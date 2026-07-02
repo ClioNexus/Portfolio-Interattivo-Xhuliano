@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xhuliano Hysenji — Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* =========================================================
+     TEMA: APPLE IOS GLASS + LIQUID GLASS + MULTI-SOURCE
+     ========================================================= */
+  :root {
+    --bg-main: #0a0807;    
+    --bg-panel: #0d0a09;   
+    --bg-hover: rgba(255, 255, 255, 0.05); 
+    
+    --gold-1: #FFD700; 
+    --gold-2: #FFB300; 
+    --gold-3: #F58A00; 
+    --gold-4: #D35400; 
+    --gold-5: #963500; 
+
+    --ios-glass-bg: rgba(25, 18, 15, 0.45); 
+    --ios-glass-hover: rgba(45, 30, 25, 0.55);
+    --ios-border: rgba(255, 255, 255, 0.12);
+    --ios-border-hover: rgba(255, 192, 153, 0.5); 
+    --ios-blur: blur(10px) saturate(150%);
+    --ios-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+    --text-peach-bright: #FFC099;    
+    --text-mahogany-bright: #FF8F66; 
+    --text-glass-body: #FFF0E6;      
+    --text-muted: #9e9792;
+    --line-muted: rgba(255,255,255,0.08);
+
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'IBM Plex Sans', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  
+  body {
+    margin: 0;
+    background-color: var(--bg-main);
+    background-image: 
+      radial-gradient(circle at 15% 40%, rgba(255, 143, 102, 0.08), transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(255, 192, 153, 0.06), transparent 40%),
+      linear-gradient(rgba(10, 8, 7, 0.65), rgba(10, 8, 7, 0.75)), 
+      url('assets/sfondo.png');
+    background-size: cover, cover, auto, cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    color: var(--text-glass-body);
+    font-family: var(--font-body);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg-main); }
+  ::-webkit-scrollbar-thumb { background: rgba(255,192,153,0.2); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-peach-bright); }
+
+  a { text-decoration: none; color: inherit; }
+  :focus-visible { outline: 2px solid var(--text-peach-bright); outline-offset: 3px; }
+
+  /* ---------------- LAYOUT & LIQUID GLASS SIDEBAR (ORO VECCHIO) ---------------- */
+  .layout { display: grid; grid-template-columns: 300px 1fr; min-height: 100vh; }
+
+  .sidebar {
+    position: sticky; top: 0; height: 100vh; padding: 36px 32px;
+    
+    background: rgba(184, 134, 11, 0.06); 
+    backdrop-filter: blur(8px) saturate(120%);
+    -webkit-backdrop-filter: blur(8px) saturate(120%);
+    border-right: 1px solid rgba(184, 134, 11, 0.15); 
+    box-shadow: 10px 0 30px rgba(0,0,0,0.4), inset -1px 0 0 rgba(255,255,255,0.03);
+    
+    display: flex; flex-direction: column; gap: 28px; z-index: 5;
+  }
+  
+  .id-photo {
+    width: 84px; height: 84px; border-radius: 12px; border: 1px solid var(--gold-1);
+    object-fit: cover; box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+  }
+  .id-name { 
+    font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; margin: 16px 0 4px; 
+    color: var(--gold-1);
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  }
+  .id-role { font-size: 0.82rem; color: #e0dcd9; line-height: 1.4; text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
+  .id-status {
+    margin-top: 14px; display: inline-flex; align-items: center; gap: 7px;
+    font-family: var(--font-mono); font-size: 0.7rem; color: #e0dcd9; text-transform: uppercase;
+  }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--gold-1);
+    box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.6); animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
+    70% { box-shadow: 0 0 0 6px rgba(255, 215, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+  }
+
+  nav.menu { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+  nav.menu a {
+    font-family: var(--font-mono); font-size: 0.85rem; color: #e0dcd9;
+    padding: 10px 14px; border-radius: 12px; display: flex; align-items: center; gap: 12px; transition: all 0.2s;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+  nav.menu a .idx { color: #aaa; transition: color 0.2s; }
+  nav.menu a:hover, nav.menu a.active { 
+    background: var(--bg-hover); 
+    border: 1px solid rgba(255, 255, 255, 0.08); 
+    color: var(--text-peach-bright); 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  }
+  nav.menu a:hover .idx, nav.menu a.active .idx { color: var(--text-mahogany-bright); }
+
+  .sidebar-foot { margin-top: auto; display: flex; flex-direction: column; gap: 8px; font-family: var(--font-mono); font-size: 0.72rem; color: #ccc; text-shadow: 0 1px 4px rgba(0,0,0,0.3);}
+  .sidebar-foot a:hover { color: var(--text-peach-bright); }
+
+  /* ---------------- ANIMAZIONE PILLOLE (GRADIENTE MASCHERATO COMPATIBILE) ---------------- */
+  @property --angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  .animated-pill {
+    position: relative;
+    border: 1px solid var(--ios-border);
+    border-radius: 50px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  
+  .animated-pill::after {
+    content: "";
+    position: absolute;
+    inset: -1px; 
+    border-radius: 50px;
+    padding: 1px; 
+    
+    background: conic-gradient(
+      from var(--angle),
+      transparent 0%,
+      var(--gold-2) 20%,
+      transparent 40%,
+      transparent 50%,
+      var(--text-mahogany-bright) 70%,
+      transparent 90%
+    );
+    
+    /* Codice Maschera corretto e compatibile */
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    
+    opacity: 0;
+    z-index: 2;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .animated-pill:hover {
+    border-color: transparent; 
+    transform: translateY(-2px);
+    background: var(--ios-glass-hover); 
+  }
+
+  .animated-pill:hover::after {
+    opacity: 1;
+    animation: spin-border 2s linear infinite;
+  }
+
+  @keyframes spin-border {
+    to { --angle: 360deg; }
+  }
+
+  /* ---------------- MAIN CONTENT ---------------- */
+  main { padding: 64px 64px 120px; max-width: 920px; position: relative; z-index: 1;}
+  section { margin-bottom: 96px; scroll-margin-top: 40px; }
+
+  .eyebrow { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; font-weight: 500; }
+  .eyebrow::after { content: ""; flex: 1; height: 1px; background: var(--line-muted); }
+  h2 { font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; margin: 0 0 24px; color: #fff; }
+
+  #profilo .eyebrow { color: var(--gold-1); }
+  #esperienza .eyebrow { color: var(--gold-2); }
+  #progetti .eyebrow { color: var(--gold-3); }
+  #certificazioni .eyebrow { color: var(--gold-4); }
+  #formazione .eyebrow { color: var(--gold-5); }
+
+  .hero { padding-top: 10px; margin-bottom: 80px; }
+  .hero h1 { font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 3.8rem); line-height: 1.1; margin: 0 0 16px; letter-spacing: -1px; animation: fadeIn 0.6s ease forwards; color: #ffffff; }
+  .hero p.tag { font-size: 1.1rem; color: var(--text-muted); max-width: 600px; animation: fadeIn 0.8s ease forwards; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  .profilo-text { max-width: 700px; font-size: 1rem; color: var(--text-glass-body); }
+  .profilo-text p { margin: 0 0 14px; }
+  .tag-groups { margin-top: 30px; display: flex; flex-direction: column; gap: 14px; }
+  .tag-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: baseline; }
+  .tag-row .label { font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; color: var(--text-mahogany-bright); width: 140px; flex-shrink: 0; }
+  
+  .chip {
+    font-size: 0.8rem; padding: 6px 16px; font-weight: 600; color: var(--text-peach-bright);
+    background: var(--ios-glass-bg); backdrop-filter: var(--ios-blur); -webkit-backdrop-filter: var(--ios-blur);
+    box-shadow: var(--ios-shadow); cursor: default;
+  }
+  .chip:hover { box-shadow: 0 8px 25px rgba(255, 192, 153, 0.15); color: #ffffff; }
+
+  .timeline { position: relative; padding-left: 26px; }
+  .timeline::before { content: ""; position: absolute; left: 5px; top: 6px; bottom: 6px; width: 1px; background: var(--line-muted); }
+  .tl-item { position: relative; padding: 0 0 30px 22px; cursor: pointer; border-left: 2px solid transparent; transition: all 0.25s; }
+  .tl-item::before { content: ""; position: absolute; left: -26px; top: 5px; width: 11px; height: 11px; border-radius: 50%; background: var(--bg-main); border: 2px solid var(--line-muted); transition: all 0.25s; }
+  .tl-item:hover { transform: translateX(4px); }
+  .tl-item:hover::before { border-color: var(--gold-2); box-shadow: 0 0 8px rgba(255, 179, 0, 0.4); background: var(--gold-2);}
+  .tl-date { font-family: var(--font-mono); font-size: 0.75rem; color: var(--gold-2); margin-bottom: 4px; }
+  .tl-title { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; color: var(--text-glass-body); transition: color 0.2s;}
+  .tl-item:hover .tl-title { color: var(--text-peach-bright); }
+  .tl-org { font-size: 0.9rem; color: var(--text-muted); margin-top: 2px; }
+  .tl-hint { font-family: var(--font-mono); font-size: 0.7rem; color: #555; margin-top: 8px; transition: color 0.2s; }
+  .tl-item:hover .tl-hint { color: var(--gold-2); }
+
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .card, .cert-tile {
+    padding: 24px; border-radius: 16px; cursor: pointer; position: relative; overflow: hidden;
+    background: var(--ios-glass-bg); backdrop-filter: var(--ios-blur); -webkit-backdrop-filter: var(--ios-blur);
+    border: 1px solid var(--ios-border); box-shadow: var(--ios-shadow); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  .card:hover, .cert-tile:hover { background: var(--ios-glass-hover); border-color: var(--ios-border-hover); transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.6), inset 0 0 20px rgba(255, 192, 153, 0.05); }
+  .card-title, .cert-name { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; margin-bottom: 6px; color: var(--text-peach-bright); transition: color 0.3s; }
+  .card:hover .card-title, .cert-tile:hover .cert-name { color: #ffffff; }
+  .card-sub, .cert-issuer { font-size: 0.85rem; color: var(--text-mahogany-bright); }
+  .cert-issuer { font-family: var(--font-mono); margin-top: 6px; }
+  .cert-row { display: flex; flex-wrap: wrap; gap: 16px; }
+  .cert-tile { min-width: 240px; flex: 1; }
+
+  .compact-list { display: flex; flex-direction: column; gap: 20px; }
+  .compact-item { border-left: 2px solid var(--line-muted); padding-left: 16px; transition: border-color 0.2s;}
+  .compact-item:hover { border-color: var(--gold-5); }
+  .compact-item .ci-date { font-family: var(--font-mono); font-size: 0.75rem; color: var(--gold-5); }
+  .compact-item .ci-title { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; margin-top: 4px; color: var(--text-glass-body);}
+  .compact-item .ci-org { font-size: 0.85rem; color: var(--text-muted); }
+
+  /* ---------------- SIDE PANEL MODALE (IOS GLASS LATERALE) ---------------- */
+  .backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.3); 
+    opacity: 0; pointer-events: none; transition: opacity 0.4s ease; z-index: 10;
+  }
+  .backdrop.show { opacity: 1; pointer-events: auto; }
+
+  .panel {
+    position: fixed; top: 0; right: 0; height: 100vh; width: min(500px, 92vw);
+    background: rgba(20, 15, 12, 0.25); backdrop-filter: blur(10px) saturate(180%); -webkit-backdrop-filter: blur(10px) saturate(180%);
+    border-left: 1px solid rgba(255,255,255,0.18);
+    transform: translateX(100%); transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 11; display: flex; flex-direction: column; box-shadow: -30px 0 60px rgba(0,0,0,0.7), inset 1px 0 0 rgba(255,255,255,0.05);
+  }
+  .panel.show { transform: translateX(0); }
+
+  .panel-head { padding: 24px 30px 16px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: flex-start; }
+  .panel-tag { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; display: flex; align-items: center; gap: 8px; }
+  .panel-close { background: none; border: none; color: rgba(255,255,255,0.5); font-size: 28px; cursor: pointer; transition: color 0.2s; padding: 0; line-height: 1; }
+  .panel-close:hover { color: #ffffff; }
+
+  .panel-body { padding: 30px; overflow-y: auto; flex: 1; }
+  .panel-body h3 { font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; margin: 0 0 6px; color: var(--text-peach-bright); text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+  .panel-body .p-sub { font-size: 0.95rem; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-mahogany-bright); }
+  .panel-body ul { padding-left: 18px; margin: 0; color: var(--text-glass-body); }
+  .panel-body li { margin-bottom: 10px; font-size: 0.95rem; text-shadow: 0 1px 5px rgba(0,0,0,0.3); }
+  
+  .panel-link {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-top: 24px;
+    font-family: var(--font-mono); font-size: 0.85rem; font-weight: 600;
+    padding: 14px 20px; color: #ffffff; 
+    width: 100%; text-decoration: none;
+  }
+  .panel-link:hover { color: #fff; }
+
+  /* ---------------- PULSANTE "DOCUMENTO IN ALTA RISOLUZIONE" ---------------- */
+  .access-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    margin-top: 24px; margin-bottom: 16px;
+    font-family: var(--font-mono); font-size: 0.9rem; font-weight: 600;
+    background: rgba(20, 15, 12, 0.4); 
+    backdrop-filter: var(--ios-blur); -webkit-backdrop-filter: var(--ios-blur);
+    padding: 12px 24px; color: var(--gold-2);
+    width: 100%; text-decoration: none; letter-spacing: 0.5px;
+  }
+  .access-btn:hover {
+    color: #fff;
+    box-shadow: 0 10px 25px rgba(184, 134, 11, 0.35); 
+  }
+
+  /* PREVIEW DOCUMENTI (Immagine) */
+  .doc-preview-container {
+    display: block; text-decoration: none; position: relative;
+    transition: transform 0.2s, box-shadow 0.2s; border-radius: 12px;
+  }
+  .doc-preview-container:hover { transform: translateY(-3px); }
+  
+  .modal-img {
+    width: 100%; border-radius: 12px; display: block;
+    border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  }
+
+  /* ---------------- FINESTRA CENTRALE ALTA RISOLUZIONE (LIGHTBOX) ---------------- */
+  #fullscreen-viewer {
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(0,0,0,0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+  }
+  #fullscreen-viewer.show { opacity: 1; pointer-events: auto; }
+  
+  .viewer-content {
+    position: relative; width: 100%; height: 100%; 
+    display: flex; justify-content: center; align-items: center; padding: 40px;
+  }
+  #close-viewer {
+    position: absolute; top: 20px; right: 30px;
+    font-size: 36px; background: none; border: none;
+    color: #fff; cursor: pointer; transition: color 0.2s; z-index: 10000;
+  }
+  #close-viewer:hover { color: var(--text-peach-bright); }
+  
+  .lightbox-media {
+    max-width: 90vw; max-height: 90vh;
+    border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    object-fit: contain;
+  }
+
+  @media (max-width: 880px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { position: relative; height: auto; flex-direction: row; align-items: center; flex-wrap: wrap; border-right: none; border-bottom: 1px solid rgba(184, 134, 11, 0.15); padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
+    nav.menu { flex-direction: row; flex-wrap: wrap; margin-top: 0; }
+    .sidebar-foot { margin-top: 0; flex-direction: row; flex-wrap: wrap; gap: 14px; }
+    main { padding: 40px 24px 90px; }
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div>
+      <img class="id-photo" src="assets/foto_profilo.jpg" alt="Foto di Xhuliano Hysenji">
+      <div class="id-name">Xhuliano Hysenji</div>
+      <div class="id-role">IT Support &amp; Back-Office Specialist<br>Cloud &amp; Data Operations</div>
+      <div class="id-status"><span class="dot"></span> sistema online</div>
+    </div>
+
+    <nav class="menu" id="nav-menu">
+      <a href="#profilo"><span class="idx">01</span> Profilo</a>
+      <a href="#esperienza"><span class="idx">02</span> Esperienza</a>
+      <a href="#progetti"><span class="idx">03</span> Progetti</a>
+      <a href="#certificazioni"><span class="idx">04</span> Certificazioni</a>
+      <a href="#formazione"><span class="idx">05</span> Formazione</a>
+    </nav>
+
+    <div class="sidebar-foot">
+      <a href="mailto:giuliocesare9236@gmail.com">giuliocesare9236@gmail.com</a>
+      <a href="https://www.linkedin.com/in/julian-hysenji-b3a094216" target="_blank" rel="noopener">linkedin.com/in/julian-hysenji</a>
+      <span>Bergamo (BG)</span>
+    </div>
+  </aside>
+
+  <main>
+    <section class="hero">
+      <h1>Xhuliano Hysenji</h1>
+      <p class="tag">Dalla manutenzione industriale al cloud: diagnostica, automazione e problem-solving applicati all'IT Support.</p>
+    </section>
+
+    <section id="profilo">
+      <div class="eyebrow">01 / Profilo</div>
+      <h2>Chi sono</h2>
+      <div class="profilo-text">
+        <p>Profilo tecnico-operativo con solida attitudine al problem-solving e all'ottimizzazione dei processi, orientato a ruoli di IT Support e Back-Office. Unisco competenze in ambito Cloud (certificazione AWS re/Start) a un'esperienza concreta in diagnostica elettromeccanica, logistica e customer service.</p>
+        <p>Parallelamente al percorso accademico in Informatica e Telecomunicazioni, conduco studio e ricerca attiva nel campo dell'Intelligenza Artificiale (AI Agents, Local Deployment, Prompt Engineering).</p>
+      </div>
+      <div class="tag-groups">
+        <div class="tag-row"><span class="label">IT &amp; Cloud</span><div class="chip animated-pill">Cloud Computing (AWS)</div><div class="chip animated-pill">Linux CLI</div><div class="chip animated-pill">System Admin</div><div class="chip animated-pill">Troubleshooting</div></div>
+        <div class="tag-row"><span class="label">Automazione</span><div class="chip animated-pill">ABB RobotStudio</div><div class="chip animated-pill">Diagnostica Elettromeccanica</div><div class="chip animated-pill">Python Scripting</div></div>
+        <div class="tag-row"><span class="label">Back-Office</span><div class="chip animated-pill">Pacchetto Office</div><div class="chip animated-pill">Data Entry</div><div class="chip animated-pill">Logistica In/Out</div></div>
+        <div class="tag-row"><span class="label">AI &amp; Digital</span><div class="chip animated-pill">AI Agents</div><div class="chip animated-pill">Whisper (Local AI)</div><div class="chip animated-pill">Prompt Engineering</div></div>
+      </div>
+    </section>
+
+    <section id="esperienza">
+      <div class="eyebrow">02 / Esperienza</div>
+      <h2>Percorso professionale</h2>
+      <div class="timeline" id="timeline"></div>
+    </section>
+
+    <section id="progetti">
+      <div class="eyebrow">03 / Progetti</div>
+      <h2>Progetti personali &amp; Deployment</h2>
+      <div class="grid" id="progetti-grid"></div>
+    </section>
+
+    <section id="certificazioni">
+      <div class="eyebrow">04 / Certificazioni</div>
+      <h2>Certificazioni &amp; Attestati</h2>
+      <div class="cert-row" id="cert-row"></div>
+    </section>
+
+    <section id="formazione">
+      <div class="eyebrow">05 / Formazione</div>
+      <h2>Formazione &amp; Istruzione</h2>
+      <div class="compact-list">
+        <div class="compact-item"><div class="ci-date">Set 2024 &ndash; In corso</div><div class="ci-title">Indirizzo Informatico e Telecomunicazioni</div><div class="ci-org">Istituto Leonardo da Vinci &mdash; Bergamo</div></div>
+        <div class="compact-item"><div class="ci-date">Set &ndash; Dic 2022</div><div class="ci-title">Cloud Computing &amp; IT Fundamentals &mdash; AWS re/Start</div><div class="ci-org">Digital Inclusion Academy, Fondazione ENGIM Lombardia ETS</div></div>
+        <div class="compact-item"><div class="ci-date">Diploma Tecnico/Professionale</div><div class="ci-title">Azienda Bergamasca Formazione (ABF)</div><div class="ci-org">Bergamo</div></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="backdrop" id="backdrop"></div>
+<aside class="panel" id="panel" role="dialog" aria-modal="true">
+  <div class="panel-head">
+    <div class="panel-tag" id="panel-tag"><span class="dot" id="panel-dot" style="animation:none;"></span> <span id="panel-tag-text">REPORT</span></div>
+    <button class="panel-close" id="panel-close" title="Chiudi (Esc)">✕</button>
+  </div>
+  <div class="panel-body" id="panel-body"></div>
+</aside>
+
+<div id="fullscreen-viewer">
+  <div class="viewer-content">
+    <button id="close-viewer" title="Chiudi">✕</button>
+    <div id="viewer-media-container" style="display:flex; justify-content:center; align-items:center; width:100%; height:100%;"></div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   IL MOTORE MULTI-SOURCE (PULITO E RESILIENTE)
+   ========================================================= */
+
+const ESPERIENZE = [
+  { date: "Mar 2026 — Presente", title: "Customer Service & Shift Operations", org: "Odeas — Bergamo", bullets: ["Gestione operativa dei turni in ambiente fast-paced.", "Problem-solving immediato e gestione ordini e pagamenti.", "Sviluppo di forti capacità di lavoro in team."] },
+  { date: "Dic 2022 — Ago 2024", title: "Security & Operations Controller", org: "ICTS Italia Srl — Ponte San Pietro", bullets: ["Monitoraggio accessi fisici tramite software di vigilanza e dashboard.", "Analisi in tempo reale per protocolli di accesso e allarmi.", "Rapido intervento e troubleshooting di sistema."] },
+  { date: "Set 2021 — Dic 2021", title: "Tecnico Manutentore Elettromeccanico", org: "Amazon BGY1 — Cividate al Piano", bullets: ["Supervisione linee di smistamento via PC remoti e diagnostica.", "Troubleshooting e risoluzione anomalie a bordo macchina.", "Manutenzione preventiva e correttiva nastri trasportatori."] },
+  { date: "Lug 2021 — Set 2021", title: "Caposquadra Cantieristico / Team Leader", org: "Adecco Italia (Amazon BGY1)", bullets: ["Coordinamento e supervisione di un team multiculturale.", "Gestione operativa movimentazione merci e collaudo.", "Comunicazione interfunzionale in lingua inglese."] },
+  { date: "Mar 2021 — Lug 2021", title: "Montatore Meccanico", org: "Professional Solutions — Bergamo", bullets: ["Finitura di precisione componenti in acciaio bonificato.", "Assemblaggio di organi di trasmissione e riduttori.", "Saldatura e montaggio nel rispetto degli standard di qualità."] }
+];
+
+const PROGETTI = [
+  { 
+    title: "3D Robotic Simulation", 
+    sub: "ABB RobotStudio", 
+    bullets: ["Progettazione e simulazione logiche di movimentazione robotica.", "Programmazione spaziale di bracci meccanici per task pick & place."],
+    preview_Base64: "", preview_Immagine: "", preview_Video: "", preview_Audio: "",
+    full_PDF: "", full_Base64: "", full_Immagine: "", full_Video: "", full_Audio: "", full_LinkWeb: ""
+  },
+  { 
+    title: "Interactive Flipbook UI", 
+    sub: "Sviluppo Front-End", 
+    bullets: ["Sviluppo rivista digitale con rendering dinamico.", "Implementazione logiche DOM avanzate e Typewriter effect."], 
+    full_LinkWeb: "https://clionexus.github.io/Ed.-Civica-Identita-Digitale-Gennaio-2026/"
+  }
+];
+
+const CERTIFICAZIONI = [
+  {
+    title: "AWS re/Start Graduate", sub: "Amazon Web Services (AWS)", bullets: ["Certificazione ufficiale cloud fundamentals e networking."],
+    full_LinkWeb: "https://www.credly.com/badges/0bf807f0-650b-46a5-94c9-06af797e40b4/public_url"
+  },
+  {
+    title: "ABB Robotica Base", sub: "Progetto Educational ABB", bullets: ["Fondamenti di programmazione e simulazione robotica.", "Ore: 40 | Codice: 6a26b380-b6b0-4b63-8a0a-936574ca1a62"],
+    preview_Base64: "", 
+    preview_Immagine: "assets/immagine.jpg",     
+    preview_Video: "",        
+    preview_Audio: "",        
+    full_PDF: "assets/ABB_ROBOTICA_BASE_NEW-ATTESTATO_FSL_ABB_INDUSTRIALE_BASE_7590.pdf", 
+    full_Base64: "",          
+    full_Immagine: "",        
+    full_Video: "",           
+    full_Audio: "",           
+    full_LinkWeb: ""          
+  },
+  {
+    title: "Oxford Test of English", sub: "Advanced Level B2", bullets: ["Certificazione ufficiale di competenza linguistica in lingua inglese.", "Score Complessivo: 129"],
+    preview_Immagine_Array: ["", ""], 
+    preview_Base64_Array: ["", ""],   
+    full_PDF: "", full_Base64: "", full_Immagine: "", full_Video: "", full_Audio: "", full_LinkWeb: ""
+  },
+  {
+    title: "Cybersecurity Fundamentals", sub: "Aruba", bullets: ["Attestato di formazione sui fondamenti di sicurezza informatica e gestione minacce."],
+    preview_Base64: "", preview_Immagine: "", preview_Video: "", preview_Audio: "",
+    full_PDF: "", full_Base64: "", full_Immagine: "", full_Video: "", full_Audio: "", full_LinkWeb: ""
+  },
+  {
+    title: "Social Media Manager & Digital Comm.", sub: "Cesvip", bullets: ["Attestato di formazione in comunicazione digitale e gestione dei social media."],
+    preview_Base64: "", preview_Immagine: "", preview_Video: "", preview_Audio: "",
+    full_PDF: "", full_Base64: "", full_Immagine: "", full_Video: "", full_Audio: "", full_LinkWeb: ""
+  }
+];
+
+const THEME_COLORS = { esperienza: "var(--gold-2)", progetti: "var(--gold-3)", certificazioni: "var(--gold-4)" };
+
+/* ============== CREAZIONE DELLE CARD ============== */
+const timeline = document.getElementById('timeline');
+ESPERIENZE.forEach((e, i) => {
+  const el = document.createElement('div'); el.className = 'tl-item';
+  el.innerHTML = `<div class="tl-date">${e.date}</div><div class="tl-title">${e.title}</div><div class="tl-org">${e.org}</div><div class="tl-hint">Espandi dettagli →</div>`;
+  el.addEventListener('click', () => openPanel('esperienza', i)); timeline.appendChild(el);
+});
+
+const pgrid = document.getElementById('progetti-grid');
+PROGETTI.forEach((p, i) => {
+  const el = document.createElement('div'); el.className = 'card';
+  el.innerHTML = `<div class="card-title">${p.title}</div><div class="card-sub">${p.sub}</div>`;
+  el.addEventListener('click', () => openPanel('progetti', i)); pgrid.appendChild(el);
+});
+
+const crow = document.getElementById('cert-row');
+CERTIFICAZIONI.forEach((c, i) => {
+  const el = document.createElement('div'); el.className = 'cert-tile';
+  el.innerHTML = `<div class="cert-name">${c.title}</div><div class="cert-issuer">${c.sub}</div>`;
+  el.addEventListener('click', () => openPanel('certificazioni', i)); crow.appendChild(el);
+});
+
+/* ============== LOGICA PANNELLO ============== */
+const backdrop = document.getElementById('backdrop');
+const panel = document.getElementById('panel');
+const panelBody = document.getElementById('panel-body');
+const panelTagText = document.getElementById('panel-tag-text');
+const panelDot = document.getElementById('panel-dot');
+
+const SOURCES = { esperienza: ESPERIENZE, progetti: PROGETTI, certificazioni: CERTIFICAZIONI };
+const LABELS = { esperienza: "ESPERIENZA", progetti: "PROGETTO", certificazioni: "CREDENZIALE" };
+
+function smartFormat(src) {
+  if (!src || typeof src !== 'string') return "";
+  if (src.includes("INSERISCI_") || src.includes("INCOLLA_")) return "";
+  src = src.trim();
+  if (src.startsWith("data:") || src.startsWith("http") || src.includes(".")) return src;
+  if (src.length > 50) return "data:image/png;base64," + src;
+  return src;
+}
+
+function generateLinkHTML(rawPreviewSrc, previewMediaType, item, sectionType, index) {
+  let previewSrc = smartFormat(rawPreviewSrc);
+  let previewHTML = "";
+  
+  if (!previewSrc) {
+      previewHTML = `<div style="padding:15px; border:1px dashed #555; color:#888; text-align:center; border-radius:8px; font-family:var(--font-mono); font-size:0.8rem; background:rgba(255,255,255,0.02);">[In attesa di caricamento]</div>`;
+  } else {
+      if (previewMediaType === 'video') {
+         previewHTML = `<video src="${previewSrc}" autoplay loop muted playsinline class="modal-img"></video>`;
+      } else if (previewMediaType === 'audio') {
+         previewHTML = `<audio src="${previewSrc}" controls class="modal-img" style="height:50px; margin-top:20px;"></audio>`;
+      } else {
+         previewHTML = `<img src="${previewSrc}" class="modal-img" alt="Anteprima">`;
+      }
+  }
+
+  let action = "";
+  let full_PDF = smartFormat(item.full_PDF);
+  let full_LinkWeb = item.full_LinkWeb;
+  
+  if (full_PDF) {
+      action = `href="${full_PDF}" target="_blank" rel="noopener"`;
+  } else if (full_LinkWeb && !full_LinkWeb.includes("INSERISCI_")) {
+      action = `href="${full_LinkWeb}" target="_blank" rel="noopener"`;
+  } else if (smartFormat(item.full_Base64) || smartFormat(item.full_Immagine) || smartFormat(item.full_Video) || smartFormat(item.full_Audio)) {
+      action = `href="javascript:void(0)" onclick="openLightbox(event, '${sectionType}', ${index})"`;
+  } 
+
+  if (!action) {
+      return `<div style="margin-top:24px;">${previewHTML}</div>`;
+  }
+
+  return `
+    <div style="margin-top: 24px;">
+      <a ${action} class="access-btn animated-pill" title="Documento in alta risoluzione">
+         <span>Documento in alta risoluzione</span>
+      </a>
+      <a ${action} class="doc-preview-container" title="Documento in alta risoluzione">
+         ${previewHTML}
+      </a>
+    </div>
+  `;
+}
+
+function openPanel(type, index) {
+  try {
+      const item = SOURCES[type][index];
+      const accentColor = THEME_COLORS[type]; 
+      
+      panelTagText.textContent = `REPORT // ${LABELS[type]}`;
+      panelTagText.style.color = accentColor;
+      panelDot.style.background = accentColor;
+
+      let html = `<h3>${item.title}</h3><div class="p-sub">${item.sub || item.org}</div><ul>`;
+      item.bullets.forEach(b => html += `<li>${b}</li>`);
+      html += `</ul>`;
+      
+      if(item.full_LinkWeb && !item.full_LinkWeb.includes("INSERISCI_") && !item.preview_Immagine && !item.preview_Base64) {
+        html += `<a class="panel-link animated-pill" href="${item.full_LinkWeb}" target="_blank" rel="noopener"><span>↗ Apri Risorsa Esterna</span></a>`;
+      }
+      
+      if (item.preview_Base64_Array && item.preview_Base64_Array.length > 0 && item.preview_Base64_Array[0] !== "" && !item.preview_Base64_Array[0].includes("INSERISCI_")) {
+          item.preview_Base64_Array.forEach(b64 => { if(b64) html += generateLinkHTML(b64, 'image', item, type, index); });
+      } else if (item.preview_Immagine_Array && item.preview_Immagine_Array.length > 0 && item.preview_Immagine_Array[0] !== "" && !item.preview_Immagine_Array[0].includes("INSERISCI_")) {
+          item.preview_Immagine_Array.forEach(img => { if(img) html += generateLinkHTML(img, 'image', item, type, index); });
+      } else {
+          let pSrc = item.preview_Base64 || item.preview_Immagine || item.preview_Video || item.preview_Audio;
+          let pType = item.preview_Video ? 'video' : (item.preview_Audio ? 'audio' : 'image');
+          if(pSrc || item.full_PDF || item.full_Base64 || item.full_Immagine || item.full_Video || item.full_Audio) {
+             html += generateLinkHTML(pSrc, pType, item, type, index);
+          }
+      }
+
+      panelBody.innerHTML = html;
+      backdrop.classList.add('show');
+      panel.classList.add('show');
+      document.body.style.overflow = 'hidden';
+  } catch (errore) {
+      console.error(errore);
+      alert("C'è stato un problema durante l'apertura: " + errore.message);
+  }
+}
+
+function closePanel() {
+  backdrop.classList.remove('show');
+  panel.classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+backdrop.addEventListener('click', closePanel);
+document.getElementById('panel-close').addEventListener('click', closePanel);
+
+/* =========================================================
+   FINESTRA CENTRALE (LIGHTBOX)
+   ========================================================= */
+const fullscreenViewer = document.getElementById('fullscreen-viewer');
+const viewerContainer = document.getElementById('viewer-media-container');
+
+function openLightbox(e, sectionType, index) {
+  e.preventDefault(); 
+  e.stopPropagation();
+
+  const item = SOURCES[sectionType][index];
+  let rawSource = item.full_Base64 || item.full_Immagine || item.full_Video || item.full_Audio;
+  let source = smartFormat(rawSource);
+  
+  if(!source) return;
+
+  let type = 'image';
+  if (item.full_Video) type = 'video';
+  else if (item.full_Audio) type = 'audio';
+
+  viewerContainer.innerHTML = ""; 
+
+  if (type === 'video') {
+     viewerContainer.innerHTML = `<video src="${source}" controls autoplay class="lightbox-media"></video>`;
+  } else if (type === 'audio') {
+     viewerContainer.innerHTML = `<audio src="${source}" controls autoplay class="lightbox-media" style="width:100%; max-width:500px;"></audio>`;
+  } else {
+     viewerContainer.innerHTML = `<img src="${source}" class="lightbox-media">`;
+  }
+
+  fullscreenViewer.classList.add('show');
+}
+
+function closeLightbox() {
+  fullscreenViewer.classList.remove('show');
+  viewerContainer.innerHTML = ""; 
+}
+
+document.getElementById('close-viewer').addEventListener('click', closeLightbox);
+fullscreenViewer.addEventListener('click', (e) => {
+  if (e.target === fullscreenViewer || e.target.classList.contains('viewer-content')) {
+    closeLightbox();
+  }
+});
+
+document.addEventListener('keydown', (e) => { 
+  if(e.key === 'Escape') {
+    if(fullscreenViewer.classList.contains('show')) {
+      closeLightbox();
+    } else if (panel.classList.contains('show')) {
+      closePanel(); 
+    }
+  } 
+});
+
+/* Scroll Highlight Nav Menu Sidebar */
+const sections = document.querySelectorAll('section');
+const navLinks = document.querySelectorAll('.menu a');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(sec => { if(pageYOffset >= sec.offsetTop - 150) current = sec.getAttribute('id'); });
+  navLinks.forEach(a => {
+    a.classList.remove('active');
+    if(a.getAttribute('href').includes(current)) a.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
