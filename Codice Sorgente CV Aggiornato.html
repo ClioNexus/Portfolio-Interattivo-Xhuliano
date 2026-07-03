@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<style>
+  /* ---------- IMPOSTAZIONI STAMPA A4 STANDARD ---------- */
+  @page { 
+    size: A4; 
+    margin: 15mm 20mm; /* Margini standard di stampa: 1.5cm sopra/sotto, 2cm ai lati */
+  }
+  
+  * { box-sizing: border-box; }
+  
+  body {
+    font-family: 'Liberation Sans', Arial, Helvetica, sans-serif;
+    color: #1a1a1a;
+    font-size: 10.3pt;
+    line-height: 1.42;
+    margin: 0;
+    padding: 0; /* Il padding ora è gestito direttamente dai margini @page per la stampa */
+  }
+
+  /* ---------- HEADER ---------- */
+  .name {
+    font-size: 23pt;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    color: #111111;
+    margin: 0 0 2px 0;
+  }
+  .role-title {
+    font-size: 11.5pt;
+    color: #2c4a63;
+    font-weight: bold;
+    margin: 0 0 7px 0;
+  }
+  .contact-line {
+    font-size: 9.5pt;
+    color: #333333;
+    margin: 0 0 14px 0;
+  }
+  .contact-line .ph { color: #b5651d; font-style: italic; }
+  .contact-sep { color: #999999; margin: 0 6px; }
+
+  /* ---------- SECTION HEADERS ---------- */
+  h2 {
+    font-size: 11.2pt;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #16314a;
+    border-bottom: 1.3px solid #16314a;
+    padding-bottom: 2px;
+    margin: 15px 0 7px 0;
+    page-break-after: avoid; 
+    break-after: avoid;
+  }
+  h2:first-of-type { margin-top: 0; }
+
+  /* ---------- SUMMARY ---------- */
+  .summary {
+    margin: 0 0 2px 0;
+    text-align: justify;
+  }
+
+  /* ---------- SKILLS ---------- */
+  .skills-list { margin: 0; padding: 0; }
+  .skill-row { margin: 0 0 3.5px 0; }
+  .skill-cat { font-weight: bold; }
+
+  /* ---------- EXPERIENCE / EDUCATION / PROJECTS ---------- */
+  .entry { 
+    margin: 0 0 10px 0; 
+    /* Previene il taglio del blocco a metà tra due pagine stampate */
+    page-break-inside: avoid; 
+    break-inside: avoid;
+    display: inline-block; 
+    width: 100%;
+  }
+  .entry:last-child { margin-bottom: 0; }
+  .entry-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0px;
+  }
+  .job-title { font-weight: bold; font-size: 10.4pt; }
+  .dates { font-style: italic; font-size: 9.5pt; color: #444444; white-space: nowrap; margin-left: 10px; }
+  .org-line { font-size: 9.8pt; color: #333333; margin-bottom: 3px; }
+  .org-line .ph { color: #b5651d; font-style: italic; }
+  ul.bullets { margin: 2px 0 0 0; padding-left: 16px; }
+  ul.bullets li { margin-bottom: 2px; }
+
+  /* ---------- PROJECTS ---------- */
+  .proj-title { font-weight: bold; font-size: 10.3pt; }
+
+  /* ---------- LANGUAGES ---------- */
+  .lang-row { margin-bottom: 2px; }
+  .lang-name { font-weight: bold; }
+
+  .note {
+    margin-top: 16px;
+    padding: 8px 10px;
+    background: #fdf3e7;
+    border: 1px solid #e3c79a;
+    font-size: 8.7pt;
+    color: #7a4a14;
+    font-style: italic;
+  }
+
+  /* ---------- HEADER LAYOUT E QR CODE ---------- */
+  .header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0;
+  }
+  .header-text { flex: 1; }
+  .qr-code {
+    width: 75px;
+    height: 75px;
+    margin-left: 20px;
+    flex-shrink: 0;
+    mix-blend-mode: multiply;
+  }
+
+</style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header-flex">
+    <div class="header-text">
+      <div class="name">Xhuliano Hysenji</div>
+      <div class="role-title">IT Support &amp; Back-Office Specialist | Cloud &amp; Data Operations</div>
+      <div class="contact-line">
+        Bergamo (BG)<span class="contact-sep">|</span>27/09/1992 (33 anni)<span class="contact-sep">|</span>+39 391 146 6680<span class="contact-sep">|</span>giuliocesare9236@gmail.com<span class="contact-sep">|</span><a href="https://www.linkedin.com/in/julian-hysenji-b3a094216" style="color:#16314a; text-decoration:none;">linkedin.com/in/julian-hysenji</a><span class="contact-sep">|</span><a href="https://clionexus.github.io/Portfolio-Interattivo-Xhuliano/" style="color:#16314a; text-decoration:none; font-weight:bold;">Portfolio Interattivo &amp; Certificazioni</a>
+      </div>
+    </div>
+    <!-- QR CODE GENERATO -->
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://clionexus.github.io/Portfolio-Interattivo-Xhuliano/" alt="QR Code Portfolio" class="qr-code">
+  </div>
+
+  <!-- PROFILO -->
+  <h2>Profilo Professionale</h2>
+  <p class="summary">Profilo tecnico-operativo con solida attitudine al problem-solving e all'ottimizzazione dei processi, orientato a ruoli di IT Support e Back-Office. Unisco competenze in ambito Cloud (certificazione AWS re/Start) e infrastrutture IT a un'esperienza concreta in amministrazione dati, gestione logistica e customer service. Parallelamente al percorso accademico in Informatica e Robotica, conduco studio e ricerca attiva nel campo dell'Intelligenza Artificiale (AI Agents, Machine Learning, Prompt Engineering). Precisione, metodo e capacità di analisi di schemi e procedure complesse mi consentono di unire l'efficienza operativa maturata sul campo alle nuove tecnologie digitali.</p>
+
+  <!-- COMPETENZE -->
+  <h2>Competenze</h2>
+  <div class="skills-list">
+    <div class="skill-row"><span class="skill-cat">IT Support &amp; Cloud:</span> Cloud Computing (AWS), Linux CLI, System Administration, Troubleshooting, Monitoraggio Sistemi</div>
+    <div class="skill-row"><span class="skill-cat">Programmazione &amp; Automazione:</span> ABB RobotStudio (Simulazione 3D), Diagnostica e Manutenzione Elettromeccanica, Robotica Industriale, Logica UI Front-end, Scripting (Python, FFmpeg)</div>
+    <div class="skill-row"><span class="skill-cat">Back-Office &amp; Operations:</span> Pacchetto Office, Data Entry, Logistica Inbound/Outbound, Lettura Schemi Tecnici</div>
+    <div class="skill-row"><span class="skill-cat">Digital &amp; Multimedia:</span> Gestione Asset Vettoriali e Audio, Social Media Management, GitHub Pages</div>
+    <div class="skill-row"><span class="skill-cat">AI &amp; Innovazione Tecnologica:</span> Deployment Locale di Modelli IA (Whisper), AI Agents, Prompt Engineering</div>
+    <div class="skill-row"><span class="skill-cat">Soft Skills:</span> Problem-Solving, Team Leadership &amp; Coordinamento, Gestione del Cliente, Adattabilità in Ambienti Dinamici</div>
+  </div>
+
+  <!-- ESPERIENZA -->
+  <h2>Esperienza Lavorativa</h2>
+
+  <div class="entry">
+    <div class="entry-head">
+      <span class="job-title">Customer Service &amp; Shift Operations</span>
+      <span class="dates">Mar 2026 &ndash; Presente</span>
+    </div>
+    <div class="org-line">Odeas &mdash; Via Borgo Palazzo 211, Bergamo</div>
+    <ul class="bullets">
+      <li>Gestione operativa dei turni in un ambiente dinamico e ad alta pressione (fast-paced).</li>
+      <li>Rapporto diretto con la clientela, problem-solving immediato e gestione di ordini e pagamenti.</li>
+      <li>Sviluppo di forti capacità di lavoro in team e comunicazione efficace.</li>
+    </ul>
+  </div>
+
+  <div class="entry">
+    <div class="entry-head">
+      <span class="job-title">Security &amp; Operations Controller</span>
+      <span class="dates">Dic 2022 &ndash; Ago 2024</span>
+    </div>
+    <div class="org-line">ICTS Italia Srl &mdash; Ponte San Pietro (BG)</div>
+    <ul class="bullets">
+      <li>Monitoraggio degli accessi fisici tramite software di vigilanza e dashboard di controllo.</li>
+      <li>Analisi in tempo reale per la gestione dei protocolli di accesso e supervisione degli allarmi.</li>
+      <li>Rapido intervento e troubleshooting in caso di anomalie di sistema per garantire la continuità operativa.</li>
+    </ul>
+  </div>
+
+  <div class="entry">
+    <div class="entry-head">
+      <span class="job-title">Tecnico Manutentore Elettromeccanico</span>
+      <span class="dates">Set 2021 &ndash; Dic 2021</span>
+    </div>
+    <div class="org-line">Amazon &mdash; Polo Logistico BGY1, Cividate al Piano (BG) (in somministrazione tramite Gi Group SPA)</div>
+    <ul class="bullets">
+      <li>Supervisione del funzionamento delle linee di smistamento tramite postazioni PC remote e monitoraggio di bracci robotici industriali con palmari diagnostici dedicati.</li>
+      <li>Troubleshooting e risoluzione di anomalie a bordo macchina, tramite reset di sistema, tarature meccaniche e calibrazione/sostituzione di sensori ottici (fotocellule).</li>
+      <li>Manutenzione preventiva e correttiva dei nastri trasportatori: taratura elettromeccanica, sostituzione di motorulli e controllo del voltaggio per la sincronizzazione delle velocità.</li>
+      <li>Interfaccia costante via radio con il centro di controllo RME (Reliability Maintenance Engineering) e supporto sul campo ai robot mobili per il trasporto scaffali, a garanzia della riduzione dei tempi di inattività (downtime).</li>
+    </ul>
+  </div>
+
+  <div class="entry">
+    <div class="entry-head">
+      <span class="job-title">Caposquadra Cantieristico / Team Leader</span>
+      <span class="dates">Lug 2021 &ndash; Set 2021</span>
+    </div>
+    <div class="org-line">Adecco Italia &mdash; presso Amazon BGY1, Cividate al Piano (BG)</div>
+    <ul class="bullets">
+      <li>Coordinamento e supervisione di un team multiculturale di 11-15 operatori durante le fasi di allestimento cantiere, nel rispetto di tempistiche e procedure di sicurezza.</li>
+      <li>Gestione operativa della movimentazione merci, del collaudo iniziale dei macchinari e supporto diretto alle installazioni tecniche sul campo.</li>
+      <li>Facilitazione della comunicazione interfunzionale in lingua inglese tra personale di cantiere internazionale (es. Lituania) reparti logistici, fornitori e installatori esterni.</li>
+    </ul>
+  </div>
+
+  <div class="entry">
+    <div class="entry-head">
+      <span class="job-title">Montatore Meccanico</span>
+      <span class="dates">Mar 2021 &ndash; Lug 2021</span>
+    </div>
+    <div class="org-line">Professional Solutions &mdash; Bergamo</div>
+    <ul class="bullets">
+      <li>Finitura di precisione (sbavatura e lucidatura) di componenti in acciaio bonificato, con trattamenti chimici di pulizia.</li>
+      <li>Assemblaggio di organi di trasmissione e riduttori meccanici (diametri da 18 a 60 cm).</li>
+      <li>Saldatura e montaggio di componenti in acciaio, alluminio e cromo, nel rispetto degli standard di qualità.</li>
+    </ul>
+  </div>
+
+  <!-- PROGETTI -->
+  <h2>Progetti</h2>
+
+  <div class="entry">
+    <div class="proj-title">3D Robotic Simulation &amp; Automation</div>
+    <ul class="bullets">
+      <li>Progettazione e simulazione di logiche di movimentazione robotica in ambienti virtuali tramite il software ABB RobotStudio.</li>
+      <li>Programmazione spaziale di bracci meccanici su tre assi (X, Y, Z) per task di manipolazione e pick &amp; place, applicando i principi della certificazione ABB Base.</li>
+    </ul>
+  </div>
+
+  <div class="entry">
+    <div class="proj-title">Interactive Digital Flipbook &amp; UI Development</div>
+    <ul class="bullets">
+      <li>Sviluppo di una rivista digitale interattiva (25+ pagine) con rendering dinamico.</li>
+      <li>Implementazione di logiche di programmazione per il controllo del DOM e delle transizioni visive, con effetti di rendering avanzati per il testo (typewriter effect sincronizzato).</li>
+      <li>Progetto live: <a href="https://clionexus.github.io/Ed.-Civica-Identita-Digitale-Gennaio-2026/" style="color:#16314a; text-decoration:none;">clionexus.github.io/Ed.-Civica-Identita-Digitale</a></li>
+    </ul>
+  </div>
+
+  <div class="entry">
+    <div class="proj-title">Offline AI Deployment &amp; Data Processing</div>
+    <ul class="bullets">
+      <li>Configurazione in locale di modelli IA open-source (Whisper.cpp) per l'elaborazione di dati audio su architetture hardware limitate.</li>
+      <li>Utilizzo pratico di terminale Linux (Termux) ed esecuzione di script a riga di comando per convertire e manipolare file multimediali tramite FFmpeg.</li>
+    </ul>
+  </div>
+
+  <div class="entry">
+    <div class="proj-title">Multimedia Engineering &amp; Web Deployment</div>
+    <ul class="bullets">
+      <li>Gestione e modifica di asset multimediali, vettoriali e audio per l'ottimizzazione dei contenuti digitali.</li>
+      <li>Setup di ambienti di hosting statico (GitHub Pages) per la distribuzione di flussi video e implementazione di moduli web interattivi per la raccolta dati.</li>
+      <li>Progetto live: <a href="https://clionexus.github.io/Portfolio-Interattivo-Xhuliano/" style="color:#16314a; text-decoration:none; font-weight:bold;">clionexus.github.io/Portfolio-Interattivo-Xhuliano</a></li>
+    </ul>
+  </div>
+
+  <!-- ISTRUZIONE -->
+  <h2>Istruzione</h2>
+
+  <div class="entry">
+    <div class="entry-head">
+      <span class="job-title">ITS Academy &ndash; Specializzazione Robotica e Automazione</span>
+      <span class="dates">Set 2024 &ndash; In corso</span>
+    </div>
+    <div class="org-line">Istituto Leonardo da Vinci (Indirizzo Informatica e Telecomunicazioni) &mdash; Bergamo</div>
+    <ul class="bullets">
+      <li>Percorso accademico avanzato incentrato su robotica industriale, sistemi informatici, reti, automazione e gestione delle infrastrutture IT.</li>
+    </ul>
+  </div>
+
+  <div class="entry">
+    <div class="entry-head">
+      <span class="job-title">Cloud Computing &amp; IT Fundamentals &ndash; AWS re/Start</span>
+      <span class="dates">Set 2022 &ndash; Dic 2022</span>
+    </div>
+    <div class="org-line">Digital Inclusion Academy &mdash; Fondazione ENGIM Lombardia ETS</div>
+    <ul class="bullets">
+      <li>Programma intensivo su architetture Cloud, amministrazione database, networking, sicurezza IT e fondamenti di programmazione Python/Linux.</li>
+    </ul>
+  </div>
+
+  <div class="entry">
+    <div class="entry-head">
+      <span class="job-title">Diploma Tecnico/Professionale</span>
+    </div>
+    <div class="org-line">ABF &ndash; Azienda Bergamasca Formazione &mdash; Bergamo</div>
+  </div>
+
+  <!-- CERTIFICAZIONI -->
+  <h2>Certificazioni e Attestati di Formazione</h2>
+  <ul class="bullets">
+    <li>AWS re/Start Graduate &mdash; Amazon Web Services (AWS) &mdash; <a href="https://www.credly.com/badges/0bf807f0-650b-46a5-94c9-06af797e40b4/public_url" style="color:#16314a; text-decoration:none;">Verifica badge (Credly)</a></li>
+    <li>Cybersecurity Specialist / Fundamentals &mdash; Aruba</li>
+    <li>Social Media Manager &amp; Digital Communication &mdash; Cesvip</li>
+    <li>Attestato ABB base New &mdash; Fondazione Dalmine / ABB</li>
+  </ul>
+
+  <!-- LINGUE -->
+  <h2>Lingue</h2>
+  <div class="lang-row"><span class="lang-name">Italiano:</span> Madrelingua</div>
+  <div class="lang-row"><span class="lang-name">Albanese:</span> Madrelingua / Bilingue</div>
+  <div class="lang-row"><span class="lang-name">Inglese:</span> Livello B2 &mdash; Certificazione Oxford (digitale)</div>
+
+</body>
+</html>
