@@ -216,9 +216,10 @@
   
   #vanta-panel-canvas { position: absolute; inset: 0; z-index: 0; opacity: 0.85; pointer-events: none; }
   
-  /* --- CANVAS EFFETTI DINAMICI --- */
+  /* --- FIX CANVAS SIZING: display block, width/height 100% --- */
   #fx-canvas {
     position: absolute; inset: 0; z-index: 1; pointer-events: none; mix-blend-mode: screen; opacity: 0.9;
+    display: block; width: 100%; height: 100%;
   }
 
   .panel-content-wrapper { position: relative; z-index: 2; display: flex; flex-direction: column; height: 100%; pointer-events: none; }
@@ -438,7 +439,7 @@ CERTIFICAZIONI.forEach((c, i) => {
 });
 
 /* ==============================================
-   MOTORE CANVAS MULTI-EFFETTO GENERATIVO
+   MOTORE CANVAS MULTI-EFFETTO (Corretto e Calibrato)
    ============================================== */
 const canvas = document.getElementById('fx-canvas');
 const ctx = canvas.getContext('2d');
@@ -446,18 +447,28 @@ const ctx = canvas.getContext('2d');
 const CanvasFX = {
   reqId: null,
   type: null,
+  rawColorStr: null,
   color: '#ffffff',
   particles: [],
+  lastFrameTime: 0,
+  
   matrixData: { drops: [], info: [], chars: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:,.<>/?λΣΔ'.split(''), words: [' LINUX ', ' PYTHON ', ' AI ', ' CLOUD ', ' AWS ', ' PROMPT ', ' AGENT ', ' SYS '], size: 18 },
-  laserData: { scanY: 0, scanDir: 1, grid: [] },
+  laserData: { scanY: 0, scanDir: 2.5, grid: [] },
   
   start(type, colorStr) {
     this.stop();
     this.type = type;
+    this.rawColorStr = colorStr; 
     this.color = this.getRGB(colorStr) || '255, 255, 255';
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
+    
+    // SOLUZIONE PROBLEMA DIMENSIONI:
+    // Prende forzatamente le dimensioni assolute del pannello per non lasciare aree scoperte.
+    const panelEl = document.getElementById('panel');
+    canvas.width = panelEl.clientWidth;
+    canvas.height = panelEl.clientHeight;
+    
     this.particles = [];
+    this.lastFrameTime = Date.now();
     
     if(type === 'matrix') this.initMatrix();
     else if(type === 'network') this.initNetwork();
@@ -475,34 +486,47 @@ const CanvasFX = {
   },
 
   getRGB(cssVarStr) {
-    // Trasforma la variabile CSS in un colore HEX per usarlo in Canvas (fallback su azzurro)
-    if(cssVarStr.includes('--c-profilo')) return '168, 85, 247'; // Purple
-    if(cssVarStr.includes('--c-esperienza')) return '59, 130, 246'; // Blue
-    if(cssVarStr.includes('--c-progetti')) return '16, 185, 129'; // Emerald
-    if(cssVarStr.includes('--c-certificazioni')) return '14, 165, 233'; // Sky
-    if(cssVarStr.includes('--c-formazione')) return '99, 102, 241'; // Indigo
+    if(cssVarStr.includes('--c-profilo')) return '168, 85, 247'; 
+    if(cssVarStr.includes('--c-esperienza')) return '59, 130, 246'; 
+    if(cssVarStr.includes('--c-progetti')) return '16, 185, 129'; 
+    if(cssVarStr.includes('--c-certificazioni')) return '14, 165, 233'; 
+    if(cssVarStr.includes('--c-formazione')) return '99, 102, 241'; 
     return '255, 255, 255';
   },
 
   loop() {
-    // Fading effect per Matrix e Laser
-    if(this.type === 'matrix' || this.type === 'laser') {
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.globalCompositeOperation = 'source-over';
-    } else {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-
-    if(this.type === 'matrix') this.drawMatrix();
-    else if(this.type === 'network') this.drawNetwork();
-    else if(this.type === 'pages') this.drawPages();
-    else if(this.type === 'typography') this.drawTypography();
-    else if(this.type === 'pulse') this.drawPulse();
-    else if(this.type === 'laser') this.drawLaser();
-
     this.reqId = requestAnimationFrame(() => this.loop());
+    
+    const now = Date.now();
+    
+    // SOLUZIONE PROBLEMA VELOCITÀ MATRIX:
+    // Il Frame Rate Controller assicura che Matrix giri al massimo a 22 FPS (eleganza pura),
+    // mentre le altre animazioni girano fluide a 60 FPS.
+    const targetFPS = (this.type === 'matrix') ? 22 : 60;
+    const interval = 1000 / targetFPS;
+    const delta = now - this.lastFrameTime;
+    
+    if (delta >= interval) {
+        this.lastFrameTime = now - (delta % interval);
+
+        // BACKGROUND CLEAR / FADE
+        if(this.type === 'matrix' || this.type === 'laser') {
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.15)'; // Il fade sfuma dolcemente
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.globalCompositeOperation = 'source-over';
+        } else {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // DRAW
+        if(this.type === 'matrix') this.drawMatrix();
+        else if(this.type === 'network') this.drawNetwork();
+        else if(this.type === 'pages') this.drawPages();
+        else if(this.type === 'typography') this.drawTypography();
+        else if(this.type === 'pulse') this.drawPulse();
+        else if(this.type === 'laser') this.drawLaser();
+    }
   },
 
   /* --- 1. MATRIX (Cybersecurity) --- */
@@ -534,11 +558,10 @@ const CanvasFX = {
         ctx.shadowBlur = (Math.random() > 0.85 || d.isWord) ? 8 : 3;
         ctx.shadowColor = ctx.fillStyle;
         
-        // Ritmo rallentato tramite throttle simulato per non renderlo troppo frenetico su reqAF
         ctx.fillText(text, i * this.matrixData.size, this.matrixData.drops[i] * this.matrixData.size);
         ctx.shadowBlur = 0;
 
-        if(this.matrixData.drops[i]*this.matrixData.size > canvas.height && Math.random() > 0.98) {
+        if(this.matrixData.drops[i]*this.matrixData.size > canvas.height && Math.random() > 0.985) {
             this.matrixData.drops[i] = 0; d.isWord = false;
         }
         this.matrixData.drops[i] += d.speed;
@@ -548,17 +571,16 @@ const CanvasFX = {
   /* --- 2. LASER / ROBOTICS (3D Simulation, ABB) --- */
   initLaser() {
       this.laserData.scanY = 0;
-      this.laserData.scanDir = 2;
+      this.laserData.scanDir = 2.5;
       this.laserData.grid = [];
       for(let i=0; i<8; i++) {
           this.laserData.grid.push({
               x: Math.random() * canvas.width, y: Math.random() * canvas.height,
-              vx: (Math.random()-0.5), vy: (Math.random()-0.5)
+              vx: (Math.random()-0.5)*1.2, vy: (Math.random()-0.5)*1.2
           });
       }
   },
   drawLaser() {
-      // Background Grid
       ctx.strokeStyle = `rgba(${this.color}, 0.1)`;
       ctx.lineWidth = 1;
       ctx.beginPath();
@@ -566,7 +588,6 @@ const CanvasFX = {
       for(let i=0; i<canvas.height; i+=40) { ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); }
       ctx.stroke();
 
-      // Scanner Line
       this.laserData.scanY += this.laserData.scanDir;
       if(this.laserData.scanY > canvas.height || this.laserData.scanY < 0) this.laserData.scanDir *= -1;
       
@@ -577,7 +598,6 @@ const CanvasFX = {
       ctx.fillStyle = `rgba(${this.color}, 0.15)`;
       ctx.fillRect(0, this.laserData.scanY - 20, canvas.width, 40);
       
-      // Robotic Nodes
       ctx.shadowBlur = 10;
       ctx.strokeStyle = `rgb(${this.color})`;
       ctx.lineWidth = 2;
@@ -618,7 +638,7 @@ const CanvasFX = {
           ctx.save();
           ctx.translate(p.x, p.y);
           ctx.rotate(p.rotZ);
-          ctx.scale(Math.cos(p.rotY), 1); // Simula 3D Flip
+          ctx.scale(Math.cos(p.rotY), 1); 
           
           ctx.strokeStyle = `rgba(${this.color}, ${p.alpha})`;
           ctx.lineWidth = 1.5;
@@ -631,7 +651,6 @@ const CanvasFX = {
           ctx.fill();
           ctx.stroke();
           
-          // Linee di testo sulla pagina
           ctx.beginPath();
           ctx.moveTo(-p.w/2 + 5, -p.h/2 + 10); ctx.lineTo(p.w/2 - 5, -p.h/2 + 10);
           ctx.moveTo(-p.w/2 + 5, -p.h/2 + 18); ctx.lineTo(p.w/2 - 10, -p.h/2 + 18);
@@ -654,7 +673,6 @@ const CanvasFX = {
       }
   },
   drawTypography() {
-      ctx.font = 'italic 40px "Playfair Display", serif';
       this.particles.forEach(p => {
           p.y += p.speedY;
           p.phase += 0.02;
@@ -701,7 +719,6 @@ const CanvasFX = {
           ctx.shadowColor = `rgb(${this.color})`;
           ctx.stroke();
           
-          // Centro
           ctx.beginPath();
           ctx.arc(p.x, p.y, 3, 0, Math.PI*2);
           ctx.fillStyle = `rgba(255,255,255, ${alpha})`;
@@ -752,9 +769,8 @@ const CanvasFX = {
 };
 
 window.addEventListener('resize', () => { 
-    if (document.getElementById('panel').classList.contains('show')) {
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
+    if (document.getElementById('panel').classList.contains('show') && CanvasFX.type) {
+        CanvasFX.start(CanvasFX.type, CanvasFX.rawColorStr); // Forza il ricalcolo dimensionale ricaricando l'effetto
     }
 });
 
@@ -847,9 +863,8 @@ function openPanel(type, index) {
       panel.classList.add('show');
       document.body.style.overflow = 'hidden';
       
-      // AVVIA IL MOTORE DEGLI EFFETTI
-      // Legge l'effetto specifico dall'oggetto dati (es. 'laser', 'pages', 'matrix')
-      CanvasFX.start(item.effect || 'network', accentColor);
+      // AVVIA IL MOTORE DEGLI EFFETTI (Con timeout minimo per far calcolare bene le misure al browser)
+      setTimeout(() => { CanvasFX.start(item.effect || 'network', accentColor); }, 50);
 
   } catch (errore) {
       console.error(errore);
