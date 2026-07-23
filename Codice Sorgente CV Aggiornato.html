@@ -6,7 +6,7 @@
   /* ---------- IMPOSTAZIONI STAMPA A4 STANDARD ---------- */
   @page { 
     size: A4; 
-    margin: 15mm 20mm; /* Margini standard di stampa: 1.5cm sopra/sotto, 2cm ai lati */
+    margin: 15mm 20mm; 
   }
   
   * { box-sizing: border-box; }
@@ -17,7 +17,7 @@
     font-size: 10.3pt;
     line-height: 1.42;
     margin: 0;
-    padding: 0; /* Il padding ora è gestito direttamente dai margini @page per la stampa */
+    padding: 0; 
   }
 
   /* ---------- HEADER ---------- */
@@ -70,7 +70,6 @@
   /* ---------- EXPERIENCE / EDUCATION / PROJECTS ---------- */
   .entry { 
     margin: 0 0 10px 0; 
-    /* Previene il taglio del blocco a metà tra due pagine stampate */
     page-break-inside: avoid; 
     break-inside: avoid;
     display: inline-block; 
@@ -107,7 +106,7 @@
     font-style: italic;
   }
 
-  /* ---------- HEADER LAYOUT E QR CODE ---------- */
+  /* ---------- HEADER LAYOUT E QR CODE / BUTTON ---------- */
   .header-flex {
     display: flex;
     justify-content: space-between;
@@ -115,12 +114,35 @@
     margin-bottom: 0;
   }
   .header-text { flex: 1; }
-  .qr-code {
-    width: 75px;
-    height: 75px;
+  
+  .header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     margin-left: 20px;
     flex-shrink: 0;
+  }
+  
+  .qr-code {
+    width: 70px;
+    height: 70px;
     mix-blend-mode: multiply;
+    margin-bottom: 5px;
+    cursor: pointer;
+  }
+  
+  .btn-portfolio {
+    background-color: #16314a;
+    color: #ffffff !important;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 7.5pt;
+    padding: 5px 10px;
+    border-radius: 4px;
+    text-align: center;
+    display: inline-block;
+    border: 1px solid #16314a;
+    letter-spacing: 0.5px;
   }
 
 </style>
@@ -133,11 +155,18 @@
       <div class="name">Xhuliano Hysenji</div>
       <div class="role-title">IT Support &amp; Back-Office Specialist | Cloud &amp; Data Operations</div>
       <div class="contact-line">
-        Bergamo (BG)<span class="contact-sep">|</span>27/09/1992 (33 anni)<span class="contact-sep">|</span>+39 391 146 6680<span class="contact-sep">|</span>giuliocesare9236@gmail.com<span class="contact-sep">|</span><a href="https://www.linkedin.com/in/julian-hysenji-b3a094216" style="color:#16314a; text-decoration:none;">linkedin.com/in/julian-hysenji</a><span class="contact-sep">|</span><a href="https://clionexus.github.io/Portfolio-Interattivo-Xhuliano/" style="color:#16314a; text-decoration:none; font-weight:bold;">Portfolio Interattivo &amp; Certificazioni</a>
+        Bergamo (BG)<span class="contact-sep">|</span>27/09/1992 (33 anni)<span class="contact-sep">|</span>+39 391 146 6680<span class="contact-sep">|</span>giuliocesare9236@gmail.com<span class="contact-sep">|</span><a href="https://www.linkedin.com/in/julian-hysenji-b3a094216" style="color:#16314a; text-decoration:none;">linkedin.com/in/julian-hysenji</a>
       </div>
     </div>
-    <!-- QR CODE GENERATO -->
-    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://clionexus.github.io/Portfolio-Interattivo-Xhuliano/" alt="QR Code Portfolio" class="qr-code">
+    
+    <!-- AREA DESTRA: QR CODE (Stampa) + BOTTONE (Digitale) -->
+    <div class="header-right">
+      <!-- Se il PDF è digitale, anche il QR code cliccabile porta al portfolio col tag cv_btn -->
+      <a href="https://clionexus.github.io/Portfolio-Interattivo-Xhuliano/?ref=cv_btn" target="_blank" title="Clicca per aprire il portfolio">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://clionexus.github.io/Portfolio-Interattivo-Xhuliano/%3Fref%3Dcv_qr" alt="QR Code Portfolio" class="qr-code">
+      </a>
+      <a href="https://clionexus.github.io/Portfolio-Interattivo-Xhuliano/?ref=cv_btn" class="btn-portfolio" target="_blank">🌐 APRI PORTFOLIO</a>
+    </div>
   </div>
 
   <!-- PROFILO -->
@@ -257,7 +286,7 @@
     <ul class="bullets">
       <li>Gestione e modifica di asset multimediali, vettoriali e audio per l'ottimizzazione dei contenuti digitali.</li>
       <li>Setup di ambienti di hosting statico (GitHub Pages) per la distribuzione di flussi video e implementazione di moduli web interattivi per la raccolta dati.</li>
-      <li>Progetto live: <a href="https://clionexus.github.io/Portfolio-Interattivo-Xhuliano/" style="color:#16314a; text-decoration:none; font-weight:bold;">clionexus.github.io/Portfolio-Interattivo-Xhuliano</a></li>
+      <li>Progetto live: <a href="https://clionexus.github.io/Portfolio-Interattivo-Xhuliano/?ref=cv_btn" style="color:#16314a; text-decoration:none; font-weight:bold;">clionexus.github.io/Portfolio-Interattivo-Xhuliano</a></li>
     </ul>
   </div>
 
