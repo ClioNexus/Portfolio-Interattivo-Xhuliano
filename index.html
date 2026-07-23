@@ -9,6 +9,17 @@
   gtag('js', new Date());
 
   gtag('config', 'G-7P0B5N12MF');
+  
+  // Funzione globale per il tracciamento degli eventi custom (già mappata sui tuoi bottoni)
+  window.trackEvent = function(eventName, eventCategory, eventLabel) {
+    if (typeof gtag === 'function') {
+      gtag('event', eventName, {
+        'event_category': eventCategory,
+        'event_label': eventLabel
+      });
+      console.log("GA4 Event Fired:", eventName, eventCategory, eventLabel);
+    }
+  };
 </script>
 
 <meta charset="UTF-8">
@@ -519,16 +530,6 @@
 <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.fog.min.js"></script>
 
 <script>
-// FUNZIONE DI TRACCIAMENTO GOOGLE ANALYTICS (INVISIBILE)
-function trackEvent(eventName, category, label) {
-  if (typeof gtag === 'function') {
-    gtag('event', eventName, {
-      'event_category': category,
-      'event_label': label
-    });
-  }
-}
-
 // INIZIALIZZAZIONE VANTA
 VANTA.WAVES({ el: "#vanta-canvas", mouseControls: true, touchControls: true, minHeight: 200, minWidth: 200, scale: 1, scaleMobile: 1, color: 0x0c1117, shininess: 45, waveHeight: 18, waveSpeed: 0.60, zoom: 0.85 });
 VANTA.FOG({ el: "#vanta-panel-canvas", mouseControls: true, touchControls: true, minHeight: 200, minWidth: 200, highlightColor: 0xa855f7, midtoneColor: 0x3b82f6, lowlightColor: 0x10b981, baseColor: 0x080a0f, blurFactor: 0.70, speed: 1.20, zoom: 1 });
@@ -972,7 +973,7 @@ function openPanel(type, index) {
       let imgArr = item.preview_Immagine_Array || [];
       let vidArr = item.preview_Video_Array || [];
 
-      let validBase64 = base64Arr.filter(x => x && x.trim() !== "" && !x.includes("INCOLLA_")); 
+      let validBase64 = base64Arr.filter(x => x && x.trim() !== "" && !x.includes("INCOLLA_") && !x.includes("INSERISCI_")); 
       let validImg = imgArr.filter(x => x && x.trim() !== "" && !x.includes("INSERISCI_"));
       let validVid = vidArr.filter(x => x && x.trim() !== "" && !x.includes("INSERISCI_"));
 
