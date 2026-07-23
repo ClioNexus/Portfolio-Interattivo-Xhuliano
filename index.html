@@ -439,7 +439,6 @@
       <div class="terminal-typewriter"><span id="tw-text"></span><span class="terminal-cursor"></span></div>
       <h1 id="hero-name">Xhuliano Hysenji</h1>
       
-      <!-- NUOVO BADGE HUB BENVENUTO -->
       <div id="hero-welcome" class="welcome-container">
         <span class="blinking-hub">Benvenuto nel Portfolio Interattivo</span>
       </div>
@@ -555,10 +554,10 @@ const PROGETTI = [
 const CERTIFICAZIONI = [
   { isTemplate: true, effect: 'network', title: "Titolo", sub: "Sottotitolo", bullets: ["Dettaglio 1", "Dettaglio 2"], preview_Base64_Array: ["", ""], preview_Immagine_Array: ["", ""], full_PDF: "", full_LinkWeb: "" },
   { effect: 'network', title: "AWS re/Start Graduate", sub: "Amazon Web Services (AWS)", bullets: ["Certificazione ufficiale cloud fundamentals e networking."], preview_Base64_Array: ["", ""], preview_Immagine_Array: ["", ""], full_PDF: "", full_LinkWeb: "https://www.credly.com/badges/0bf807f0-650b-46a5-94c9-06af797e40b4/public_url" },
-  { effect: 'laser', title: "ABB Robotica Base", sub: "Progetto Educational ABB", bullets: ["Fondamenti di programmazione e simulazione robotica.", "Ore: 40 | Codice: 6a26b380-b6b0-4b63-8a0a-936574ca1a62"], preview_Base64_Array: ["", ""], preview_Immagine_Array: ["assets/immagine.jpg", ""], full_PDF: "assets/ABB_ROBOTICA_BASE_NEW-ATTESTATO_FSL_ABB_INDUSTRIALE_BASE_7590.pdf", full_LinkWeb: "" },
-  { effect: 'typography', title: "Oxford Test of English", sub: "Advanced Level B2", bullets: ["Certificazione ufficiale di competenza linguistica in lingua inglese.", "Score Complessivo: 129"], preview_Base64_Array: ["", ""], preview_Immagine_Array: ["assets/oxford-b2-1.png", "assets/oxford-b2-2.png"], full_PDF: "assets/Oxford_Test_of_English_Advanced_Certificate.pdf", full_LinkWeb: "" },
+  { effect: 'laser', title: "ABB Robotica Base", sub: "Progetto Educational ABB", bullets: ["Fondamenti di programmazione e simulazione robotica.", "Ore: 40 | Codice: 6a26b380-b6b0-4b63-8a0a-936574ca1a62"], preview_Base64_Array: ["", ""], preview_Immagine_Array: ["assets/ABB robotica.png", "assets/ABB robotica depliant.png"], full_PDF: "assets/ABB_ROBOTICA_BASE_NEW_ATTESTATO_FSL_ABB_INDUSTRIALE_BASE_7590.pdf", full_LinkWeb: "" },
+  { effect: 'typography', title: "Oxford Test of English", sub: "Advanced Level B2", bullets: ["Certificazione ufficiale di competenza linguistica in lingua inglese.", "Score Complessivo: 129"], preview_Base64_Array: ["", ""], preview_Immagine_Array: ["assets/cert-b2-1.png", "assets/cert-b2-2.png"], full_PDF: "assets/Oxford_Test_of_English_Advanced_Certificate.pdf", full_LinkWeb: "" },
   { effect: 'matrix', title: "Cybersecurity Fundamentals", sub: "Aruba", bullets: ["Attestato di formazione sui fondamenti di sicurezza informatica e gestione minacce."], preview_Base64_Array: ["", ""], preview_Immagine_Array: ["", ""], full_PDF: "", full_LinkWeb: "" },
-  { effect: 'pulse', title: "Social Media Manager & Digital Comm.", sub: "Cesvip", bullets: ["Attestato di formazione in comunicazione digitale e gestione dei social media."], preview_Base64_Array: [`data:image/jpeg;base64,INCOLLA_QUI_TESTO_PAGINA_1`, `data:image/jpeg;base64,INCOLLA_QUI_TESTO_PAGINA_2`], preview_Immagine_Array: ["", ""], full_PDF: "assets/Scanned_20260703_143610.pdf", full_LinkWeb: "" }
+  { effect: 'pulse', title: "Social Media Manager & Digital Comm.", sub: "Cesvip", bullets: ["Attestato di formazione in comunicazione digitale e gestione dei social media."], preview_Base64_Array: ["", ""], preview_Immagine_Array: ["assets/Scanned_20260703_153610_anteprima.png", ""], full_PDF: "assets/Scanned_20260703_153610.pdf", full_LinkWeb: "" }
 ];
 
 const THEME_COLORS = { esperienza: "var(--c-esperienza)", progetti: "var(--c-progetti)", certificazioni: "var(--c-certificazioni)" };
@@ -794,7 +793,6 @@ function openPanel(type, index) {
   try {
       const item = SOURCES[type][index]; const accentColor = THEME_COLORS[type]; 
       
-      // === INVIA L'EVENTO AD ANALYTICS: "Ehi, ha aperto un pannello!" ===
       trackEvent('apertura_dettaglio', type, item.title);
 
       panelTagText.textContent = `REPORT // ${LABELS[type]}`; panelTagText.style.color = accentColor; panelDot.style.background = accentColor;
@@ -815,7 +813,6 @@ function openPanel(type, index) {
           html += `<div class="doc-viewer" style="--accent: ${accentColor};">`;
           if (mediaList.length > 0) {
               mediaList.forEach((mediaSrc, idx) => {
-                  // === TRACCIA I CLICK SUI BOTTONI O SULLE IMMAGINI DA INGRANDIRE ===
                   let actionAttr = targetLink 
                     ? `href="${targetLink}" target="_blank" rel="noopener" onclick="trackEvent('click_risorsa_esterna', '${type}', '${item.title}')"` 
                     : `href="javascript:void(0)" onclick="openLightboxSrc('${mediaSrc}'); trackEvent('zoom_documento', '${type}', '${item.title}')"`;
@@ -823,7 +820,6 @@ function openPanel(type, index) {
                   html += `<div class="doc-item-row"><div class="doc-branch"><div class="doc-branch-btn"><a ${actionAttr} class="doc-btn animated-pill" title="${btnText}">${activeIcon} ${btnText}</a></div><div class="doc-branch-line"></div></div><div class="doc-content"><img src="${mediaSrc}" class="doc-preview" alt="Pagina Documento" onclick="openLightboxSrc('${mediaSrc}'); trackEvent('zoom_documento', '${type}', '${item.title}')" title="Clicca per ingrandire"></div></div>`;
               });
           } else if (targetLink) {
-              // === TRACCIA IL CLICK SE C'E SOLO IL BOTTONE (ES. FLIPBOOK O LINK AWS) ===
               html += `<div class="doc-item-row"><div class="doc-branch" style="width: 100%;"><div class="doc-branch-btn"><a href="${targetLink}" target="_blank" rel="noopener" class="doc-btn animated-pill" onclick="trackEvent('click_risorsa_esterna', '${type}', '${item.title}')">${activeIcon} ${btnText}</a></div></div></div>`;
           }
           html += `</div>`; 
@@ -881,9 +877,8 @@ function runTypewriter() {
 
   if (!twIsDeleting && currentCharIdx === currentText.length) {
     if (currentPhraseIdx === twPhrases.length - 1) {
-        // Sequenza di apparizione a cascata!
         document.getElementById('hero-name').classList.add('reveal');
-        document.getElementById('hero-welcome').classList.add('reveal'); // Appare il badge
+        document.getElementById('hero-welcome').classList.add('reveal');
         document.getElementById('hero-tag').classList.add('reveal');
         return; 
     }
