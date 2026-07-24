@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fascicolo Tecnico N. 2026-XH-01 — Ecosistema Digitale Portfolio &amp; CV Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --bg: #0a0a0d;
+        --bg-raised: #121317;
+        --bg-inset: #0e0f13;
+        --surface: #17181d;
+        --border: rgba(255,255,255,0.08);
+        --border-strong: rgba(255,255,255,0.16);
+        --text: #e7e7ea;
+        --text-muted: #8d8f9a;
+        --text-faint: #5c5e69;
+        --amber: #e8a33d;
+        --amber-dim: rgba(232,163,61,0.14);
+        --cyan: #4fd6d0;
+        --cyan-dim: rgba(79,214,208,0.12);
+        --red: #e8615f;
+        --green: #6fce8f;
+        --font-display: "Playfair Display", serif;
+        --font-head: "Space Grotesk", sans-serif;
+        --font-mono: "IBM Plex Mono", monospace;
+        --font-sans: "IBM Plex Sans", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        margin: 0;
+        background:
+            radial-gradient(ellipse 1200px 600px at 15% -10%, rgba(232,163,61,0.05), transparent),
+            radial-gradient(ellipse 1000px 700px at 100% 20%, rgba(79,214,208,0.04), transparent),
+            var(--bg);
+        color: var(--text);
+        font-family: var(--font-sans);
+        line-height: 1.75;
+        font-size: 16px;
+    }
+
+    /* ---------- Layout shell ---------- */
+    .shell {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    /* ---------- Sidebar / indice fascicolo ---------- */
+    .toc {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        border-right: 1px solid var(--border);
+        padding: 32px 20px 40px;
+        background: var(--bg-inset);
+    }
+    .toc-stamp {
+        font-family: var(--font-mono);
+        font-size: 10.5px;
+        letter-spacing: 0.14em;
+        color: var(--amber);
+        border: 1px solid var(--border-strong);
+        padding: 8px 10px;
+        border-radius: 3px;
+        margin-bottom: 26px;
+        line-height: 1.6;
+        text-transform: uppercase;
+    }
+    .toc-stamp b { color: var(--text); }
+    .toc h4 {
+        font-family: var(--font-mono);
+        font-size: 10.5px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--text-faint);
+        margin: 22px 0 8px;
+    }
+    .toc ol {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        counter-reset: toc-counter;
+    }
+    .toc li { counter-increment: toc-counter; margin-bottom: 2px; }
+    .toc a {
+        display: flex;
+        gap: 8px;
+        text-decoration: none;
+        color: var(--text-muted);
+        font-size: 13.5px;
+        padding: 6px 8px;
+        border-radius: 4px;
+        font-family: var(--font-sans);
+        transition: background 0.15s, color 0.15s;
+    }
+    .toc a::before {
+        content: counter(toc-counter, decimal-leading-zero);
+        font-family: var(--font-mono);
+        color: var(--text-faint);
+        font-size: 11px;
+        padding-top: 1px;
+    }
+    .toc a:hover, .toc a.active {
+        background: var(--surface);
+        color: var(--amber);
+    }
+    .toc a.active::before { color: var(--amber); }
+
+    /* ---------- Main column ---------- */
+    main { padding: 0 0 100px; min-width: 0; }
+
+    .cover {
+        padding: 64px 72px 44px;
+        border-bottom: 1px solid var(--border);
+        position: relative;
+    }
+    .cover::after {
+        content: "";
+        position: absolute;
+        top: 0; right: 0; bottom: 0;
+        width: 40%;
+        background: linear-gradient(120deg, transparent, rgba(232,163,61,0.035));
+        pointer-events: none;
+    }
+    .protocollo-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        font-family: var(--font-mono);
+        font-size: 11.5px;
+        color: var(--text-faint);
+        letter-spacing: 0.06em;
+        margin-bottom: 34px;
+        text-transform: uppercase;
+    }
+    .badge-stato {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--green);
+        border: 1px solid rgba(111,206,143,0.35);
+        background: rgba(111,206,143,0.08);
+        padding: 4px 10px;
+        border-radius: 20px;
+        letter-spacing: 0.08em;
+    }
+    .badge-stato::before { content: "● "; }
+
+    .kicker {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--cyan);
+        margin-bottom: 14px;
+    }
+    h1.title {
+        font-family: var(--font-display);
+        font-style: italic;
+        font-weight: 700;
+        font-size: 2.7rem;
+        line-height: 1.2;
+        margin: 0 0 18px;
+        color: #fbfbfc;
+        max-width: 14ch;
+    }
+    .subtitle {
+        color: var(--text-muted);
+        font-size: 1.05rem;
+        max-width: 60ch;
+        margin-bottom: 34px;
+    }
+
+    .meta-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1px;
+        background: var(--border);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    .meta-cell {
+        background: var(--bg-raised);
+        padding: 14px 16px;
+    }
+    .meta-cell .label {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-faint);
+        margin-bottom: 6px;
+    }
+    .meta-cell .value {
+        font-size: 13.5px;
+        color: var(--text);
+        font-weight: 500;
+    }
+
+    /* ---------- Sections ---------- */
+    section.doc-section {
+        padding: 54px 72px;
+        border-bottom: 1px solid var(--border);
+        scroll-margin-top: 20px;
+    }
+    section.doc-section:target { background: var(--bg-inset); }
+
+    .section-tag {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--amber);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .section-tag::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+    }
+
+    h2 {
+        font-family: var(--font-head);
+        font-weight: 600;
+        font-size: 1.65rem;
+        color: #fbfbfc;
+        margin: 0 0 24px;
+        letter-spacing: -0.01em;
+    }
+    h3 {
+        font-family: var(--font-head);
+        font-weight: 600;
+        font-size: 1.15rem;
+        color: var(--cyan);
+        margin: 34px 0 12px;
+    }
+    h4 {
+        font-family: var(--font-sans);
+        font-weight: 600;
+        font-size: 0.98rem;
+        color: var(--text);
+        margin: 22px 0 8px;
+    }
+
+    p { color: #cfd0d6; margin: 0 0 16px; max-width: 78ch; }
+    strong { color: var(--text); font-weight: 600; }
+    em { color: var(--text-muted); }
+
+    ul, ol.reg { margin: 0 0 20px; padding-left: 22px; max-width: 76ch; }
+    li { color: #cfd0d6; margin-bottom: 10px; }
+
+    code {
+        font-family: var(--font-mono);
+        background: var(--bg-inset);
+        border: 1px solid var(--border);
+        padding: 2px 7px;
+        border-radius: 4px;
+        font-size: 0.85em;
+        color: var(--amber);
+    }
+
+    .commit-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--font-mono);
+        font-size: 12.5px;
+        background: var(--bg-inset);
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--cyan);
+        padding: 9px 14px;
+        border-radius: 4px;
+        color: var(--text-muted);
+        margin: 4px 0 18px;
+    }
+    .commit-chip b { color: var(--text); font-weight: 500; }
+    .commit-chip .type-feat { color: var(--green); }
+    .commit-chip .type-style { color: var(--cyan); }
+    .commit-chip .type-init { color: var(--amber); }
+    .commit-chip .type-refactor { color: #c792ea; }
+    .commit-chip .type-docs { color: #82aaff; } /* Nuovo colore per docs */
+
+    .callout {
+        border: 1px solid var(--border-strong);
+        border-left: 3px solid var(--amber);
+        background: var(--amber-dim);
+        padding: 18px 22px;
+        border-radius: 6px;
+        margin: 24px 0;
+        max-width: 76ch;
+    }
+    .callout.legal { border-left-color: var(--green); background: rgba(111,206,143,0.06); }
+    .callout.legal h4 { color: var(--green); }
+    .callout h4 { margin-top: 0; color: var(--amber); font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
+    .callout p:last-child { margin-bottom: 0; }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 18px 0 30px;
+        font-size: 13.5px;
+    }
+    th, td {
+        text-align: left;
+        padding: 11px 14px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: top;
+    }
+    th {
+        font-family: var(--font-mono);
+        font-size: 10.5px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-faint);
+        border-bottom: 1px solid var(--border-strong);
+    }
+    td { color: #cfd0d6; }
+    td.mono, th.mono { font-family: var(--font-mono); font-size: 12px; }
+    tr:hover td { background: rgba(255,255,255,0.015); }
+    .pill {
+        display: inline-block;
+        font-family: var(--font-mono);
+        font-size: 10.5px;
+        padding: 2px 8px;
+        border-radius: 20px;
+        letter-spacing: 0.04em;
+    }
+    .pill-feat { background: rgba(111,206,143,0.12); color: var(--green); }
+    .pill-style { background: rgba(79,214,208,0.12); color: var(--cyan); }
+    .pill-init { background: rgba(232,163,61,0.14); color: var(--amber); }
+    .pill-refactor { background: rgba(199,146,234,0.12); color: #c792ea; }
+    .pill-docs { background: rgba(130,170,255,0.12); color: #82aaff; }
+    .pill-no { background: rgba(232,97,95,0.12); color: var(--red); }
+    .pill-yes { background: rgba(111,206,143,0.12); color: var(--green); }
+
+    .glossary dt {
+        font-family: var(--font-mono);
+        color: var(--cyan);
+        font-size: 13.5px;
+        margin-top: 16px;
+    }
+    .glossary dd { margin: 4px 0 0; color: #cfd0d6; max-width: 74ch; }
+
+    .stamp-final {
+        margin: 40px 0 0;
+        padding: 24px 28px;
+        border: 1px dashed var(--border-strong);
+        border-radius: 6px;
+        font-family: var(--font-mono);
+        font-size: 12.5px;
+        color: var(--text-muted);
+        line-height: 2;
+    }
+    .stamp-final .ok { color: var(--green); }
+
+    footer.doc-footer {
+        padding: 40px 72px 60px;
+        color: var(--text-faint);
+        font-family: var(--font-mono);
+        font-size: 11.5px;
+        text-align: center;
+        letter-spacing: 0.04em;
+    }
+
+    @media (max-width: 980px) {
+        .shell { grid-template-columns: 1fr; }
+        .toc { position: relative; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+        .cover, section.doc-section, footer.doc-footer { padding-left: 26px; padding-right: 26px; }
+        .meta-grid { grid-template-columns: 1fr 1fr; }
+    }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+    <!-- ================= SIDEBAR / INDICE ================= -->
+    <nav class="toc" id="toc">
+        <div class="toc-stamp">
+            FASCICOLO N. 2026-XH-01<br>
+            <b>CLASSIFICAZIONE:</b> Documentazione Tecnica Interna<br>
+            <b>USO:</b> Manutenzione &amp; Difesa Procedurale
+        </div>
+
+        <h4>Indice del Fascicolo</h4>
+        <ol>
+            <li><a href="#executive-summary">Executive Summary</a></li>
+            <li><a href="#filosofia">Filosofia Architetturale</a></li>
+            <li><a href="#fase1">Fase 1 — Fondamenta UI/UX</a></li>
+            <li><a href="#fase2">Fase 2 — Motori Grafici</a></li>
+            <li><a href="#fase3">Fase 3 — Interattività DOM</a></li>
+            <li><a href="#fase4">Fase 4 — Database e Rendering</a></li>
+            <li><a href="#fase5">Fase 5 — Documenti e Multimedia</a></li>
+            <li><a href="#fase6">Fase 6 — Tracciamento Base</a></li>
+            <li><a href="#fase7">Fase 7 — Ponte CV↔Portfolio</a></li>
+            <li><a href="#fase8">Fase 8 — ePrivacy &amp; Consent Mode</a></li>
+            <li><a href="#changelog">App. A — Registro Commit</a></li>
+            <li><a href="#glossario">App. B — Glossario Tecnico</a></li>
+            <li><a href="#manutenzione">App. C — Guida alla Manutenzione</a></li>
+            <li><a href="#chiusura">Chiusura e Validità</a></li>
+        </ol>
+    </nav>
+
+    <!-- ================= MAIN ================= -->
+    <main>
+
+        <div class="cover">
+            <div class="protocollo-row">
+                <span>Protocollo Tecnico / Versionamento Architetturale</span>
+                <span class="badge-stato">Sistema in produzione</span>
+            </div>
+            <div class="kicker">Documento Architetturale &amp; Registro di Sviluppo</div>
+            <h1 class="title">Ecosistema Digitale: Portfolio Interattivo &amp; CV Tracker</h1>
+            <p class="subtitle">Manuale operativo, registro storico delle implementazioni e documento di tutela procedurale relativo al sistema unificato Portfolio + Curriculum, redatto a partire dalla cronologia completa dei commit di sviluppo.</p>
+
+            <div class="meta-grid">
+                <div class="meta-cell">
+                    <div class="label">Autore</div>
+                    <div class="value">Xhuliano Hysenji</div>
+                </div>
+                <div class="meta-cell">
+                    <div class="label">Ruolo di riferimento</div>
+                    <div class="value">IT Support &amp; Back-Office / Cloud &amp; Data Ops</div>
+                </div>
+                <div class="meta-cell">
+                    <div class="label">Stack tecnologico</div>
+                    <div class="value">HTML5 · CSS3 · JS Vanilla · Three.js · Vanta.js · GA4</div>
+                </div>
+                <div class="meta-cell">
+                    <div class="label">Hosting</div>
+                    <div class="value">GitHub Pages</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 1. EXECUTIVE SUMMARY ================= -->
+        <section class="doc-section" id="executive-summary">
+            <div class="section-tag">01 · Executive Summary</div>
+            <h2>Scopo e valore del documento</h2>
+            <p>Questo fascicolo ricostruisce, commit dopo commit, l'intera ingegnerizzazione del sistema "Portfolio + Curriculum": dalle fondamenta HTML fino all'infrastruttura di analisi comportamentale basata su Google Analytics 4. Non è un semplice registro di modifiche, ma uno strumento a triplice funzione:</p>
+            <ul>
+                <li><strong>Manuale operativo</strong> — per intervenire sul codice in futuro senza dover ricostruire a memoria le scelte progettuali.</li>
+                <li><strong>Manifesto tecnico</strong> — da portare a un colloquio per dimostrare, con cognizione di causa, il perché di ogni scelta architetturale, non solo il come.</li>
+                <li><strong>Documento di tutela</strong> — per rispondere in modo puntuale e verificabile a qualsiasi domanda su cosa viene tracciato, perché, e con quale base giuridica, in particolare in sede di colloquio o di eventuale contestazione privacy.</li>
+            </ul>
+            <p>Il progetto trasforma un portfolio statico in un <strong>funnel di recruitment interattivo, tracciabile e scalabile</strong>: ogni scelta tecnica — dalla tipografia al motore di rendering Canvas, fino ai parametri UTM — è stata presa in funzione di questo obiettivo, non per mero esercizio stilistico.</p>
+        </section>
+
+        <!-- ================= 2. FILOSOFIA ================= -->
+        <section class="doc-section" id="filosofia">
+            <div class="section-tag">02 · Principi Guida</div>
+            <h2>Filosofia architetturale</h2>
+            <p>Tre principi attraversano l'intero sviluppo e giustificano scelte apparentemente "old style" in un'epoca dominata dai framework:</p>
+            <h4>1. Vanilla-first</h4>
+            <p>Nessun framework pesante (React, Angular, Vue). L'assenza di un Virtual DOM e di una toolchain di build garantisce un Time-To-Interactive praticamente istantaneo — un fattore critico quando l'utente reale è un selezionatore che dedica in media pochi secondi alla prima impressione. In secondo luogo, mostrare padronanza del DOM nativo comunica una competenza "core" spesso più apprezzata, in ruoli IT Support/Back-Office, rispetto alla dimestichezza con una libreria pre-confezionata.</p>
+            <h4>2. Separazione dati/presentazione</h4>
+            <p>Ogni contenuto (esperienze, progetti, certificazioni) vive in strutture JSON isolate dalla logica di rendering. Aggiungere un titolo di studio non richiede toccare l'HTML: si compila un oggetto e il motore di rendering fa il resto. Questo riduce drasticamente il rischio di introdurre bug durante gli aggiornamenti futuri.</p>
+            <h4>3. Osservabilità del comportamento, non dell'identità</h4>
+            <p>Il sistema è stato progettato per rispondere alla domanda "quali parti del profilo generano interesse concreto?", non "chi è la persona che sta guardando?". Questa distinzione è il cardine dell'intera Fase 6 ed è la ragione per cui l'infrastruttura di tracciamento può essere difesa senza ambiguità in sede di colloquio o di audit.</p>
+        </section>
+
+        <!-- ================= FASE 1 ================= -->
+        <section class="doc-section" id="fase1">
+            <div class="section-tag">03 · Fase 1</div>
+            <h2>Fondamenta Visive (UI/UX)</h2>
+
+            <div class="commit-chip"><span class="type-init">init</span><b>project scaffolding with HTML5 and base meta tags</b></div>
+            <p>Costruzione dello scheletro in HTML5 puro, senza dipendenze di build. Meta tag di viewport e charset impostati da subito per garantire resa corretta su mobile fin dal primo render, requisito non negoziabile dato che una quota rilevante del traffico da QR code (vedi Fase 7) proviene da smartphone.</p>
+
+            <div class="commit-chip"><span class="type-style">style</span><b>import Google Fonts (Space Grotesk, IBM Plex Sans/Mono, Playfair Display)</b></div>
+            <p>Scelta tipografica deliberata e non estetica fine a se stessa: <code>IBM Plex Mono</code> richiama il mondo dell'amministrazione di sistema e del terminale Linux, rafforzando in modo implicito il posizionamento IT del candidato ancora prima che il recruiter legga una riga di testo. <code>IBM Plex Sans</code> garantisce leggibilità alle descrizioni discorsive. <code>Playfair Display</code> viene riservato ai titoli, per introdurre un contrappunto editoriale che eviti l'effetto "dashboard fredda".</p>
+
+            <div class="commit-chip"><span class="type-style">style</span><b>setup CSS global variables and iOS Glassmorphism theme</b></div>
+            <p>Interfaccia costruita su variabili CSS globali (<code>:root</code>), trasparenze e <code>backdrop-filter: blur()</code>, con palette scura nativa. Il Glassmorphism in stile iOS riduce l'affaticamento visivo su sessioni prolungate e restituisce una percezione di prodotto curato, coerente con ruoli che richiedono attenzione al dettaglio operativo.</p>
+        </section>
+
+        <!-- ================= FASE 2 ================= -->
+        <section class="doc-section" id="fase2">
+            <div class="section-tag">04 · Fase 2</div>
+            <h2>Motori Grafici e Layout Strutturale</h2>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>integrate Three.js and Vanta.js (Waves &amp; Fog) dependencies</b></div>
+            <p>Integrazione di ambienti 3D reattivi e a basso impatto prestazionale: <code>Vanta.Waves</code> per lo sfondo principale, <code>Vanta.Fog</code> per il pannello laterale. La scelta comunica competenza di front-end integration avanzata senza dover scrivere un motore WebGL da zero in questa fase — la componente Canvas proprietaria arriva più avanti, in Fase 4.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>build sidebar profile card with pulsing status dot and tooltips</b></div>
+            <p>Colonna di navigazione fissa (<code>position: sticky</code>) che simula visivamente una console operativa, con indicatore di stato "online" pulsante. I tag delle competenze tecniche sono corredati di tooltip esplicativi, pensati per un pubblico misto: recruiter HR non specializzati e tecnici hiring manager. Questo doppio livello di lettura è una scelta di accessibilità comunicativa, non solo grafica.</p>
+
+            <h4>Sistema di colori tematici per sezione</h4>
+            <p>Ogni macro-sezione possiede una propria "firma cromatica" definita tramite variabile CSS dedicata: <code>--c-profilo</code> (viola), <code>--c-esperienza</code> (blu), <code>--c-progetti</code> (verde), <code>--c-certificazioni</code> (ciano), <code>--c-formazione</code> (indaco). La variabile locale <code>--accent</code> di ogni <code>&lt;section&gt;</code> eredita il colore corrispondente e lo propaga automaticamente a bordi, ombreggiature, timeline e — cosa più rilevante — al motore Canvas FX del pannello di dettaglio (Fase 4), così che l'intera esperienza visiva di una voce resti coerente con la categoria a cui appartiene, senza dover hard-codare colori in più punti del codice.</p>
+        </section>
+
+        <!-- ================= FASE 3 ================= -->
+        <section class="doc-section" id="fase3">
+            <div class="section-tag">05 · Fase 3</div>
+            <h2>Interattività e Logica del DOM</h2>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>implement Terminal Typewriter boot sequence in hero section</b></div>
+            <p>Script che simula, carattere per carattere, una sequenza di boot da server Linux nella hero section, con logica di scrittura/cancellazione a velocità variabile (<code>typingSpeed</code> randomizzata sulla scrittura, fissa più rapida in cancellazione) per un effetto meno meccanico. La sequenza reale mostrata è:</p>
+            <ul>
+                <li><code>root@server:~# ./boot_portfolio.sh</code></li>
+                <li><code>mounting AWS_cloud_infrastructure...</code></li>
+                <li><code>systemctl start local-ai-agents.service</code></li>
+                <li><code>root@server:~# whoami</code></li>
+                <li><code>Ciao, sono</code> — a questo punto il nome, il badge di benvenuto e il sottotitolo vengono rivelati con una <code>keyframe</code> dedicata (<code>cyber-materialize</code>).</li>
+            </ul>
+            <p>Funziona come "firma tecnica" immediata: nei primi due secondi di permanenza sulla pagina, prima ancora di scorrere, l'utente riceve un segnale coerente col profilo professionale dichiarato.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>implement scrollspy logic to dynamically highlight menu items</b></div>
+            <p>Un Event Listener sullo scroll calcola quale sezione è attiva nel viewport e aggiorna la voce di menu corrispondente. Oltre al beneficio di navigazione, questa stessa logica di "osservazione dello scroll" è stata riutilizzata concettualmente in questo stesso documento per l'indice laterale.</p>
+        </section>
+
+        <!-- ================= FASE 4 ================= -->
+        <section class="doc-section" id="fase4">
+            <div class="section-tag">06 · Fase 4</div>
+            <h2>Database Locale e Renderizzazione Dinamica</h2>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>create JSON arrays for ESPERIENZE, PROGETTI, and CERTIFICAZIONI</b></div>
+            <p>Separazione rigorosa tra dati e grafica: ogni voce (esperienza lavorativa, progetto, certificazione) è un oggetto JSON con proprietà normalizzate (titolo, periodo, descrizione, asset, tag). Il rendering è puramente funzionale: itera l'array e produce il markup. Aggiungere un nuovo certificato è un'operazione di compilazione dati, non di sviluppo front-end.</p>
+            <p>Ogni array include come primo elemento un oggetto <code>{ isTemplate: true, ... }</code>, mai renderizzato ma mantenuto come "stampo" pronto all'uso.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>add dynamic HTML5 Canvas FX Engine</b></div>
+            <p>Motore grafico proprietario costruito su tag <code>&lt;canvas&gt;</code>, distinto dalle librerie esterne della Fase 2. Ogni voce del database possiede una proprietà <code>effect</code> che determina quale dei sei algoritmi particellari implementati viene eseguito all'apertura del pannello di dettaglio. La mappatura non è casuale ma semantica:</p>
+            <table>
+                <thead><tr><th>Effetto</th><th>Logica visiva</th><th>Applicato a</th></tr></thead>
+                <tbody>
+                    <tr><td class="mono">network</td><td>Nodi connessi da linee, tipico di un grafo di relazioni</td><td>Esperienze lavorative, badge AWS</td></tr>
+                    <tr><td class="mono">matrix</td><td>Pioggia di caratteri in stile terminale, con parole chiave</td><td>Cybersecurity Fundamentals</td></tr>
+                    <tr><td class="mono">laser</td><td>Griglia scan-line con fascio orizzontale in movimento</td><td>Robotica ABB, progetti 3D</td></tr>
+                    <tr><td class="mono">pages</td><td>Rettangoli/pagine che ruotano su asse Y in caduta lenta</td><td>Progetti editoriali/documentali</td></tr>
+                    <tr><td class="mono">typography</td><td>Lettere corsive che pulsano in dissolvenza</td><td>Certificazione linguistica Oxford</td></tr>
+                    <tr><td class="mono">pulse</td><td>Cerchi concentrici che si espandono e svaniscono</td><td>Certificazione Social Media</td></tr>
+                </tbody>
+            </table>
+            <p>Il ciclo di animazione è gestito con <code>requestAnimationFrame</code> e distrutto esplicitamente con <code>cancelAnimationFrame</code> alla chiusura del pannello, per prevenire consumo di CPU/GPU in background.</p>
+
+            <div class="commit-chip"><span class="type-refactor">refactor</span><b>reformat JSON databases into vertical multi-line structures</b></div>
+            <p>Reindentazione verticale degli array per ospitare stringhe lunghe (inclusi payload Base64) senza incorrere in errori di sintassi durante le modifiche manuali future.</p>
+        </section>
+
+        <!-- ================= FASE 5 ================= -->
+        <section class="doc-section" id="fase5">
+            <div class="section-tag">07 · Fase 5</div>
+            <h2>Gestione Documenti e Multimedia "Future-Proof"</h2>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>build Fullscreen Lightbox viewer for zooming assets</b></div>
+            <p>Visualizzatore modale a schermo intero per la lettura in alta risoluzione di diplomi e attestati, elemento chiave per chi deve verificare l'autenticità formale delle certificazioni dichiarate.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>add global support for video assets (preview_Video_Array)</b></div>
+            <p>Il sistema di iniezione DOM riconosce dinamicamente il tipo di asset (immagine, PDF, Base64, video MP4) e produce il markup adeguato, senza rami di codice duplicati per ogni formato.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>implement smart hover-preview and audio cleanup</b></div>
+            <p>I video in anteprima sono marcati <code>muted loop playsinline</code> per evitare il blocco autoplay dei browser moderni; l'anteprima si avvia al passaggio del mouse e si interrompe all'uscita. L'audio reale si attiva solo all'apertura nel Lightbox a schermo intero. Alla chiusura del modale, il nodo HTML viene distrutto dinamicamente (<code>viewerContainer.innerHTML = ""</code>) per impedire l'esecuzione residua dell'audio/video in background.</p>
+        </section>
+
+        <!-- ================= FASE 6 — TRACCIAMENTO ================= -->
+        <section class="doc-section" id="fase6">
+            <div class="section-tag">08 · Fase 6</div>
+            <h2>Architettura di Tracciamento (Web Analytics) Base</h2>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>integrate Google Analytics 4 (GA4) global tracking snippet</b></div>
+            <p>Iniezione dello snippet globale GA4 (Measurement ID <code>G-7P0B5N12MF</code>), caricato in modo asincrono. Google Analytics 4 opera in modalità aggregata: raccoglie parametri macro senza costruire un profilo identificativo individuale nel senso richiesto per una vera profilazione.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>implement custom trackEvent() logic for behavioral analytics</b></div>
+            <p>Superamento del tracciamento di base (pageview) tramite una funzione dedicata che mappa le seguenti interazioni chiave:</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Evento</th>
+                        <th>Innesco</th>
+                        <th>Cosa rivela</th>
+                        <th>Dato personale?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="mono">apertura_dettaglio</td><td>Click su una card di esperienza, progetto o certificazione</td><td>Quale competenza tecnica specifica attira l'attenzione</td><td><span class="pill pill-no">No PII</span></td></tr>
+                    <tr><td class="mono">zoom_documento</td><td>Apertura del Lightbox su un asset</td><td>Intenzione di verifica incrociata della fonte</td><td><span class="pill pill-no">No PII</span></td></tr>
+                    <tr><td class="mono">click_risorsa_esterna</td><td>Uscita verso piattaforme ufficiali (es. GitHub)</td><td>Abbandono del sito verso fonte terza di verifica</td><td><span class="pill pill-no">No PII</span></td></tr>
+                    <tr><td class="mono">play_video</td><td>Riproduzione di contenuto multimediale</td><td>Engagement verso dimostrazioni pratiche</td><td><span class="pill pill-no">No PII</span></td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ================= FASE 7 ================= -->
+        <section class="doc-section" id="fase7">
+            <div class="section-tag">09 · Fase 7</div>
+            <h2>Integrazione Cross-Platform: il Ponte CV ↔ Portfolio</h2>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>implement dual-tracking URL parameters (?ref=cv_btn &amp; ?ref=cv_qr)</b></div>
+            <p>Applicazione di un protocollo in stile UTM per segmentare le fonti di traffico verso il portfolio:</p>
+            <ul>
+                <li><code>?ref=cv_btn</code> — accesso dal bottone testuale/grafico presente nel CV digitale (PDF).</li>
+                <li><code>?ref=cv_qr</code> — accesso dal QR code stampato sulle copie cartacee del CV.</li>
+            </ul>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>update CV with GDPR privacy footer and ATS-friendly inline CTA</b></div>
+            <p>Rimozione dell'età per favorire lo screening imparziale (Unbiased Recruitment). Inserimento di una CTA nascosta nel tag <code>&lt;span&gt;</code> per garantire la compatibilità con i software ATS, e aggiunta del footer normativo GDPR.</p>
+        </section>
+
+        <!-- ================= FASE 8 ================= -->
+        <section class="doc-section" id="fase8">
+            <div class="section-tag">10 · Fase 8 — Sezione di Difesa Procedurale</div>
+            <h2>Compliance Privacy (ePrivacy &amp; Google Consent Mode v2)</h2>
+            <p>Implementazione avanzata per garantire la totale rispondenza normativa (Art. 13 GDPR e direttiva ePrivacy sui cookie). Da citare esplicitamente in sede di colloquio o audit.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>implement Google Consent Mode v2 for GA4 with default denied state</b></div>
+            <p>L'attivazione dei cookie statistici di GA4 è stata condizionata al consenso esplicito dell'utente (Opt-in). Al caricamento della pagina, il flag <code>analytics_storage</code> viene forzato rigorosamente su <code>denied</code> tramite le API di Google Consent Mode. In questo stato di default, GA4 opera in modalità cookieless inviando solo ping base senza identificatori di sessione o tracciamento persistente.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>build glassmorphism Cookie Banner with localStorage state management</b></div>
+            <p>Sviluppo di un Banner Cookie non intrusivo che si integra nativamente nel design system (Glassmorphism). Al click su "Accetta", lo stato di GA4 viene aggiornato (<code>update</code> a <code>granted</code>) e la scelta viene archiviata nel <code>localStorage</code> del browser dell'utente sotto la chiave <code>cookie_consent_analytics</code>. Questa architettura impedisce che il banner venga riproposto a ogni visita, migliorando l'esperienza utente senza fare ricorso a librerie esterne di CMP (Consent Management Platform).</p>
+
+            <div class="commit-chip"><span class="type-docs">docs</span><b>create standalone informativa-privacy.html compliant with Art. 13 GDPR</b></div>
+            <p>Creazione di un documento dedicato e isolato (<code>informativa-privacy.html</code>) in stretta continuità visiva con il portfolio. L'informativa esplicita:</p>
+            <ul>
+                <li>Il Titolare del Trattamento (Xhuliano Hysenji).</li>
+                <li>I dati raccolti (esclusivamente navigazione statistica in forma aggregata).</li>
+                <li>La base giuridica (consenso e legittimo interesse in fase precontrattuale).</li>
+                <li>I dettagli tecnici sui cookie utilizzati (<code>_ga</code>).</li>
+                <li>I diritti dell'interessato, tra cui il re-invoke del banner tramite il footer della sidebar.</li>
+            </ul>
+        </section>
+
+        <!-- ================= APPENDICE A — CHANGELOG ================= -->
+        <section class="doc-section" id="changelog">
+            <div class="section-tag">11 · Appendice A</div>
+            <h2>Registro completo dei commit</h2>
+            <p>Cronologia integrale, in ordine di implementazione, come riferimento rapido per la manutenzione futura.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:36px;">#</th>
+                        <th style="width:90px;">Tipo</th>
+                        <th>Messaggio di commit</th>
+                        <th>Fase</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="mono">1</td><td><span class="pill pill-init">init</span></td><td>project scaffolding with HTML5 and base meta tags</td><td>Fase 1</td></tr>
+                    <tr><td class="mono">2</td><td><span class="pill pill-style">style</span></td><td>import Google Fonts (Space Grotesk, IBM Plex Sans/Mono, Playfair Display)</td><td>Fase 1</td></tr>
+                    <tr><td class="mono">3</td><td><span class="pill pill-style">style</span></td><td>setup CSS global variables and iOS Glassmorphism theme</td><td>Fase 1</td></tr>
+                    <tr><td class="mono">4</td><td><span class="pill pill-feat">feat</span></td><td>integrate Three.js and Vanta.js (Waves &amp; Fog) dependencies</td><td>Fase 2</td></tr>
+                    <tr><td class="mono">5</td><td><span class="pill pill-feat">feat</span></td><td>build sidebar profile card with pulsing status dot and tooltips</td><td>Fase 2</td></tr>
+                    <tr><td class="mono">6</td><td><span class="pill pill-feat">feat</span></td><td>implement Terminal Typewriter boot sequence in hero section</td><td>Fase 3</td></tr>
+                    <tr><td class="mono">7</td><td><span class="pill pill-feat">feat</span></td><td>implement scrollspy logic to dynamically highlight menu items</td><td>Fase 3</td></tr>
+                    <tr><td class="mono">8</td><td><span class="pill pill-feat">feat</span></td><td>create JSON arrays for ESPERIENZE, PROGETTI, and CERTIFICAZIONI</td><td>Fase 4</td></tr>
+                    <tr><td class="mono">9</td><td><span class="pill pill-feat">feat</span></td><td>add dynamic HTML5 Canvas FX Engine</td><td>Fase 4</td></tr>
+                    <tr><td class="mono">10</td><td><span class="pill pill-refactor">refactor</span></td><td>reformat JSON databases into vertical multi-line structures</td><td>Fase 4</td></tr>
+                    <tr><td class="mono">11</td><td><span class="pill pill-feat">feat</span></td><td>build Fullscreen Lightbox viewer for zooming assets</td><td>Fase 5</td></tr>
+                    <tr><td class="mono">12</td><td><span class="pill pill-feat">feat</span></td><td>add global support for video assets (preview_Video_Array)</td><td>Fase 5</td></tr>
+                    <tr><td class="mono">13</td><td><span class="pill pill-feat">feat</span></td><td>implement smart hover-preview and audio cleanup</td><td>Fase 5</td></tr>
+                    <tr><td class="mono">14</td><td><span class="pill pill-feat">feat</span></td><td>integrate Google Analytics 4 (GA4) global tracking snippet</td><td>Fase 6</td></tr>
+                    <tr><td class="mono">15</td><td><span class="pill pill-feat">feat</span></td><td>implement custom trackEvent() logic for behavioral analytics</td><td>Fase 6</td></tr>
+                    <tr><td class="mono">16</td><td><span class="pill pill-feat">feat</span></td><td>implement dual-tracking URL parameters (?ref=cv_btn &amp; ?ref=cv_qr)</td><td>Fase 7</td></tr>
+                    <tr><td class="mono">17</td><td><span class="pill pill-feat">feat</span></td><td>update CV with GDPR privacy footer and ATS-friendly inline CTA</td><td>Fase 7</td></tr>
+                    <tr><td class="mono">18</td><td><span class="pill pill-feat">feat</span></td><td>implement Google Consent Mode v2 for GA4 with default denied state</td><td>Fase 8</td></tr>
+                    <tr><td class="mono">19</td><td><span class="pill pill-feat">feat</span></td><td>build glassmorphism Cookie Banner with localStorage state management</td><td>Fase 8</td></tr>
+                    <tr><td class="mono">20</td><td><span class="pill pill-docs">docs</span></td><td>create standalone informativa-privacy.html compliant with Art. 13 GDPR</td><td>Fase 8</td></tr>
+                </tbody>
+            </table>
+            <p style="color: var(--text-faint); font-size: 13px;"><em>Nota: la tabella non riporta hash o timestamp poiché non presenti nella cronologia fornita in origine. In caso di repository Git effettivo, si consiglia di integrare questa tabella con l'output di <code>git log --pretty=format:"%h|%ad|%s" --date=short</code> per avere tracciabilità temporale completa.</em></p>
+        </section>
+
+        <!-- ================= APPENDICE B — GLOSSARIO ================= -->
+        <section class="doc-section" id="glossario">
+            <div class="section-tag">12 · Appendice B</div>
+            <h2>Glossario tecnico</h2>
+            <p>Utile per spiegare il progetto a un interlocutore non tecnico senza perdere precisione.</p>
+            <dl class="glossary">
+                <dt>Vanilla JavaScript</dt>
+                <dd>JavaScript scritto senza framework o librerie di astrazione (React, Vue, ecc.), utilizzando direttamente le API native del browser.</dd>
+
+                <dt>Glassmorphism</dt>
+                <dd>Stile visivo basato su superfici semitrasparenti e sfocate, che simula il vetro smerigliato; diffuso nelle interfacce Apple recenti.</dd>
+
+                <dt>Scrollspy</dt>
+                <dd>Tecnica che monitora la posizione di scorrimento della pagina per evidenziare dinamicamente la sezione attualmente visibile nel menu di navigazione.</dd>
+
+                <dt>Data-driven rendering</dt>
+                <dd>Approccio in cui l'interfaccia viene generata a partire da una struttura dati (es. JSON), invece di essere scritta manualmente in HTML statico.</dd>
+
+                <dt>requestAnimationFrame / cancelAnimationFrame</dt>
+                <dd>API del browser per sincronizzare le animazioni con il ciclo di refresh dello schermo, e per interromperle esplicitamente evitando sprechi di risorse.</dd>
+
+                <dt>PII (Personally Identifiable Information)</dt>
+                <dd>Qualunque dato che permetta di identificare direttamente o indirettamente una persona fisica (nome, email, indirizzo IP in chiaro, ecc.).</dd>
+
+                <dt>dataLayer</dt>
+                <dd>Struttura dati intermedia usata da Google Analytics/Tag Manager per ricevere eventi custom dal sito prima di inoltrarli ai server di raccolta.</dd>
+
+                <dt>Parametro UTM / ref</dt>
+                <dd>Parametro aggiunto a un URL per identificare la sorgente di provenienza del traffico (es. un bottone specifico o un QR code), leggibile dagli strumenti di analytics.</dd>
+
+                <dt>ATS (Applicant Tracking System)</dt>
+                <dd>Software utilizzato dalle aziende per raccogliere, filtrare e scansionare automaticamente i CV ricevuti, spesso sensibile a layout complessi o multi-colonna.</dd>
+            </dl>
+        </section>
+
+        <!-- ================= APPENDICE C — MANUTENZIONE ================= -->
+        <section class="doc-section" id="manutenzione">
+            <div class="section-tag">13 · Appendice C</div>
+            <h2>Guida rapida alla manutenzione futura</h2>
+
+            <h3>Aggiungere una nuova esperienza, progetto o certificazione</h3>
+            <ol class="reg">
+                <li>Individuare l'array JSON corrispondente (<code>ESPERIENZE</code>, <code>PROGETTI</code> o <code>CERTIFICAZIONI</code>).</li>
+                <li>Copiare il primo oggetto dell'array, quello con <code>isTemplate: true</code>, e incollarlo come nuova voce: contiene già tutte le proprietà attese.</li>
+                <li>Rimuovere <code>isTemplate: true</code> dalla nuova voce (altrimenti il rendering la ignora) e compilare i campi.</li>
+                <li>Assegnare alla proprietà <code>effect</code> uno dei sei valori validi (<code>network</code>, <code>matrix</code>, <code>laser</code>, <code>pages</code>, <code>typography</code>, <code>pulse</code>) per il motore Canvas.</li>
+                <li>Non toccare il markup HTML: il rendering è automatico.</li>
+            </ol>
+
+            <h3>Aggiungere un nuovo evento di tracciamento</h3>
+            <ol class="reg">
+                <li>Definire chiaramente cosa si vuole misurare e perché.</li>
+                <li>Richiamare <code>trackEvent(eventName, category, label)</code> sull'interazione desiderata. (Nota: non è necessario gestire il consenso, la funzione eredita automaticamente le regole della Google Consent Mode v2 configurate in <code>index.html</code>).</li>
+                <li>Aggiungere la nuova voce alla tabella degli eventi in Fase 6.</li>
+            </ol>
+        </section>
+
+        <!-- ================= CHIUSURA ================= -->
+        <section class="doc-section" id="chiusura" style="border-bottom: none;">
+            <div class="section-tag">14 · Chiusura</div>
+            <h2>Stato del progetto e validità del documento</h2>
+            <p>Sistema operativo, collaudato e in produzione, distribuito via GitHub Pages. Architettura pensata per essere scalabile a future integrazioni senza richiedere una riscrittura strutturale.</p>
+
+            <div class="stamp-final">
+                <span class="ok">✓</span> Separazione dati/presentazione: verificata<br>
+                <span class="ok">✓</span> Gestione memoria (Canvas FX, audio, video): verificata<br>
+                <span class="ok">✓</span> Compliance GDPR &amp; ePrivacy (Consent Mode v2): verificata<br>
+                <span class="ok">✓</span> Compatibilità ATS del CV: verificata
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<footer class="doc-footer">
+    Documento generato per il versionamento architetturale del progetto Portfolio &amp; CV — Xhuliano Hysenji · Fascicolo N. 2026-XH-01 · Fine documento
+</footer>
+
+<script>
+    // Scrollspy leggero per l'indice laterale
+    const sections = document.querySelectorAll('section.doc-section');
+    const links = document.querySelectorAll('.toc a');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const id = entry.target.getAttribute('id');
+            const link = document.querySelector('.toc a[href="#' + id + '"]');
+            if (!link) return;
+            if (entry.isIntersecting) {
+                links.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+            }
+        });
+    }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
+
+    sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
