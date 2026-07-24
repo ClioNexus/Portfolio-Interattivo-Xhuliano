@@ -434,11 +434,15 @@
     .sidebar { position: relative; height: auto; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); padding-bottom: 40px;}
     .sidebar-content-wrapper { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 20px; background: none; }
     
-    /* MODIFICA MOBILE: Illumina i bottoni del menu di default su smartphone */
+    /* MODIFICA MOBILE: Bottoni accessi e colorati su smartphone */
     nav.menu a {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      background: rgba(56, 189, 248, 0.08); /* Sfondo leggermente azzurro */
+      border: 1px solid rgba(56, 189, 248, 0.35); /* Bordo azzurro visibile */
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4), inset 0 0 10px rgba(56, 189, 248, 0.1);
+      color: #ffffff; /* Testo bianco puro per massimo contrasto */
+    }
+    nav.menu a .idx {
+      color: var(--ui-accent); /* I numerini diventano azzurro fluo */
     }
 
     nav.menu { flex-direction: row; flex-wrap: wrap; margin-top: 0; width: 100%; }
