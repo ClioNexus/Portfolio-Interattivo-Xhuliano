@@ -290,6 +290,7 @@
     .commit-chip .type-init { color: var(--amber); }
     .commit-chip .type-refactor { color: #c792ea; }
     .commit-chip .type-docs { color: #82aaff; }
+    .commit-chip .type-fix { color: var(--red); }
 
     .callout {
         border: 1px solid var(--border-strong);
@@ -341,6 +342,7 @@
     .pill-init { background: rgba(232,163,61,0.14); color: var(--amber); }
     .pill-refactor { background: rgba(199,146,234,0.12); color: #c792ea; }
     .pill-docs { background: rgba(130,170,255,0.12); color: #82aaff; }
+    .pill-fix { background: rgba(232,97,95,0.12); color: var(--red); }
     .pill-no { background: rgba(232,97,95,0.12); color: var(--red); }
     .pill-yes { background: rgba(111,206,143,0.12); color: var(--green); }
 
@@ -495,6 +497,9 @@
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>build sidebar profile card with pulsing status dot and tooltips</b></div>
             <p>Colonna di navigazione fissa (<code>position: sticky</code>) che simula visivamente una console operativa, con indicatore di stato "online" pulsante. I tag delle competenze tecniche sono corredati di tooltip esplicativi, pensati per un pubblico misto: recruiter HR non specializzati e tecnici hiring manager. Questo doppio livello di lettura è una scelta di accessibilità comunicativa, non solo grafica.</p>
+
+            <div class="commit-chip"><span class="type-style">style</span><b>apply default illuminated state to sidebar menu buttons for mobile/touch devices</b></div>
+            <p>Ottimizzazione UX specifica per smartphone: in assenza dell'evento <code>hover</code> sui dispositivi touch, i bottoni del menu laterale acquisiscono uno stato di illuminazione di default (sfondo e bordo visibili) al di sotto della soglia di 880px, segnalando chiaramente l'interattività dell'elemento.</p>
 
             <h4>Sistema di colori tematici per sezione</h4>
             <p>Ogni macro-sezione possiede una propria "firma cromatica" definita tramite variabile CSS dedicata: <code>--c-profilo</code> (viola), <code>--c-esperienza</code> (blu), <code>--c-progetti</code> (verde), <code>--c-certificazioni</code> (ciano), <code>--c-formazione</code> (indaco). La variabile locale <code>--accent</code> di ogni <code>&lt;section&gt;</code> eredita il colore corrispondente e lo propaga automaticamente a bordi, ombreggiature, timeline e — cosa più rilevante — al motore Canvas FX del pannello di dettaglio (Fase 4), così che l'intera esperienza visiva di una voce resti coerente con la categoria a cui appartiene, senza dover hard-codare colori in più punti del codice.</p>
@@ -653,6 +658,9 @@
                 <li><strong>CTA "Visiona originali nel Portfolio"</strong> racchiusa in tag <code>&lt;span&gt;</code>, per non interferire con la struttura di scansione dei software ATS (Applicant Tracking System).</li>
                 <li><strong>Clausola GDPR a piè di pagina</strong> (D.Lgs 196/03 e Regolamento UE 2016/679), mantenuta come precauzione formale contro le procedure di scarto automatizzate adottate da HR e software di selezione ancora legati a prassi datate del panorama lavorativo italiano.</li>
             </ul>
+
+            <div class="commit-chip"><span class="type-fix">fix</span><b>prevent phone number line-break in CV contact section</b></div>
+            <p>Blindatura tipografica del layout per l'esportazione PDF: l'applicazione della regola <code>white-space: nowrap</code> sul blocco dei contatti impedisce al motore di stampa del browser di spezzare il numero di telefono su due righe, preservando la formattazione formale del documento in ogni formato.</p>
         </section>
 
         <!-- ================= FASE 8 ================= -->
@@ -713,6 +721,9 @@
                     <tr><td class="mono">18</td><td><span class="pill pill-feat">feat</span></td><td>implement Google Consent Mode v2 for GA4 with default denied state</td><td>Fase 8</td></tr>
                     <tr><td class="mono">19</td><td><span class="pill pill-feat">feat</span></td><td>build glassmorphism Cookie Banner with localStorage state management</td><td>Fase 8</td></tr>
                     <tr><td class="mono">20</td><td><span class="pill pill-docs">docs</span></td><td>create standalone informativa-privacy.html compliant with Art. 13 GDPR</td><td>Fase 8</td></tr>
+                    <tr><td class="mono">21</td><td><span class="pill pill-fix">fix</span></td><td>prevent phone number line-break in CV contact section</td><td>Fase 7</td></tr>
+                    <tr><td class="mono">22</td><td><span class="pill pill-docs">docs</span></td><td>refine and polish wording for Phase 8 Consent Mode documentation</td><td>Fase 8</td></tr>
+                    <tr><td class="mono">23</td><td><span class="pill pill-feat">feat</span></td><td>merge mobile UI fixes and Google Consent Mode v2 integration</td><td>Fase 2/8</td></tr>
                 </tbody>
             </table>
             <p style="color: var(--text-faint); font-size: 13px;"><em>Nota: la tabella non riporta hash o timestamp poiché non presenti nella cronologia fornita in origine. In caso di repository Git effettivo, si consiglia di integrare questa tabella con l'output di <code>git log --pretty=format:"%h|%ad|%s" --date=short</code> per avere tracciabilità temporale completa.</em></p>
@@ -770,7 +781,7 @@
             <h3>Aggiungere un nuovo evento di tracciamento</h3>
             <ol class="reg">
                 <li>Definire chiaramente cosa si vuole misurare e perché (evitare eventi "per curiosità" non collegati a una domanda di business reale).</li>
-                <li>Richiamare <code>trackEvent(eventName, category, label)</code> sull'interazione desiderata.</li>
+                <li>Richiamare <code>trackEvent(eventName, category, label)</code> sull'interazione desiderata. (Nota: non è necessario gestire il consenso, la funzione eredita automaticamente le regole della Google Consent Mode v2 configurate in <code>index.html</code>).</li>
                 <li>Aggiungere la nuova voce alla tabella degli eventi in Fase 6 di questo documento, mantenendo coerenza con il principio "nessun dato personale, solo interazione anonima".</li>
             </ol>
 
