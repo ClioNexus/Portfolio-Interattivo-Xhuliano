@@ -289,7 +289,7 @@
     .commit-chip .type-style { color: var(--cyan); }
     .commit-chip .type-init { color: var(--amber); }
     .commit-chip .type-refactor { color: #c792ea; }
-    .commit-chip .type-docs { color: #82aaff; } /* Nuovo colore per docs */
+    .commit-chip .type-docs { color: #82aaff; }
 
     .callout {
         border: 1px solid var(--border-strong);
@@ -402,7 +402,7 @@
             <li><a href="#fase3">Fase 3 — Interattività DOM</a></li>
             <li><a href="#fase4">Fase 4 — Database e Rendering</a></li>
             <li><a href="#fase5">Fase 5 — Documenti e Multimedia</a></li>
-            <li><a href="#fase6">Fase 6 — Tracciamento Base</a></li>
+            <li><a href="#fase6">Fase 6 — Tracciamento e Compliance</a></li>
             <li><a href="#fase7">Fase 7 — Ponte CV↔Portfolio</a></li>
             <li><a href="#fase8">Fase 8 — ePrivacy &amp; Consent Mode</a></li>
             <li><a href="#changelog">App. A — Registro Commit</a></li>
@@ -527,25 +527,25 @@
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>create JSON arrays for ESPERIENZE, PROGETTI, and CERTIFICAZIONI</b></div>
             <p>Separazione rigorosa tra dati e grafica: ogni voce (esperienza lavorativa, progetto, certificazione) è un oggetto JSON con proprietà normalizzate (titolo, periodo, descrizione, asset, tag). Il rendering è puramente funzionale: itera l'array e produce il markup. Aggiungere un nuovo certificato è un'operazione di compilazione dati, non di sviluppo front-end.</p>
-            <p>Ogni array include come primo elemento un oggetto <code>{ isTemplate: true, ... }</code>, mai renderizzato ma mantenuto come "stampo" pronto all'uso.</p>
+            <p>Ogni array include come primo elemento un oggetto <code>{ isTemplate: true, ... }</code>, mai renderizzato (il loop di rendering lo salta esplicitamente con <code>if(item.isTemplate) return;</code>) ma mantenuto come "stampo" pronto all'uso: per aggiungere una nuova voce è sufficiente duplicarlo e compilare i campi, senza dover ricordare a memoria la struttura dell'oggetto.</p>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>add dynamic HTML5 Canvas FX Engine</b></div>
-            <p>Motore grafico proprietario costruito su tag <code>&lt;canvas&gt;</code>, distinto dalle librerie esterne della Fase 2. Ogni voce del database possiede una proprietà <code>effect</code> che determina quale dei sei algoritmi particellari implementati viene eseguito all'apertura del pannello di dettaglio. La mappatura non è casuale ma semantica:</p>
+            <p>Motore grafico proprietario costruito su tag <code>&lt;canvas&gt;</code>, distinto dalle librerie esterne della Fase 2. Ogni voce del database possiede una proprietà <code>effect</code> che determina quale dei sei algoritmi particellari implementati (<code>network</code>, <code>matrix</code>, <code>laser</code>, <code>pages</code>, <code>typography</code>, <code>pulse</code>) viene eseguito all'apertura del pannello di dettaglio. La mappatura non è casuale ma semantica:</p>
             <table>
                 <thead><tr><th>Effetto</th><th>Logica visiva</th><th>Applicato a</th></tr></thead>
                 <tbody>
                     <tr><td class="mono">network</td><td>Nodi connessi da linee, tipico di un grafo di relazioni</td><td>Esperienze lavorative, badge AWS</td></tr>
-                    <tr><td class="mono">matrix</td><td>Pioggia di caratteri in stile terminale, con parole chiave</td><td>Cybersecurity Fundamentals</td></tr>
-                    <tr><td class="mono">laser</td><td>Griglia scan-line con fascio orizzontale in movimento</td><td>Robotica ABB, progetti 3D</td></tr>
-                    <tr><td class="mono">pages</td><td>Rettangoli/pagine che ruotano su asse Y in caduta lenta</td><td>Progetti editoriali/documentali</td></tr>
-                    <tr><td class="mono">typography</td><td>Lettere corsive che pulsano in dissolvenza</td><td>Certificazione linguistica Oxford</td></tr>
-                    <tr><td class="mono">pulse</td><td>Cerchi concentrici che si espandono e svaniscono</td><td>Certificazione Social Media</td></tr>
+                    <tr><td class="mono">matrix</td><td>Pioggia di caratteri in stile terminale, con parole chiave (<code>LINUX</code>, <code>PYTHON</code>, <code>AI</code>...) che emergono a intermittenza</td><td>Cybersecurity Fundamentals</td></tr>
+                    <tr><td class="mono">laser</td><td>Griglia scan-line con fascio orizzontale in movimento e nodi mobili</td><td>Robotica ABB, progetti di simulazione 3D</td></tr>
+                    <tr><td class="mono">pages</td><td>Rettangoli/pagine che ruotano su asse Y in caduta lenta</td><td>Progetti editoriali/documentali (es. flipbook)</td></tr>
+                    <tr><td class="mono">typography</td><td>Lettere corsive (Playfair Display) che pulsano in dissolvenza</td><td>Certificazione linguistica Oxford B2</td></tr>
+                    <tr><td class="mono">pulse</td><td>Cerchi concentrici che si espandono e svaniscono, come un radar</td><td>Certificazione Social Media Management</td></tr>
                 </tbody>
             </table>
-            <p>Il ciclo di animazione è gestito con <code>requestAnimationFrame</code> e distrutto esplicitamente con <code>cancelAnimationFrame</code> alla chiusura del pannello, per prevenire consumo di CPU/GPU in background.</p>
+            <p>Il ciclo di animazione è gestito con <code>requestAnimationFrame</code> e distrutto esplicitamente con <code>cancelAnimationFrame</code> alla chiusura del pannello, per prevenire consumo di CPU/GPU in background. Un dettaglio ulteriore di ottimizzazione: l'effetto <code>matrix</code> è deliberatamente limitato via delta-time a circa 22 fps (contro i 60 fps degli altri effetti), sia per fedeltà estetica al ritmo "a scatti" dei terminali storici, sia per contenere il carico di rendering su dispositivi meno performanti. Alla ridimensionamento della finestra, un listener su <code>resize</code> reinizializza l'effetto attivo alle nuove dimensioni del pannello, evitando artefatti grafici su cambi di orientamento mobile.</p>
 
             <div class="commit-chip"><span class="type-refactor">refactor</span><b>reformat JSON databases into vertical multi-line structures</b></div>
-            <p>Reindentazione verticale degli array per ospitare stringhe lunghe (inclusi payload Base64) senza incorrere in errori di sintassi durante le modifiche manuali future.</p>
+            <p>Reindentazione verticale degli array per ospitare stringhe lunghe (inclusi payload Base64 di alcune immagini) senza incorrere in errori di sintassi durante le modifiche manuali future. Pratica di Clean Code minore ma che riduce concretamente il rischio di regressioni accidentali.</p>
         </section>
 
         <!-- ================= FASE 5 ================= -->
@@ -560,19 +560,25 @@
             <p>Il sistema di iniezione DOM riconosce dinamicamente il tipo di asset (immagine, PDF, Base64, video MP4) e produce il markup adeguato, senza rami di codice duplicati per ogni formato.</p>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>implement smart hover-preview and audio cleanup</b></div>
-            <p>I video in anteprima sono marcati <code>muted loop playsinline</code> per evitare il blocco autoplay dei browser moderni; l'anteprima si avvia al passaggio del mouse e si interrompe all'uscita. L'audio reale si attiva solo all'apertura nel Lightbox a schermo intero. Alla chiusura del modale, il nodo HTML viene distrutto dinamicamente (<code>viewerContainer.innerHTML = ""</code>) per impedire l'esecuzione residua dell'audio/video in background.</p>
+            <p>I video in anteprima sono marcati <code>muted loop playsinline</code>: non è una scelta stilistica ma un requisito tecnico, poiché i browser moderni bloccano l'autoplay di contenuti con audio non richiesto dall'utente. L'attributo <code>muted</code> aggira questa restrizione in modo pienamente conforme alle policy dei browser; l'anteprima si avvia al passaggio del mouse (<code>onmouseover="this.play()"</code>) e si interrompe all'uscita (<code>onmouseout="this.pause()"</code>), in stile YouTube. L'audio reale si attiva solo all'apertura nel Lightbox a schermo intero, dove il tag viene ricreato con <code>controls autoplay</code> (senza <code>muted</code>).</p>
+            <p>Alla chiusura del modale, il nodo HTML viene distrutto dinamicamente (<code>viewerContainer.innerHTML = ""</code>) invece di essere semplicemente nascosto via CSS — questo impedisce l'esecuzione residua dell'audio/video in background: gestione esplicita del rischio di memory/audio leak, non un dettaglio implicito lasciato al garbage collector del browser.</p>
         </section>
 
         <!-- ================= FASE 6 — TRACCIAMENTO ================= -->
         <section class="doc-section" id="fase6">
-            <div class="section-tag">08 · Fase 6</div>
-            <h2>Architettura di Tracciamento (Web Analytics) Base</h2>
+            <div class="section-tag">08 · Fase 6 — Sezione di Difesa Procedurale</div>
+            <h2>Architettura di Tracciamento (Web Analytics) e Compliance</h2>
+            <p>Questa è la sezione da citare per esteso in caso di domande — proprie, di un recruiter o di un responsabile privacy — su cosa fa esattamente il sito quando viene visitato. Ogni elemento è descritto con la relativa giustificazione tecnica e giuridica.</p>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>integrate Google Analytics 4 (GA4) global tracking snippet</b></div>
-            <p>Iniezione dello snippet globale GA4 (Measurement ID <code>G-7P0B5N12MF</code>), caricato in modo asincrono. Google Analytics 4 opera in modalità aggregata: raccoglie parametri macro senza costruire un profilo identificativo individuale nel senso richiesto per una vera profilazione.</p>
+            <p>Iniezione dello snippet globale GA4 (Measurement ID <code>G-7P0B5N12MF</code>), caricato in modo asincrono (<code>&lt;script async&gt;</code>) nel <code>&lt;head&gt;</code> per non bloccare il rendering iniziale della pagina. Google Analytics 4 opera in modalità aggregata: raccoglie parametri macro (tipo di dispositivo, area geografica generica, durata di sessione, sorgente di traffico) senza costruire un profilo identificativo individuale nel senso richiesto per una vera profilazione ai fini del GDPR.</p>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>implement custom trackEvent() logic for behavioral analytics</b></div>
-            <p>Superamento del tracciamento di base (pageview) tramite una funzione dedicata che mappa le seguenti interazioni chiave:</p>
+            <p>Superamento del tracciamento di base (pageview) tramite una funzione dedicata:</p>
+            <div class="commit-chip" style="border-left-color: var(--amber);"><code>function trackEvent(eventName, category, label) { gtag('event', eventName, { event_category: category, event_label: label }); }</code></div>
+            <p>La funzione viene richiamata inline sui quattro trigger d'interazione già descritti nella tabella sottostante, passando sempre la stessa coppia di parametri: <code>category</code> = la sezione di provenienza (<code>esperienza</code>/<code>progetti</code>/<code>certificazioni</code>) e <code>label</code> = il titolo testuale della voce coinvolta. Nessuna funzione del sito raccoglie o trasmette a GA4 dati diversi da questi due parametri testuali, entrambi già pubblici sul sito stesso. Questo trasforma il sito da vetrina passiva a strumento di Business Intelligence orientato a un solo scopo dichiarato: capire quali parti del profilo generano interesse concreto in fase di selezione.</p>
+
+            <h3>Mappa completa degli eventi tracciati</h3>
             <table>
                 <thead>
                     <tr>
@@ -583,12 +589,48 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td class="mono">apertura_dettaglio</td><td>Click su una card di esperienza, progetto o certificazione</td><td>Quale competenza tecnica specifica attira l'attenzione</td><td><span class="pill pill-no">No PII</span></td></tr>
-                    <tr><td class="mono">zoom_documento</td><td>Apertura del Lightbox su un asset</td><td>Intenzione di verifica incrociata della fonte</td><td><span class="pill pill-no">No PII</span></td></tr>
-                    <tr><td class="mono">click_risorsa_esterna</td><td>Uscita verso piattaforme ufficiali (es. GitHub)</td><td>Abbandono del sito verso fonte terza di verifica</td><td><span class="pill pill-no">No PII</span></td></tr>
-                    <tr><td class="mono">play_video</td><td>Riproduzione di contenuto multimediale</td><td>Engagement verso dimostrazioni pratiche</td><td><span class="pill pill-no">No PII</span></td></tr>
+                    <tr>
+                        <td class="mono">apertura_dettaglio</td>
+                        <td>Click su una card di esperienza, progetto o certificazione</td>
+                        <td>Quale competenza tecnica specifica attira l'attenzione del selezionatore</td>
+                        <td><span class="pill pill-no">No PII</span></td>
+                    </tr>
+                    <tr>
+                        <td class="mono">zoom_documento</td>
+                        <td>Apertura del Lightbox su un asset (diploma, attestato)</td>
+                        <td>Intenzione di verifica incrociata della fonte, non solo lettura superficiale</td>
+                        <td><span class="pill pill-no">No PII</span></td>
+                    </tr>
+                    <tr>
+                        <td class="mono">click_risorsa_esterna</td>
+                        <td>Uscita verso piattaforme ufficiali (es. badge Credly, repository GitHub)</td>
+                        <td>Abbandono del sito verso una fonte terza di verifica, segnale di interesse elevato</td>
+                        <td><span class="pill pill-no">No PII</span></td>
+                    </tr>
+                    <tr>
+                        <td class="mono">play_video</td>
+                        <td>Riproduzione di un contenuto multimediale (demo, simulazione)</td>
+                        <td>Engagement verso dimostrazioni pratiche rispetto alla sola lettura testuale</td>
+                        <td><span class="pill pill-no">No PII</span></td>
+                    </tr>
                 </tbody>
             </table>
+
+            <div class="callout legal">
+                <h4>Nota di difesa privacy — da citare in colloquio o audit</h4>
+                <p>I quattro trigger sopra elencati registrano <strong>esclusivamente interazioni anonime con l'interfaccia</strong>: quale elemento è stato aperto, non chi lo ha aperto. Non viene raccolto alcun dato anagrafico, indirizzo email, o identificativo diretto tramite questi eventi custom. Lo scopo dichiarato e verificabile è l'ottimizzazione del layout e la comprensione delle aree del profilo di maggiore interesse aziendale — una finalità di analisi statistica aggregata, non di profilazione individuale a fini di marketing o retargeting, che infatti non è mai stata implementata.</p>
+            </div>
+
+            <h3>Cosa il sistema NON fa (per chiarezza esplicita)</h3>
+            <ul>
+                <li>Non utilizza cookie di profilazione marketing o retargeting pubblicitario.</li>
+                <li>Non incrocia i dati di navigazione con l'identità dell'utente che li genera.</li>
+                <li>Non rivende né condivide dati con terze parti al di fuori dell'elaborazione statistica standard di Google Analytics.</li>
+                <li>Non richiede né raccoglie credenziali, email o dati di contatto tramite il tracciamento comportamentale.</li>
+            </ul>
+
+            <h3>Base giuridica e finalità</h3>
+            <p>Il trattamento dei dati aggregati rientra nell'ambito delle misure adottate su richiesta dell'interessato prima della conclusione di un contratto (fase precontrattuale di selezione), oltre che nel legittimo interesse dell'autore a comprendere l'efficacia del proprio strumento di autopromozione professionale — finalità entrambe compatibili con l'impianto del Regolamento UE 2016/679 quando, come in questo caso, il trattamento resta aggregato e non identificativo.</p>
         </section>
 
         <!-- ================= FASE 7 ================= -->
@@ -600,34 +642,40 @@
             <p>Applicazione di un protocollo in stile UTM per segmentare le fonti di traffico verso il portfolio:</p>
             <ul>
                 <li><code>?ref=cv_btn</code> — accesso dal bottone testuale/grafico presente nel CV digitale (PDF).</li>
-                <li><code>?ref=cv_qr</code> — accesso dal QR code stampato sulle copie cartacee del CV.</li>
+                <li><code>?ref=cv_qr</code> — accesso dal QR code stampato sulle copie cartacee del CV, utile per eventi, fiere e colloqui in presenza.</li>
             </ul>
+            <p>Questa segmentazione permette di valutare, nel tempo, quale formato di CV (digitale o cartaceo) genera più conversioni verso il portfolio, informazione utile per orientare le future candidature.</p>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>update CV with GDPR privacy footer and ATS-friendly inline CTA</b></div>
-            <p>Rimozione dell'età per favorire lo screening imparziale (Unbiased Recruitment). Inserimento di una CTA nascosta nel tag <code>&lt;span&gt;</code> per garantire la compatibilità con i software ATS, e aggiunta del footer normativo GDPR.</p>
+            <p>Due interventi mirati sul CV:</p>
+            <ul>
+                <li><strong>Rimozione dell'età</strong>, per favorire uno screening imparziale (Unbiased Recruitment).</li>
+                <li><strong>CTA "Visiona originali nel Portfolio"</strong> racchiusa in tag <code>&lt;span&gt;</code>, per non interferire con la struttura di scansione dei software ATS (Applicant Tracking System).</li>
+                <li><strong>Clausola GDPR a piè di pagina</strong> (D.Lgs 196/03 e Regolamento UE 2016/679), mantenuta come precauzione formale contro le procedure di scarto automatizzate adottate da HR e software di selezione ancora legati a prassi datate del panorama lavorativo italiano.</li>
+            </ul>
         </section>
 
         <!-- ================= FASE 8 ================= -->
         <section class="doc-section" id="fase8">
             <div class="section-tag">10 · Fase 8 — Sezione di Difesa Procedurale</div>
-            <h2>Compliance Privacy (ePrivacy &amp; Google Consent Mode v2)</h2>
-            <p>Implementazione avanzata per garantire la totale rispondenza normativa (Art. 13 GDPR e direttiva ePrivacy sui cookie). Da citare esplicitamente in sede di colloquio o audit.</p>
+            <h2>Compliance ePrivacy e Google Consent Mode v2</h2>
+            <p>Intervento successivo alla prima stesura di questo documento, introdotto per colmare due lacune formali indipendenti dalla correttezza tecnica del tracciamento descritto in Fase 6: l'assenza di un gate di consenso <em>prima</em> dell'attivazione dei cookie statistici, e l'assenza di un'informativa privacy pubblicata sul sito (art. 13 GDPR).</p>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>implement Google Consent Mode v2 for GA4 with default denied state</b></div>
-            <p>L'attivazione dei cookie statistici di GA4 è stata condizionata al consenso esplicito dell'utente (Opt-in). Al caricamento della pagina, il flag <code>analytics_storage</code> viene forzato rigorosamente su <code>denied</code> tramite le API di Google Consent Mode. In questo stato di default, GA4 opera in modalità cookieless inviando solo ping base senza identificatori di sessione o tracciamento persistente.</p>
+            <p>Subito dopo <code>gtag('js', new Date())</code> e prima di <code>gtag('config', ...)</code>, viene impostato <code>gtag('consent', 'default', {'analytics_storage': 'denied'})</code>. In questo stato iniziale GA4 non imposta alcun cookie: opera in modalità "cookieless ping", inviando al massimo dati aggregati e non identificativi, senza salvare nulla sul dispositivo dell'utente. Solo un'azione esplicita dell'utente può far passare il flag a <code>granted</code>.</p>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>build glassmorphism Cookie Banner with localStorage state management</b></div>
-            <p>Sviluppo di un Banner Cookie non intrusivo che si integra nativamente nel design system (Glassmorphism). Al click su "Accetta", lo stato di GA4 viene aggiornato (<code>update</code> a <code>granted</code>) e la scelta viene archiviata nel <code>localStorage</code> del browser dell'utente sotto la chiave <code>cookie_consent_analytics</code>. Questa architettura impedisce che il banner venga riproposto a ogni visita, migliorando l'esperienza utente senza fare ricorso a librerie esterne di CMP (Consent Management Platform).</p>
+            <p>Banner non intrusivo, coerente con il design system esistente (stesso <code>backdrop-filter</code>, stessa palette), ancorato a fondo pagina. Al click su "Accetta" viene richiamato <code>gtag('consent', 'update', {'analytics_storage': 'granted'})</code> e la scelta viene persistita in <code>localStorage</code> sotto la chiave <code>cookie_consent_analytics</code>, così da non ripresentare il banner ad ogni visita. Al click su "Rifiuta" la scelta viene salvata come <code>denied</code> e GA4 resta permanentemente senza storage. Un link "Gestisci cookie" nel footer della sidebar permette di riaprire il banner e cambiare idea in qualunque momento — requisito esplicito del diritto di revoca del consenso.</p>
 
             <div class="commit-chip"><span class="type-docs">docs</span><b>create standalone informativa-privacy.html compliant with Art. 13 GDPR</b></div>
-            <p>Creazione di un documento dedicato e isolato (<code>informativa-privacy.html</code>) in stretta continuità visiva con il portfolio. L'informativa esplicita:</p>
-            <ul>
-                <li>Il Titolare del Trattamento (Xhuliano Hysenji).</li>
-                <li>I dati raccolti (esclusivamente navigazione statistica in forma aggregata).</li>
-                <li>La base giuridica (consenso e legittimo interesse in fase precontrattuale).</li>
-                <li>I dettagli tecnici sui cookie utilizzati (<code>_ga</code>).</li>
-                <li>I diritti dell'interessato, tra cui il re-invoke del banner tramite il footer della sidebar.</li>
-            </ul>
+            <p>Pagina indipendente, in continuità visiva col portfolio, raggiungibile dal footer della sidebar e dal testo stesso del banner. Contiene gli elementi richiesti dall'art. 13 GDPR: identità del titolare del trattamento, categorie di dati raccolti (statistiche aggregate + i quattro eventi custom di Fase 6, esplicitamente qualificati come privi di identificativi), i cookie tecnici effettivamente impostati da GA4 (<code>_ga</code>, <code>_ga_[container-id]</code>) con relativa durata, base giuridica (consenso per i cookie statistici, legittimo interesse/misure precontrattuali per i dati di candidatura), il richiamo al trasferimento extra-UE verso Google Ireland/USA tramite clausole contrattuali standard, l'elenco dei diritti dell'interessato con link diretto al reclamo presso il Garante Privacy, e un pulsante che azzera il consenso salvato per permettere una nuova scelta.</p>
+
+            <div class="callout legal">
+                <h4>Nota di difesa privacy — Fase 8</h4>
+                <p>Prima di questo intervento, il documento poteva <em>spiegare</em> cosa il tracciamento faceva, ma non <em>dimostrava</em> che l'utente avesse potuto scegliere prima che il tracciamento partisse. Da questa Fase in poi, le due cose coincidono: nessun cookie GA4 viene scritto sul dispositivo dell'utente finché il flag <code>analytics_storage</code> non è <code>granted</code> per sua scelta esplicita, verificabile aprendo gli strumenti sviluppatore del browser prima e dopo il click su "Accetta".</p>
+            </div>
+
+            <p style="color: var(--text-faint); font-size: 13px;"><em>Nota di continuità: qualunque nuovo evento aggiunto in futuro tramite <code>trackEvent()</code> eredita automaticamente il gate di consenso qui descritto — non richiede alcuna modifica alla logica di Consent Mode.</em></p>
         </section>
 
         <!-- ================= APPENDICE A — CHANGELOG ================= -->
@@ -713,17 +761,23 @@
             <h3>Aggiungere una nuova esperienza, progetto o certificazione</h3>
             <ol class="reg">
                 <li>Individuare l'array JSON corrispondente (<code>ESPERIENZE</code>, <code>PROGETTI</code> o <code>CERTIFICAZIONI</code>).</li>
-                <li>Copiare il primo oggetto dell'array, quello con <code>isTemplate: true</code>, e incollarlo come nuova voce: contiene già tutte le proprietà attese.</li>
-                <li>Rimuovere <code>isTemplate: true</code> dalla nuova voce (altrimenti il rendering la ignora) e compilare i campi.</li>
-                <li>Assegnare alla proprietà <code>effect</code> uno dei sei valori validi (<code>network</code>, <code>matrix</code>, <code>laser</code>, <code>pages</code>, <code>typography</code>, <code>pulse</code>) per il motore Canvas.</li>
+                <li>Copiare il primo oggetto dell'array, quello con <code>isTemplate: true</code>, e incollarlo come nuova voce: contiene già tutte le proprietà attese (<code>date</code>/<code>title</code>/<code>org</code> o <code>sub</code>, <code>bullets</code>, i tre array di asset, <code>full_PDF</code>, <code>full_LinkWeb</code>).</li>
+                <li>Rimuovere <code>isTemplate: true</code> dalla nuova voce (altrimenti il rendering la ignora) e compilare i campi rispettando la formattazione verticale già in uso.</li>
+                <li>Assegnare alla proprietà <code>effect</code> uno dei sei valori validi (<code>network</code>, <code>matrix</code>, <code>laser</code>, <code>pages</code>, <code>typography</code>, <code>pulse</code>), scegliendolo per coerenza semantica con il contenuto — vedi tabella di mappatura in Fase 4.</li>
                 <li>Non toccare il markup HTML: il rendering è automatico.</li>
             </ol>
 
             <h3>Aggiungere un nuovo evento di tracciamento</h3>
             <ol class="reg">
-                <li>Definire chiaramente cosa si vuole misurare e perché.</li>
-                <li>Richiamare <code>trackEvent(eventName, category, label)</code> sull'interazione desiderata. (Nota: non è necessario gestire il consenso, la funzione eredita automaticamente le regole della Google Consent Mode v2 configurate in <code>index.html</code>).</li>
-                <li>Aggiungere la nuova voce alla tabella degli eventi in Fase 6.</li>
+                <li>Definire chiaramente cosa si vuole misurare e perché (evitare eventi "per curiosità" non collegati a una domanda di business reale).</li>
+                <li>Richiamare <code>trackEvent(eventName, category, label)</code> sull'interazione desiderata.</li>
+                <li>Aggiungere la nuova voce alla tabella degli eventi in Fase 6 di questo documento, mantenendo coerenza con il principio "nessun dato personale, solo interazione anonima".</li>
+            </ol>
+
+            <h3>Verificare l'assenza di memory leak su nuovi contenuti multimediali</h3>
+            <ol class="reg">
+                <li>Ogni nuovo asset video deve seguire il pattern hover-preview silenziato + audio solo su Lightbox già implementato in Fase 5.</li>
+                <li>Alla chiusura di qualunque modale multimediale, verificare che il nodo venga effettivamente distrutto (<code>innerHTML = ""</code>) e non semplicemente nascosto via CSS.</li>
             </ol>
         </section>
 
@@ -731,13 +785,15 @@
         <section class="doc-section" id="chiusura" style="border-bottom: none;">
             <div class="section-tag">14 · Chiusura</div>
             <h2>Stato del progetto e validità del documento</h2>
-            <p>Sistema operativo, collaudato e in produzione, distribuito via GitHub Pages. Architettura pensata per essere scalabile a future integrazioni senza richiedere una riscrittura strutturale.</p>
+            <p>Sistema operativo, collaudato e in produzione, distribuito via GitHub Pages. Architettura pensata per essere scalabile a future integrazioni (nuove sezioni, nuovi effetti Canvas FX, nuovi eventi di tracciamento) senza richiedere una riscrittura strutturale.</p>
 
             <div class="stamp-final">
                 <span class="ok">✓</span> Separazione dati/presentazione: verificata<br>
                 <span class="ok">✓</span> Gestione memoria (Canvas FX, audio, video): verificata<br>
-                <span class="ok">✓</span> Compliance GDPR &amp; ePrivacy (Consent Mode v2): verificata<br>
-                <span class="ok">✓</span> Compatibilità ATS del CV: verificata
+                <span class="ok">✓</span> Tracciamento comportamentale privo di PII: verificata<br>
+                <span class="ok">✓</span> Compliance ePrivacy &amp; Google Consent Mode v2: verificata<br>
+                <span class="ok">✓</span> Compatibilità ATS del CV: verificata<br>
+                <span class="ok">✓</span> Clausola GDPR presente su CV: verificata
             </div>
         </section>
 
@@ -749,7 +805,7 @@
 </footer>
 
 <script>
-    // Scrollspy leggero per l'indice laterale
+    // Scrollspy leggero per l'indice laterale, coerente con la Fase 3 del documento stesso.
     const sections = document.querySelectorAll('section.doc-section');
     const links = document.querySelectorAll('.toc a');
 
