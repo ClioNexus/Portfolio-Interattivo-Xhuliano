@@ -8,8 +8,14 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
+  /* Consent Mode v2: nessuno storage/cookie di analytics viene impostato
+     finché l'utente non accetta esplicitamente dal banner in fondo alla pagina. */
+  gtag('consent', 'default', {
+    'analytics_storage': 'denied'
+  });
+
   gtag('config', 'G-7P0B5N12MF');
-  
+
   // Funzione globale per il tracciamento degli eventi custom
   window.trackEvent = function(eventName, eventCategory, eventLabel) {
     if (typeof gtag === 'function') {
@@ -28,14 +34,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
 <style>
-  /* =========================================================
-     TEMA: APPLE IOS GLASS + 3D VANTA + DYNAMIC CANVAS FX
-     ========================================================= */
   :root {
     --bg-main: #0a0807;    
     --bg-hover: rgba(255, 255, 255, 0.05); 
     
-    /* Firme Cromatiche */
     --c-profilo: #a855f7;       
     --c-esperienza: #3b82f6;    
     --c-progetti: #10b981;      
@@ -96,7 +98,6 @@
   a { text-decoration: none; color: inherit; }
   :focus-visible { outline: 2px solid var(--text-peach-bright); outline-offset: 3px; }
 
-  /* ---------------- LAYOUT & SIDEBAR ---------------- */
   .layout { display: grid; grid-template-columns: 300px 1fr; min-height: 100vh; }
 
   .sidebar {
@@ -159,7 +160,6 @@
 
   .hero { padding-top: 10px; margin-bottom: 80px; }
   
-  /* TYPEWRITER TERMINAL STYLE */
   .terminal-typewriter {
     font-family: var(--font-mono);
     color: var(--ui-accent);
@@ -182,7 +182,6 @@
   }
   @keyframes terminal-blink { 50% { opacity: 0; } }
 
-  /* ---------------- ANIMAZIONE INGRESSO NOME E SOTTOTITOLI ---------------- */
   .hero h1 { 
     font-family: var(--font-display); 
     font-size: clamp(2.5rem, 5vw, 3.8rem); 
@@ -202,7 +201,6 @@
     100% { opacity: 1; transform: translateY(0) scale(1) skewX(0deg); color: #ffffff; text-shadow: none; filter: blur(0px); }
   }
 
-  /* NUOVO BADGE DI BENVENUTO (HUB) */
   .welcome-container {
     opacity: 0;
     transform: translateY(10px);
@@ -401,6 +399,36 @@
   #close-viewer:hover { color: var(--ui-accent); }
   .lightbox-media { max-width: 90vw; max-height: 90vh; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); object-fit: contain; }
 
+  /* ---------------- COOKIE CONSENT BANNER ---------------- */
+  #consent-banner {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 20000;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 18px;
+    padding: 18px 24px; background: rgba(8, 10, 15, 0.85);
+    backdrop-filter: blur(14px) saturate(150%); -webkit-backdrop-filter: blur(14px) saturate(150%);
+    border-top: 1px solid rgba(56, 189, 248, 0.25);
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.6);
+    transform: translateY(110%); transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  #consent-banner.show { transform: translateY(0); }
+  #consent-banner p {
+    margin: 0; max-width: 560px; font-size: 0.85rem; color: var(--text-glass-body); line-height: 1.5;
+  }
+  #consent-banner a { color: var(--ui-accent); text-decoration: underline; }
+  .consent-actions { display: flex; gap: 10px; flex-shrink: 0; }
+  .consent-btn {
+    font-family: var(--font-mono); font-size: 0.78rem; padding: 10px 20px; border-radius: 8px;
+    cursor: pointer; border: 1px solid var(--ios-border); transition: all 0.25s; letter-spacing: 0.03em;
+  }
+  .consent-btn.accept { background: var(--ui-accent); color: #04121a; border-color: var(--ui-accent); font-weight: 600; }
+  .consent-btn.accept:hover { box-shadow: 0 0 20px rgba(56, 189, 248, 0.5); transform: translateY(-1px); }
+  .consent-btn.reject { background: transparent; color: var(--text-muted); }
+  .consent-btn.reject:hover { color: #ffffff; border-color: rgba(255,255,255,0.3); }
+  #manage-cookies-link { cursor: pointer; }
+  @media (max-width: 700px) {
+    #consent-banner { flex-direction: column; align-items: stretch; text-align: center; padding: 16px 20px 20px; }
+    .consent-actions { justify-content: center; }
+  }
+
   @media (max-width: 880px) {
     .layout { grid-template-columns: 1fr; }
     .sidebar { position: relative; height: auto; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); padding-bottom: 40px;}
@@ -449,6 +477,9 @@
         <a href="mailto:giuliocesare9236@gmail.com">giuliocesare9236@gmail.com</a>
         <a href="https://www.linkedin.com/in/julian-hysenji-b3a094216" target="_blank" rel="noopener">linkedin.com/in/julian-hysenji</a>
         <span>Bergamo (BG)</span>
+        <!-- Aggiunta Link Privacy di Claude -->
+        <a href="informativa-privacy.html">Informativa Privacy</a>
+        <a href="javascript:void(0)" id="manage-cookies-link">Gestisci cookie</a>
       </div>
     </div>
   </aside>
@@ -528,12 +559,73 @@
   </div>
 </div>
 
+<!-- Aggiunta Banner Cookie di Claude -->
+<div id="consent-banner" role="dialog" aria-live="polite" aria-label="Preferenze cookie">
+  <p>Questo sito utilizza Google Analytics in forma aggregata, senza raccogliere dati identificativi, per capire quali sezioni del portfolio generano più interesse. I cookie statistici vengono attivati solo con il tuo consenso. Maggiori dettagli nell'<a href="informativa-privacy.html">informativa privacy</a>.</p>
+  <div class="consent-actions">
+    <button class="consent-btn reject" id="consent-reject">Rifiuta</button>
+    <button class="consent-btn accept" id="consent-accept">Accetta</button>
+  </div>
+</div>
+
+<!-- SCRIPT -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.waves.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.fog.min.js"></script>
 
 <script>
-// Inizializzazione Vanta
+/* ==============================================
+   COOKIE CONSENT GATE (Google Consent Mode v2)
+   GA4 non memorizza alcun cookie/identificatore
+   finché l'utente non clicca "Accetta".
+   ============================================== */
+(function () {
+  const CONSENT_KEY = 'cookie_consent_analytics';
+  const banner = document.getElementById('consent-banner');
+  const acceptBtn = document.getElementById('consent-accept');
+  const rejectBtn = document.getElementById('consent-reject');
+  const manageLink = document.getElementById('manage-cookies-link');
+
+  function grantConsent() {
+    if (typeof gtag === 'function') {
+      gtag('consent', 'update', { 'analytics_storage': 'granted' });
+    }
+    localStorage.setItem(CONSENT_KEY, 'granted');
+    hideBanner();
+  }
+
+  function denyConsent() {
+    if (typeof gtag === 'function') {
+      gtag('consent', 'update', { 'analytics_storage': 'denied' });
+    }
+    localStorage.setItem(CONSENT_KEY, 'denied');
+    hideBanner();
+  }
+
+  function showBanner() {
+    if (banner) banner.classList.add('show');
+  }
+
+  function hideBanner() {
+    if (banner) banner.classList.remove('show');
+  }
+
+  const storedChoice = localStorage.getItem(CONSENT_KEY);
+  if (storedChoice === 'granted') {
+    grantConsent();
+  } else if (storedChoice === 'denied') {
+    // scelta già registrata, il banner resta nascosto
+  } else {
+    // prima visita: nessuna scelta salvata, mostra il banner
+    setTimeout(showBanner, 600);
+  }
+
+  if (acceptBtn) acceptBtn.addEventListener('click', grantConsent);
+  if (rejectBtn) rejectBtn.addEventListener('click', denyConsent);
+  if (manageLink) manageLink.addEventListener('click', showBanner);
+})();
+
+// INIZIALIZZAZIONE VANTA
 VANTA.WAVES({ 
   el: "#vanta-canvas", 
   mouseControls: true, 
@@ -981,7 +1073,7 @@ CERTIFICAZIONI.forEach((c, i) => {
 });
 
 // ==============================================
-// MOTORE CANVAS FX (LOGICA ESPANSA)
+// MOTORE CANVAS FX
 // ==============================================
 
 const canvas = document.getElementById('fx-canvas');
