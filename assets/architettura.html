@@ -407,6 +407,7 @@
             <li><a href="#fase6">Fase 6 — Tracciamento e Compliance</a></li>
             <li><a href="#fase7">Fase 7 — Ponte CV↔Portfolio</a></li>
             <li><a href="#fase8">Fase 8 — ePrivacy &amp; Consent Mode</a></li>
+            <li><a href="#fase9">Fase 9 — Telemetria Avanzata</a></li>
             <li><a href="#changelog">App. A — Registro Commit</a></li>
             <li><a href="#glossario">App. B — Glossario Tecnico</a></li>
             <li><a href="#manutenzione">App. C — Guida alla Manutenzione</a></li>
@@ -686,9 +687,38 @@
             <p style="color: var(--text-faint); font-size: 13px;"><em>Nota di continuità: qualunque nuovo evento aggiunto in futuro tramite <code>trackEvent()</code> eredita automaticamente il gate di consenso qui descritto — non richiede alcuna modifica alla logica di Consent Mode.</em></p>
         </section>
 
+        <!-- ================= FASE 9 ================= -->
+        <section class="doc-section" id="fase9">
+            <div class="section-tag">11 · Fase 9</div>
+            <h2>Implementazione Telemetria Avanzata e Riconoscimento Sessioni (Telegram Radar v2.0)</h2>
+            <p>Evoluzione del sistema di notifica webhook di base (Ping) in un motore di telemetria intelligente. L'obiettivo è fornire un report istantaneo su Telegram contenente dati arricchiti sul visitatore, distinguendo un nuovo accesso da un utente di ritorno, e tracciando la posizione geografica stimata e il tipo di dispositivo.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>add UUID generation and localStorage persistence for returning users</b></div>
+            <p><strong>Step A: Generazione Identificativo (Lato Client)</strong><br>
+            Al caricamento del portfolio, JavaScript verifica se nel <code>localStorage</code> del browser esiste già un "Visitor ID" univoco anonimo.</p>
+            <ul>
+                <li><em>Se NON esiste:</em> Genera una stringa alfanumerica casuale, la salva nel browser e contrassegna la sessione come "Nuovo Visitatore".</li>
+                <li><em>Se ESISTE:</em> Recupera l'ID esistente, riconoscendo che si tratta di un "Utente di Ritorno".</li>
+            </ul>
+            <p>Il Frontend invia una chiamata <code>fetch()</code> al server Flask passando questo ID, i dati del browser (User-Agent) e la sorgente (Referer).</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>integrate IP geolocation lookup and SQLite tracking in Flask backend</b></div>
+            <p><strong>Step B: Elaborazione Dati (Lato Server)</strong><br>
+            L'endpoint <code>/notify-portfolio</code> riceve il payload, estrae l'indirizzo IP della richiesta in ingresso e interroga un servizio di Geo-IP Lookup per tradurre l'IP in coordinate di massima (Città, Nazione). Si connette poi al database <code>secure_docs.db</code> per incrementare il contatore totale delle visualizzazioni del CV.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>format and dispatch structured telemetry report via Telegram API</b></div>
+            <p><strong>Step C: Formattazione e Alert (Notifica)</strong><br>
+            Il backend compila un report strutturato (Markdown) con i dati raccolti (status utente, visualizzazioni totali, posizione stimata, dispositivo e sorgente) e lo inoltra tramite POST all'API di Telegram, recapitandolo nella chat privata del Titolare.</p>
+
+            <div class="callout legal">
+                <h4>Considerazioni sulla Sicurezza e GDPR</h4>
+                <p>L'identificativo nel <code>localStorage</code> è una stringa completamente anonima (es. <code>user_8f4b2a</code>) e non contiene dati PII. L'indirizzo IP non viene storicizzato in chiaro a lungo termine nel database, ma processato in RAM "al volo" solo per estrarre la città e inviare il ping su Telegram. Il sistema opera in modo silente tramite chiamate asincrone protette da policy CORS per impedire abusi dell'endpoint da domini terzi.</p>
+            </div>
+        </section>
+
         <!-- ================= APPENDICE A — CHANGELOG ================= -->
         <section class="doc-section" id="changelog">
-            <div class="section-tag">11 · Appendice A</div>
+            <div class="section-tag">12 · Appendice A</div>
             <h2>Registro completo dei commit</h2>
             <p>Cronologia integrale, in ordine di implementazione, come riferimento rapido per la manutenzione futura.</p>
             <table>
@@ -724,6 +754,9 @@
                     <tr><td class="mono">21</td><td><span class="pill pill-fix">fix</span></td><td>prevent phone number line-break in CV contact section</td><td>Fase 7</td></tr>
                     <tr><td class="mono">22</td><td><span class="pill pill-docs">docs</span></td><td>refine and polish wording for Phase 8 Consent Mode documentation</td><td>Fase 8</td></tr>
                     <tr><td class="mono">23</td><td><span class="pill pill-feat">feat</span></td><td>merge mobile UI fixes and Google Consent Mode v2 integration</td><td>Fase 2/8</td></tr>
+                    <tr><td class="mono">24</td><td><span class="pill pill-feat">feat</span></td><td>add UUID generation and localStorage persistence for returning users</td><td>Fase 9</td></tr>
+                    <tr><td class="mono">25</td><td><span class="pill pill-feat">feat</span></td><td>integrate IP geolocation lookup and SQLite tracking in Flask backend</td><td>Fase 9</td></tr>
+                    <tr><td class="mono">26</td><td><span class="pill pill-feat">feat</span></td><td>format and dispatch structured telemetry report via Telegram API</td><td>Fase 9</td></tr>
                 </tbody>
             </table>
             <p style="color: var(--text-faint); font-size: 13px;"><em>Nota: la tabella non riporta hash o timestamp poiché non presenti nella cronologia fornita in origine. In caso di repository Git effettivo, si consiglia di integrare questa tabella con l'output di <code>git log --pretty=format:"%h|%ad|%s" --date=short</code> per avere tracciabilità temporale completa.</em></p>
@@ -731,7 +764,7 @@
 
         <!-- ================= APPENDICE B — GLOSSARIO ================= -->
         <section class="doc-section" id="glossario">
-            <div class="section-tag">12 · Appendice B</div>
+            <div class="section-tag">13 · Appendice B</div>
             <h2>Glossario tecnico</h2>
             <p>Utile per spiegare il progetto a un interlocutore non tecnico senza perdere precisione.</p>
             <dl class="glossary">
@@ -766,7 +799,7 @@
 
         <!-- ================= APPENDICE C — MANUTENZIONE ================= -->
         <section class="doc-section" id="manutenzione">
-            <div class="section-tag">13 · Appendice C</div>
+            <div class="section-tag">14 · Appendice C</div>
             <h2>Guida rapida alla manutenzione futura</h2>
 
             <h3>Aggiungere una nuova esperienza, progetto o certificazione</h3>
@@ -794,7 +827,7 @@
 
         <!-- ================= CHIUSURA ================= -->
         <section class="doc-section" id="chiusura" style="border-bottom: none;">
-            <div class="section-tag">14 · Chiusura</div>
+            <div class="section-tag">15 · Chiusura</div>
             <h2>Stato del progetto e validità del documento</h2>
             <p>Sistema operativo, collaudato e in produzione, distribuito via GitHub Pages. Architettura pensata per essere scalabile a future integrazioni (nuove sezioni, nuovi effetti Canvas FX, nuovi eventi di tracciamento) senza richiedere una riscrittura strutturale.</p>
 
@@ -803,6 +836,7 @@
                 <span class="ok">✓</span> Gestione memoria (Canvas FX, audio, video): verificata<br>
                 <span class="ok">✓</span> Tracciamento comportamentale privo di PII: verificata<br>
                 <span class="ok">✓</span> Compliance ePrivacy &amp; Google Consent Mode v2: verificata<br>
+                <span class="ok">✓</span> Telemetria real-time e riconoscimento sessioni anonime: verificata<br>
                 <span class="ok">✓</span> Compatibilità ATS del CV: verificata<br>
                 <span class="ok">✓</span> Clausola GDPR presente su CV: verificata
             </div>
