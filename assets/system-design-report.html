@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Design Report N. 2026-XH-01 — Ecosistema Digitale Portfolio &amp; CV Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --bg: #0a0a0d;
+        --bg-raised: #121317;
+        --bg-inset: #0e0f13;
+        --surface: #17181d;
+        --border: rgba(255,255,255,0.08);
+        --border-strong: rgba(255,255,255,0.16);
+        --text: #e7e7ea;
+        --text-muted: #8d8f9a;
+        --text-faint: #5c5e69;
+        --amber: #e8a33d;
+        --amber-dim: rgba(232,163,61,0.14);
+        --cyan: #4fd6d0;
+        --cyan-dim: rgba(79,214,208,0.12);
+        --red: #e8615f;
+        --green: #6fce8f;
+        --font-display: "Playfair Display", serif;
+        --font-head: "Space Grotesk", sans-serif;
+        --font-mono: "IBM Plex Mono", monospace;
+        --font-sans: "IBM Plex Sans", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        margin: 0;
+        background:
+            radial-gradient(ellipse 1200px 600px at 15% -10%, rgba(232,163,61,0.05), transparent),
+            radial-gradient(ellipse 1000px 700px at 100% 20%, rgba(79,214,208,0.04), transparent),
+            var(--bg);
+        color: var(--text);
+        font-family: var(--font-sans);
+        line-height: 1.75;
+        font-size: 16px;
+    }
+
+    /* ---------- Layout shell ---------- */
+    .shell {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    /* ---------- Sidebar / indice fascicolo ---------- */
+    .toc {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        border-right: 1px solid var(--border);
+        padding: 32px 20px 40px;
+        background: var(--bg-inset);
+    }
+    .toc-stamp {
+        font-family: var(--font-mono);
+        font-size: 10.5px;
+        letter-spacing: 0.14em;
+        color: var(--amber);
+        border: 1px solid var(--border-strong);
+        padding: 8px 10px;
+        border-radius: 3px;
+        margin-bottom: 26px;
+        line-height: 1.6;
+        text-transform: uppercase;
+    }
+    .toc-stamp b { color: var(--text); }
+    .toc h4 {
+        font-family: var(--font-mono);
+        font-size: 10.5px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--text-faint);
+        margin: 22px 0 8px;
+    }
+    .toc ol {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        counter-reset: toc-counter;
+    }
+    .toc li { counter-increment: toc-counter; margin-bottom: 2px; }
+    .toc a {
+        display: flex;
+        gap: 8px;
+        text-decoration: none;
+        color: var(--text-muted);
+        font-size: 13.5px;
+        padding: 6px 8px;
+        border-radius: 4px;
+        font-family: var(--font-sans);
+        transition: background 0.15s, color 0.15s;
+    }
+    .toc a::before {
+        content: counter(toc-counter, decimal-leading-zero);
+        font-family: var(--font-mono);
+        color: var(--text-faint);
+        font-size: 11px;
+        padding-top: 1px;
+    }
+    .toc a:hover, .toc a.active {
+        background: var(--surface);
+        color: var(--amber);
+    }
+    .toc a.active::before { color: var(--amber); }
+
+    /* ---------- Main column ---------- */
+    main { padding: 0 0 100px; min-width: 0; }
+
+    .cover {
+        padding: 64px 72px 44px;
+        border-bottom: 1px solid var(--border);
+        position: relative;
+    }
+    .cover::after {
+        content: "";
+        position: absolute;
+        top: 0; right: 0; bottom: 0;
+        width: 40%;
+        background: linear-gradient(120deg, transparent, rgba(232,163,61,0.035));
+        pointer-events: none;
+    }
+    .protocollo-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        font-family: var(--font-mono);
+        font-size: 11.5px;
+        color: var(--text-faint);
+        letter-spacing: 0.06em;
+        margin-bottom: 34px;
+        text-transform: uppercase;
+    }
+    .badge-stato {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--green);
+        border: 1px solid rgba(111,206,143,0.35);
+        background: rgba(111,206,143,0.08);
+        padding: 4px 10px;
+        border-radius: 20px;
+        letter-spacing: 0.08em;
+    }
+    .badge-stato::before { content: "● "; }
+
+    .kicker {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--cyan);
+        margin-bottom: 14px;
+    }
+    h1.title {
+        font-family: var(--font-display);
+        font-style: italic;
+        font-weight: 700;
+        font-size: 2.7rem;
+        line-height: 1.2;
+        margin: 0 0 18px;
+        color: #fbfbfc;
+        max-width: 14ch;
+    }
+    .subtitle {
+        color: var(--text-muted);
+        font-size: 1.05rem;
+        max-width: 60ch;
+        margin-bottom: 34px;
+    }
+
+    .meta-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1px;
+        background: var(--border);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    .meta-cell {
+        background: var(--bg-raised);
+        padding: 14px 16px;
+    }
+    .meta-cell .label {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-faint);
+        margin-bottom: 6px;
+    }
+    .meta-cell .value {
+        font-size: 13.5px;
+        color: var(--text);
+        font-weight: 500;
+    }
+
+    /* ---------- Sections ---------- */
+    section.doc-section {
+        padding: 54px 72px;
+        border-bottom: 1px solid var(--border);
+        scroll-margin-top: 20px;
+    }
+    section.doc-section:target { background: var(--bg-inset); }
+
+    .section-tag {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--amber);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .section-tag::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+    }
+
+    h2 {
+        font-family: var(--font-head);
+        font-weight: 600;
+        font-size: 1.65rem;
+        color: #fbfbfc;
+        margin: 0 0 24px;
+        letter-spacing: -0.01em;
+    }
+    h3 {
+        font-family: var(--font-head);
+        font-weight: 600;
+        font-size: 1.15rem;
+        color: var(--cyan);
+        margin: 34px 0 12px;
+    }
+    h4 {
+        font-family: var(--font-sans);
+        font-weight: 600;
+        font-size: 0.98rem;
+        color: var(--text);
+        margin: 22px 0 8px;
+    }
+
+    p { color: #cfd0d6; margin: 0 0 16px; max-width: 78ch; }
+    strong { color: var(--text); font-weight: 600; }
+    em { color: var(--text-muted); }
+
+    ul, ol.reg { margin: 0 0 20px; padding-left: 22px; max-width: 76ch; }
+    li { color: #cfd0d6; margin-bottom: 10px; }
+
+    code {
+        font-family: var(--font-mono);
+        background: var(--bg-inset);
+        border: 1px solid var(--border);
+        padding: 2px 7px;
+        border-radius: 4px;
+        font-size: 0.85em;
+        color: var(--amber);
+    }
+
+    .commit-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-family: var(--font-mono);
+        font-size: 12.5px;
+        background: var(--bg-inset);
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--cyan);
+        padding: 9px 14px;
+        border-radius: 4px;
+        color: var(--text-muted);
+        margin: 4px 0 18px;
+    }
+    .commit-chip b { color: var(--text); font-weight: 500; }
+    .commit-chip .type-feat { color: var(--green); }
+    .commit-chip .type-style { color: var(--cyan); }
+    .commit-chip .type-init { color: var(--amber); }
+    .commit-chip .type-refactor { color: #c792ea; }
+    .commit-chip .type-docs { color: #82aaff; }
+    .commit-chip .type-fix { color: var(--red); }
+
+    .callout {
+        border: 1px solid var(--border-strong);
+        border-left: 3px solid var(--amber);
+        background: var(--amber-dim);
+        padding: 18px 22px;
+        border-radius: 6px;
+        margin: 24px 0;
+        max-width: 76ch;
+    }
+    .callout.legal { border-left-color: var(--green); background: rgba(111,206,143,0.06); }
+    .callout.legal h4 { color: var(--green); }
+    .callout h4 { margin-top: 0; color: var(--amber); font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
+    .callout p:last-child { margin-bottom: 0; }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 18px 0 30px;
+        font-size: 13.5px;
+    }
+    th, td {
+        text-align: left;
+        padding: 11px 14px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: top;
+    }
+    th {
+        font-family: var(--font-mono);
+        font-size: 10.5px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-faint);
+        border-bottom: 1px solid var(--border-strong);
+    }
+    td { color: #cfd0d6; }
+    td.mono, th.mono { font-family: var(--font-mono); font-size: 12px; }
+    tr:hover td { background: rgba(255,255,255,0.015); }
+    .pill {
+        display: inline-block;
+        font-family: var(--font-mono);
+        font-size: 10.5px;
+        padding: 2px 8px;
+        border-radius: 20px;
+        letter-spacing: 0.04em;
+    }
+    .pill-feat { background: rgba(111,206,143,0.12); color: var(--green); }
+    .pill-style { background: rgba(79,214,208,0.12); color: var(--cyan); }
+    .pill-init { background: rgba(232,163,61,0.14); color: var(--amber); }
+    .pill-refactor { background: rgba(199,146,234,0.12); color: #c792ea; }
+    .pill-docs { background: rgba(130,170,255,0.12); color: #82aaff; }
+    .pill-fix { background: rgba(232,97,95,0.12); color: var(--red); }
+    .pill-no { background: rgba(232,97,95,0.12); color: var(--red); }
+    .pill-yes { background: rgba(111,206,143,0.12); color: var(--green); }
+
+    .glossary dt {
+        font-family: var(--font-mono);
+        color: var(--cyan);
+        font-size: 13.5px;
+        margin-top: 16px;
+    }
+    .glossary dd { margin: 4px 0 0; color: #cfd0d6; max-width: 74ch; }
+
+    .stamp-final {
+        margin: 40px 0 0;
+        padding: 24px 28px;
+        border: 1px dashed var(--border-strong);
+        border-radius: 6px;
+        font-family: var(--font-mono);
+        font-size: 12.5px;
+        color: var(--text-muted);
+        line-height: 2;
+    }
+    .stamp-final .ok { color: var(--green); }
+
+    footer.doc-footer {
+        padding: 40px 72px 60px;
+        color: var(--text-faint);
+        font-family: var(--font-mono);
+        font-size: 11.5px;
+        text-align: center;
+        letter-spacing: 0.04em;
+    }
+
+    @media (max-width: 980px) {
+        .shell { grid-template-columns: 1fr; }
+        .toc { position: relative; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+        .cover, section.doc-section, footer.doc-footer { padding-left: 26px; padding-right: 26px; }
+        .meta-grid { grid-template-columns: 1fr 1fr; }
+    }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+    <!-- ================= SIDEBAR / INDICE ================= -->
+    <nav class="toc" id="toc">
+        <div class="toc-stamp">
+            SYSTEM DESIGN REPORT N. 2026-XH-01<br>
+            <b>CLASSIFICAZIONE:</b> Documentazione Tecnica Interna<br>
+            <b>USO:</b> Manutenzione &amp; Difesa Procedurale
+        </div>
+
+        <h4>Indice del Documento</h4>
+        <ol>
+            <li><a href="#executive-summary">Executive Summary</a></li>
+            <li><a href="#filosofia">Filosofia Architetturale</a></li>
+            <li><a href="#fase1">Fase 1 — Fondamenta UI/UX</a></li>
+            <li><a href="#fase2">Fase 2 — Motori Grafici</a></li>
+            <li><a href="#fase3">Fase 3 — Interattività DOM</a></li>
+            <li><a href="#fase4">Fase 4 — Database e Rendering</a></li>
+            <li><a href="#fase5">Fase 5 — Documenti e Multimedia</a></li>
+            <li><a href="#fase6">Fase 6 — Tracciamento e Compliance</a></li>
+            <li><a href="#fase7">Fase 7 — Ponte CV↔Portfolio</a></li>
+            <li><a href="#fase8">Fase 8 — ePrivacy &amp; Consent Mode</a></li>
+            <li><a href="#fase9">Fase 9 — Telemetria Avanzata</a></li>
+            <li><a href="#fase10">Fase 10 — Build, Sicurezza &amp; AI</a></li>
+            <li><a href="#changelog">App. A — Registro Commit</a></li>
+            <li><a href="#glossario">App. B — Glossario Tecnico</a></li>
+            <li><a href="#manutenzione">App. C — Guida alla Manutenzione</a></li>
+            <li><a href="#chiusura">Chiusura e Validità</a></li>
+        </ol>
+    </nav>
+
+    <!-- ================= MAIN ================= -->
+    <main>
+
+        <div class="cover">
+            <div class="protocollo-row">
+                <span>Protocollo Tecnico / Versionamento Architetturale</span>
+                <span class="badge-stato">Sistema in produzione</span>
+            </div>
+            <div class="kicker">Documento Architetturale &amp; Registro di Sviluppo</div>
+            <h1 class="title">Ecosistema Digitale: Portfolio Interattivo &amp; CV Tracker</h1>
+            <p class="subtitle">Manuale operativo, registro storico delle implementazioni e documento di tutela procedurale relativo al sistema unificato Portfolio + Curriculum, redatto a partire dalla cronologia completa dei commit di sviluppo.</p>
+
+            <div class="meta-grid">
+                <div class="meta-cell">
+                    <div class="label">Autore</div>
+                    <div class="value">Xhuliano Hysenji</div>
+                </div>
+                <div class="meta-cell">
+                    <div class="label">Ruolo di riferimento</div>
+                    <div class="value">IT Support &amp; Back-Office / Cloud &amp; Data Ops</div>
+                </div>
+                <div class="meta-cell">
+                    <div class="label">Stack tecnologico</div>
+                    <div class="value">HTML5 · CSS3 · JS Vanilla · Three.js · Vanta.js · GA4</div>
+                </div>
+                <div class="meta-cell">
+                    <div class="label">Hosting</div>
+                    <div class="value">GitHub Pages</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 1. EXECUTIVE SUMMARY ================= -->
+        <section class="doc-section" id="executive-summary">
+            <div class="section-tag">01 · Executive Summary</div>
+            <h2>Scopo e valore del documento</h2>
+            <p>Questo fascicolo ricostruisce, commit dopo commit, l'intera ingegnerizzazione del sistema "Portfolio + Curriculum": dalle fondamenta HTML fino all'infrastruttura di analisi comportamentale basata su Google Analytics 4. Non è un semplice registro di modifiche, ma uno strumento a triplice funzione:</p>
+            <ul>
+                <li><strong>Manuale operativo</strong> — per intervenire sul codice in futuro senza dover ricostruire a memoria le scelte progettuali.</li>
+                <li><strong>Manifesto tecnico</strong> — da portare a un colloquio per dimostrare, con cognizione di causa, il perché di ogni scelta architetturale, non solo il come.</li>
+                <li><strong>Documento di tutela</strong> — per rispondere in modo puntuale e verificabile a qualsiasi domanda su cosa viene tracciato, perché, e con quale base giuridica, in particolare in sede di colloquio o di eventuale contestazione privacy.</li>
+            </ul>
+            <p>Il progetto trasforma un portfolio statico in un <strong>funnel di recruitment interattivo, tracciabile e scalabile</strong>: ogni scelta tecnica — dalla tipografia al motore di rendering Canvas, fino ai parametri UTM — è stata presa in funzione di questo obiettivo, non per mero esercizio stilistico.</p>
+        </section>
+
+        <!-- ================= 2. FILOSOFIA ================= -->
+        <section class="doc-section" id="filosofia">
+            <div class="section-tag">02 · Principi Guida</div>
+            <h2>Filosofia architetturale</h2>
+            <p>Tre principi attraversano l'intero sviluppo e giustificano scelte apparentemente "old style" in un'epoca dominata dai framework:</p>
+            <h4>1. Vanilla-first</h4>
+            <p>Nessun framework pesante (React, Angular, Vue). L'assenza di un Virtual DOM e di una toolchain di build garantisce un Time-To-Interactive praticamente istantaneo — un fattore critico quando l'utente reale è un selezionatore che dedica in media pochi secondi alla prima impressione. In secondo luogo, mostrare padronanza del DOM nativo comunica una competenza "core" spesso più apprezzata, in ruoli IT Support/Back-Office, rispetto alla dimestichezza con una libreria pre-confezionata.</p>
+            <h4>2. Separazione dati/presentazione</h4>
+            <p>Ogni contenuto (esperienze, progetti, certificazioni) vive in strutture JSON isolate dalla logica di rendering. Aggiungere un titolo di studio non richiede toccare l'HTML: si compila un oggetto e il motore di rendering fa il resto. Questo riduce drasticamente il rischio di introdurre bug durante gli aggiornamenti futuri.</p>
+            <h4>3. Osservabilità del comportamento, non dell'identità</h4>
+            <p>Il sistema è stato progettato per rispondere alla domanda "quali parti del profilo generano interesse concreto?", non "chi è la persona che sta guardando?". Questa distinzione è il cardine dell'intera Fase 6 ed è la ragione per cui l'infrastruttura di tracciamento può essere difesa senza ambiguità in sede di colloquio o di audit.</p>
+        </section>
+
+        <!-- ================= FASE 1 ================= -->
+        <section class="doc-section" id="fase1">
+            <div class="section-tag">03 · Fase 1</div>
+            <h2>Fondamenta Visive (UI/UX)</h2>
+
+            <div class="commit-chip"><span class="type-init">init</span><b>project scaffolding with HTML5 and base meta tags</b></div>
+            <p>Costruzione dello scheletro in HTML5 puro, senza dipendenze di build. Meta tag di viewport e charset impostati da subito per garantire resa corretta su mobile fin dal primo render, requisito non negoziabile dato che una quota rilevante del traffico da QR code (vedi Fase 7) proviene da smartphone.</p>
+
+            <div class="commit-chip"><span class="type-style">style</span><b>import Google Fonts (Space Grotesk, IBM Plex Sans/Mono, Playfair Display)</b></div>
+            <p>Scelta tipografica deliberata e non estetica fine a se stessa: <code>IBM Plex Mono</code> richiama il mondo dell'amministrazione di sistema e del terminale Linux, rafforzando in modo implicito il posizionamento IT del candidato ancora prima che il recruiter legga una riga di testo. <code>IBM Plex Sans</code> garantisce leggibilità alle descrizioni discorsive. <code>Playfair Display</code> viene riservato ai titoli, per introdurre un contrappunto editoriale che eviti l'effetto "dashboard fredda".</p>
+
+            <div class="commit-chip"><span class="type-style">style</span><b>setup CSS global variables and iOS Glassmorphism theme</b></div>
+            <p>Interfaccia costruita su variabili CSS globali (<code>:root</code>), trasparenze e <code>backdrop-filter: blur()</code>, con palette scura nativa. Il Glassmorphism in stile iOS riduce l'affaticamento visivo su sessioni prolungate e restituisce una percezione di prodotto curato, coerente con ruoli che richiedono attenzione al dettaglio operativo.</p>
+        </section>
+
+        <!-- ================= FASE 2 ================= -->
+        <section class="doc-section" id="fase2">
+            <div class="section-tag">04 · Fase 2</div>
+            <h2>Motori Grafici e Layout Strutturale</h2>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>integrate Three.js and Vanta.js (Waves &amp; Fog) dependencies</b></div>
+            <p>Integrazione di ambienti 3D reattivi e a basso impatto prestazionale: <code>Vanta.Waves</code> per lo sfondo principale, <code>Vanta.Fog</code> per il pannello laterale. La scelta comunica competenza di front-end integration avanzata senza dover scrivere un motore WebGL da zero in questa fase — la componente Canvas proprietaria arriva più avanti, in Fase 4.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>build sidebar profile card with pulsing status dot and tooltips</b></div>
+            <p>Colonna di navigazione fissa (<code>position: sticky</code>) che simula visivamente una console operativa, con indicatore di stato "online" pulsante. I tag delle competenze tecniche sono corredati di tooltip esplicativi, pensati per un pubblico misto: recruiter HR non specializzati e tecnici hiring manager. Questo doppio livello di lettura è una scelta di accessibilità comunicativa, non solo grafica.</p>
+
+            <div class="commit-chip"><span class="type-style">style</span><b>apply default illuminated state to sidebar menu buttons for mobile/touch devices</b></div>
+            <p>Ottimizzazione UX specifica per smartphone: in assenza dell'evento <code>hover</code> sui dispositivi touch, i bottoni del menu laterale acquisiscono uno stato di illuminazione di default (sfondo e bordo visibili) al di sotto della soglia di 880px, segnalando chiaramente l'interattività dell'elemento.</p>
+
+            <h4>Sistema di colori tematici per sezione</h4>
+            <p>Ogni macro-sezione possiede una propria "firma cromatica" definita tramite variabile CSS dedicata: <code>--c-profilo</code> (viola), <code>--c-esperienza</code> (blu), <code>--c-progetti</code> (verde), <code>--c-certificazioni</code> (ciano), <code>--c-formazione</code> (indaco). La variabile locale <code>--accent</code> di ogni <code>&lt;section&gt;</code> eredita il colore corrispondente e lo propaga automaticamente a bordi, ombreggiature, timeline e — cosa più rilevante — al motore Canvas FX del pannello di dettaglio (Fase 4), così che l'intera esperienza visiva di una voce resti coerente con la categoria a cui appartiene, senza dover hard-codare colori in più punti del codice.</p>
+        </section>
+
+        <!-- ================= FASE 3 ================= -->
+        <section class="doc-section" id="fase3">
+            <div class="section-tag">05 · Fase 3</div>
+            <h2>Interattività e Logica del DOM</h2>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>implement Terminal Typewriter boot sequence in hero section</b></div>
+            <p>Script che simula, carattere per carattere, una sequenza di boot da server Linux nella hero section, con logica di scrittura/cancellazione a velocità variabile (<code>typingSpeed</code> randomizzata sulla scrittura, fissa più rapida in cancellazione) per un effetto meno meccanico. La sequenza reale mostrata è:</p>
+            <ul>
+                <li><code>root@server:~# ./boot_portfolio.sh</code></li>
+                <li><code>mounting AWS_cloud_infrastructure...</code></li>
+                <li><code>systemctl start local-ai-agents.service</code></li>
+                <li><code>root@server:~# whoami</code></li>
+                <li><code>Ciao, sono</code> — a questo punto il nome, il badge di benvenuto e il sottotitolo vengono rivelati con una <code>keyframe</code> dedicata (<code>cyber-materialize</code>).</li>
+            </ul>
+            <p>Funziona come "firma tecnica" immediata: nei primi due secondi di permanenza sulla pagina, prima ancora di scorrere, l'utente riceve un segnale coerente col profilo professionale dichiarato.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>implement scrollspy logic to dynamically highlight menu items</b></div>
+            <p>Un Event Listener sullo scroll calcola quale sezione è attiva nel viewport e aggiorna la voce di menu corrispondente. Oltre al beneficio di navigazione, questa stessa logica di "osservazione dello scroll" è stata riutilizzata concettualmente in questo stesso documento per l'indice laterale.</p>
+        </section>
+
+        <!-- ================= FASE 4 ================= -->
+        <section class="doc-section" id="fase4">
+            <div class="section-tag">06 · Fase 4</div>
+            <h2>Database Locale e Renderizzazione Dinamica</h2>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>create JSON arrays for ESPERIENZE, PROGETTI, and CERTIFICAZIONI</b></div>
+            <p>Separazione rigorosa tra dati e grafica: ogni voce (esperienza lavorativa, progetto, certificazione) è un oggetto JSON con proprietà normalizzate (titolo, periodo, descrizione, asset, tag). Il rendering è puramente funzionale: itera l'array e produce il markup. Aggiungere un nuovo certificato è un'operazione di compilazione dati, non di sviluppo front-end.</p>
+            <p>Ogni array include come primo elemento un oggetto <code>{ isTemplate: true, ... }</code>, mai renderizzato (il loop di rendering lo salta esplicitamente con <code>if(item.isTemplate) return;</code>) ma mantenuto come "stampo" pronto all'uso: per aggiungere una nuova voce è sufficiente duplicarlo e compilare i campi, senza dover ricordare a memoria la struttura dell'oggetto.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>add dynamic HTML5 Canvas FX Engine</b></div>
+            <p>Motore grafico proprietario costruito su tag <code>&lt;canvas&gt;</code>, distinto dalle librerie esterne della Fase 2. Ogni voce del database possiede una proprietà <code>effect</code> che determina quale dei sei algoritmi particellari implementati (<code>network</code>, <code>matrix</code>, <code>laser</code>, <code>pages</code>, <code>typography</code>, <code>pulse</code>) viene eseguito all'apertura del pannello di dettaglio. La mappatura non è casuale ma semantica:</p>
+            <table>
+                <thead><tr><th>Effetto</th><th>Logica visiva</th><th>Applicato a</th></tr></thead>
+                <tbody>
+                    <tr><td class="mono">network</td><td>Nodi connessi da linee, tipico di un grafo di relazioni</td><td>Esperienze lavorative, badge AWS</td></tr>
+                    <tr><td class="mono">matrix</td><td>Pioggia di caratteri in stile terminale, con parole chiave (<code>LINUX</code>, <code>PYTHON</code>, <code>AI</code>...) che emergono a intermittenza</td><td>Cybersecurity Fundamentals</td></tr>
+                    <tr><td class="mono">laser</td><td>Griglia scan-line con fascio orizzontale in movimento e nodi mobili</td><td>Robotica ABB, progetti di simulazione 3D</td></tr>
+                    <tr><td class="mono">pages</td><td>Rettangoli/pagine che ruotano su asse Y in caduta lenta</td><td>Progetti editoriali/documentali (es. flipbook)</td></tr>
+                    <tr><td class="mono">typography</td><td>Lettere corsive (Playfair Display) che pulsano in dissolvenza</td><td>Certificazione linguistica Oxford B2</td></tr>
+                    <tr><td class="mono">pulse</td><td>Cerchi concentrici che si espandono e svaniscono, come un radar</td><td>Certificazione Social Media Management</td></tr>
+                </tbody>
+            </table>
+            <p>Il ciclo di animazione è gestito con <code>requestAnimationFrame</code> e distrutto esplicitamente con <code>cancelAnimationFrame</code> alla chiusura del pannello, per prevenire consumo di CPU/GPU in background. Un dettaglio ulteriore di ottimizzazione: l'effetto <code>matrix</code> è deliberatamente limitato via delta-time a circa 22 fps (contro i 60 fps degli altri effetti), sia per fedeltà estetica al ritmo "a scatti" dei terminali storici, sia per contenere il carico di rendering su dispositivi meno performanti. Alla ridimensionamento della finestra, un listener su <code>resize</code> reinizializza l'effetto attivo alle nuove dimensioni del pannello, evitando artefatti grafici su cambi di orientamento mobile.</p>
+
+            <div class="commit-chip"><span class="type-refactor">refactor</span><b>reformat JSON databases into vertical multi-line structures</b></div>
+            <p>Reindentazione verticale degli array per ospitare stringhe lunghe (inclusi payload Base64 di alcune immagini) senza incorrere in errori di sintassi durante le modifiche manuali future. Pratica di Clean Code minore ma che riduce concretamente il rischio di regressioni accidentali.</p>
+        </section>
+
+        <!-- ================= FASE 5 ================= -->
+        <section class="doc-section" id="fase5">
+            <div class="section-tag">07 · Fase 5</div>
+            <h2>Gestione Documenti e Multimedia "Future-Proof"</h2>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>build Fullscreen Lightbox viewer for zooming assets</b></div>
+            <p>Visualizzatore modale a schermo intero per la lettura in alta risoluzione di diplomi e attestati, elemento chiave per chi deve verificare l'autenticità formale delle certificazioni dichiarate.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>add global support for video assets (preview_Video_Array)</b></div>
+            <p>Il sistema di iniezione DOM riconosce dinamicamente il tipo di asset (immagine, PDF, Base64, video MP4) e produce il markup adeguato, senza rami di codice duplicati per ogni formato.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>implement smart hover-preview and audio cleanup</b></div>
+            <p>I video in anteprima sono marcati <code>muted loop playsinline</code>: non è una scelta stilistica ma un requisito tecnico, poiché i browser moderni bloccano l'autoplay di contenuti con audio non richiesto dall'utente. L'attributo <code>muted</code> aggira questa restrizione in modo pienamente conforme alle policy dei browser; l'anteprima si avvia al passaggio del mouse (<code>onmouseover="this.play()"</code>) e si interrompe all'uscita (<code>onmouseout="this.pause()"</code>), in stile YouTube. L'audio reale si attiva solo all'apertura nel Lightbox a schermo intero, dove il tag viene ricreato con <code>controls autoplay</code> (senza <code>muted</code>).</p>
+            <p>Alla chiusura del modale, il nodo HTML viene distrutto dinamicamente (<code>viewerContainer.innerHTML = ""</code>) invece di essere semplicemente nascosto via CSS — questo impedisce l'esecuzione residua dell'audio/video in background: gestione esplicita del rischio di memory/audio leak, non un dettaglio implicito lasciato al garbage collector del browser.</p>
+        </section>
+
+        <!-- ================= FASE 6 — TRACCIAMENTO ================= -->
+        <section class="doc-section" id="fase6">
+            <div class="section-tag">08 · Fase 6 — Sezione di Difesa Procedurale</div>
+            <h2>Architettura di Tracciamento (Web Analytics) e Compliance</h2>
+            <p>Questa è la sezione da citare per esteso in caso di domande — proprie, di un recruiter o di un responsabile privacy — su cosa fa esattamente il sito quando viene visitato. Ogni elemento è descritto con la relativa giustificazione tecnica e giuridica.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>integrate Google Analytics 4 (GA4) global tracking snippet</b></div>
+            <p>Iniezione dello snippet globale GA4 (Measurement ID <code>G-7P0B5N12MF</code>), caricato in modo asincrono (<code>&lt;script async&gt;</code>) nel <code>&lt;head&gt;</code> per non bloccare il rendering iniziale della pagina. Google Analytics 4 opera in modalità aggregata: raccoglie parametri macro (tipo di dispositivo, area geografica generica, durata di sessione, sorgente di traffico) senza costruire un profilo identificativo individuale nel senso richiesto per una vera profilazione ai fini del GDPR.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>implement custom trackEvent() logic for behavioral analytics</b></div>
+            <p>Superamento del tracciamento di base (pageview) tramite una funzione dedicata:</p>
+            <div class="commit-chip" style="border-left-color: var(--amber);"><code>function trackEvent(eventName, category, label) { gtag('event', eventName, { event_category: category, event_label: label }); }</code></div>
+            <p>La funzione viene richiamata inline sui quattro trigger d'interazione già descritti nella tabella sottostante, passando sempre la stessa coppia di parametri: <code>category</code> = la sezione di provenienza (<code>esperienza</code>/<code>progetti</code>/<code>certificazioni</code>) e <code>label</code> = il titolo testuale della voce coinvolta. Nessuna funzione del sito raccoglie o trasmette a GA4 dati diversi da questi due parametri testuali, entrambi già pubblici sul sito stesso. Questo trasforma il sito da vetrina passiva a strumento di Business Intelligence orientato a un solo scopo dichiarato: capire quali parti del profilo generano interesse concreto in fase di selezione.</p>
+
+            <h3>Mappa completa degli eventi tracciati</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Evento</th>
+                        <th>Innesco</th>
+                        <th>Cosa rivela</th>
+                        <th>Dato personale?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="mono">apertura_dettaglio</td>
+                        <td>Click su una card di esperienza, progetto o certificazione</td>
+                        <td>Quale competenza tecnica specifica attira l'attenzione del selezionatore</td>
+                        <td><span class="pill pill-no">No PII</span></td>
+                    </tr>
+                    <tr>
+                        <td class="mono">zoom_documento</td>
+                        <td>Apertura del Lightbox su un asset (diploma, attestato)</td>
+                        <td>Intenzione di verifica incrociata della fonte, non solo lettura superficiale</td>
+                        <td><span class="pill pill-no">No PII</span></td>
+                    </tr>
+                    <tr>
+                        <td class="mono">click_risorsa_esterna</td>
+                        <td>Uscita verso piattaforme ufficiali (es. badge Credly, repository GitHub)</td>
+                        <td>Abbandono del sito verso una fonte terza di verifica, segnale di interesse elevato</td>
+                        <td><span class="pill pill-no">No PII</span></td>
+                    </tr>
+                    <tr>
+                        <td class="mono">play_video</td>
+                        <td>Riproduzione di un contenuto multimediale (demo, simulazione)</td>
+                        <td>Engagement verso dimostrazioni pratiche rispetto alla sola lettura testuale</td>
+                        <td><span class="pill pill-no">No PII</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="callout legal">
+                <h4>Nota di difesa privacy — da citare in colloquio o audit</h4>
+                <p>I quattro trigger sopra elencati registrano <strong>esclusivamente interazioni anonime con l'interfaccia</strong>: quale elemento è stato aperto, non chi lo ha aperto. Non viene raccolto alcun dato anagrafico, indirizzo email, o identificativo diretto tramite questi eventi custom. Lo scopo dichiarato e verificabile è l'ottimizzazione del layout e la comprensione delle aree del profilo di maggiore interesse aziendale — una finalità di analisi statistica aggregata, non di profilazione individuale a fini di marketing o retargeting, che infatti non è mai stata implementata.</p>
+            </div>
+
+            <h3>Cosa il sistema NON fa (per chiarezza esplicita)</h3>
+            <ul>
+                <li>Non utilizza cookie di profilazione marketing o retargeting pubblicitario.</li>
+                <li>Non incrocia i dati di navigazione con l'identità dell'utente che li genera.</li>
+                <li>Non rivende né condivide dati con terze parti al di fuori dell'elaborazione statistica standard di Google Analytics.</li>
+                <li>Non richiede né raccoglie credenziali, email o dati di contatto tramite il tracciamento comportamentale.</li>
+            </ul>
+
+            <h3>Base giuridica e finalità</h3>
+            <p>Il trattamento dei dati aggregati rientra nell'ambito delle misure adottate su richiesta dell'interessato prima della conclusione di un contratto (fase precontrattuale di selezione), oltre che nel legittimo interesse dell'autore a comprendere l'efficacia del proprio strumento di autopromozione professionale — finalità entrambe compatibili con l'impianto del Regolamento UE 2016/679 quando, come in questo caso, il trattamento resta aggregato e non identificativo.</p>
+        </section>
+
+        <!-- ================= FASE 7 ================= -->
+        <section class="doc-section" id="fase7">
+            <div class="section-tag">09 · Fase 7</div>
+            <h2>Integrazione Cross-Platform: il Ponte CV ↔ Portfolio</h2>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>implement dual-tracking URL parameters (?ref=cv_btn &amp; ?ref=cv_qr)</b></div>
+            <p>Applicazione di un protocollo in stile UTM per segmentare le fonti di traffico verso il portfolio:</p>
+            <ul>
+                <li><code>?ref=cv_btn</code> — accesso dal bottone testuale/grafico presente nel CV digitale (PDF).</li>
+                <li><code>?ref=cv_qr</code> — accesso dal QR code stampato sulle copie cartacee del CV, utile per eventi, fiere e colloqui in presenza.</li>
+            </ul>
+            <p>Questa segmentazione permette di valutare, nel tempo, quale formato di CV (digitale o cartaceo) genera più conversioni verso il portfolio, informazione utile per orientare le future candidature.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>update CV with GDPR privacy footer and ATS-friendly inline CTA</b></div>
+            <p>Due interventi mirati sul CV:</p>
+            <ul>
+                <li><strong>Rimozione dell'età</strong>, per favorire uno screening imparziale (Unbiased Recruitment).</li>
+                <li><strong>CTA "Visiona originali nel Portfolio"</strong> racchiusa in tag <code>&lt;span&gt;</code>, per non interferire con la struttura di scansione dei software ATS (Applicant Tracking System).</li>
+                <li><strong>Clausola GDPR a piè di pagina</strong> (D.Lgs 196/03 e Regolamento UE 2016/679), mantenuta come precauzione formale contro le procedure di scarto automatizzate adottate da HR e software di selezione ancora legati a prassi datate del panorama lavorativo italiano.</li>
+            </ul>
+
+            <div class="commit-chip"><span class="type-fix">fix</span><b>prevent phone number line-break in CV contact section</b></div>
+            <p>Blindatura tipografica del layout per l'esportazione PDF: l'applicazione della regola <code>white-space: nowrap</code> sul blocco dei contatti impedisce al motore di stampa del browser di spezzare il numero di telefono su due righe, preservando la formattazione formale del documento in ogni formato.</p>
+        </section>
+
+        <!-- ================= FASE 8 ================= -->
+        <section class="doc-section" id="fase8">
+            <div class="section-tag">10 · Fase 8 — Sezione di Difesa Procedurale</div>
+            <h2>Compliance ePrivacy e Google Consent Mode v2</h2>
+            <p>Intervento successivo alla prima stesura di questo documento, introdotto per colmare due lacune formali indipendenti dalla correttezza tecnica del tracciamento descritto in Fase 6: l'assenza di un gate di consenso <em>prima</em> dell'attivazione dei cookie statistici, e l'assenza di un'informativa privacy pubblicata sul sito (art. 13 GDPR).</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>implement Google Consent Mode v2 for GA4 with default denied state</b></div>
+            <p>Subito dopo <code>gtag('js', new Date())</code> e prima di <code>gtag('config', ...)</code>, viene impostato <code>gtag('consent', 'default', {'analytics_storage': 'denied'})</code>. In questo stato iniziale GA4 non imposta alcun cookie: opera in modalità "cookieless ping", inviando al massimo dati aggregati e non identificativi, senza salvare nulla sul dispositivo dell'utente. Solo un'azione esplicita dell'utente può far passare il flag a <code>granted</code>.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>build glassmorphism Cookie Banner with localStorage state management</b></div>
+            <p>Banner non intrusivo, coerente con il design system esistente (stesso <code>backdrop-filter</code>, stessa palette), ancorato a fondo pagina. Al click su "Accetta" viene richiamato <code>gtag('consent', 'update', {'analytics_storage': 'granted'})</code> e la scelta viene persistita in <code>localStorage</code> sotto la chiave <code>cookie_consent_analytics</code>, così da non ripresentare il banner ad ogni visita. Al click su "Rifiuta" la scelta viene salvata come <code>denied</code> e GA4 resta permanentemente senza storage. Un link "Gestisci cookie" nel footer della sidebar permette di riaprire il banner e cambiare idea in qualunque momento — requisito esplicito del diritto di revoca del consenso.</p>
+
+            <div class="commit-chip"><span class="type-docs">docs</span><b>create standalone informativa-privacy.html compliant with Art. 13 GDPR</b></div>
+            <p>Pagina indipendente, in continuità visiva col portfolio, raggiungibile dal footer della sidebar e dal testo stesso del banner. Contiene gli elementi richiesti dall'art. 13 GDPR: identità del titolare del trattamento, categorie di dati raccolti (statistiche aggregate + i quattro eventi custom di Fase 6, esplicitamente qualificati come privi di identificativi), i cookie tecnici effettivamente impostati da GA4 (<code>_ga</code>, <code>_ga_[container-id]</code>) con relativa durata, base giuridica (consenso per i cookie statistici, legittimo interesse/misure precontrattuali per i dati di candidatura), il richiamo al trasferimento extra-UE verso Google Ireland/USA tramite clausole contrattuali standard, l'elenco dei diritti dell'interessato con link diretto al reclamo presso il Garante Privacy, e un pulsante che azzera il consenso salvato per permettere una nuova scelta.</p>
+
+            <div class="callout legal">
+                <h4>Nota di difesa privacy — Fase 8</h4>
+                <p>Prima di questo intervento, il documento poteva <em>spiegare</em> cosa il tracciamento faceva, ma non <em>dimostrava</em> che l'utente avesse potuto scegliere prima che il tracciamento partisse. Da questa Fase in poi, le due cose coincidono: nessun cookie GA4 viene scritto sul dispositivo dell'utente finché il flag <code>analytics_storage</code> non è <code>granted</code> per sua scelta esplicita, verificabile aprendo gli strumenti sviluppatore del browser prima e dopo il click su "Accetta".</p>
+            </div>
+
+            <p style="color: var(--text-faint); font-size: 13px;"><em>Nota di continuità: qualunque nuovo evento aggiunto in futuro tramite <code>trackEvent()</code> eredita automaticamente il gate di consenso qui descritto — non richiede alcuna modifica alla logica di Consent Mode.</em></p>
+        </section>
+
+        <!-- ================= FASE 9 ================= -->
+        <section class="doc-section" id="fase9">
+            <div class="section-tag">11 · Fase 9</div>
+            <h2>Implementazione Telemetria Avanzata e Riconoscimento Sessioni (Telegram Radar v2.0)</h2>
+            <p>Evoluzione del sistema di notifica webhook di base (Ping) in un motore di telemetria intelligente. L'obiettivo è fornire un report istantaneo su Telegram contenente dati arricchiti sul visitatore, distinguendo un nuovo accesso da un utente di ritorno, e tracciando la posizione geografica stimata e il tipo di dispositivo.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>add UUID generation and localStorage persistence for returning users</b></div>
+            <p><strong>Step A: Generazione Identificativo (Lato Client)</strong><br>
+            Al caricamento del portfolio, JavaScript verifica se nel <code>localStorage</code> del browser esiste già un "Visitor ID" univoco anonimo.</p>
+            <ul>
+                <li><em>Se NON esiste:</em> Genera una stringa alfanumerica casuale, la salva nel browser e contrassegna la sessione come "Nuovo Visitatore".</li>
+                <li><em>Se ESISTE:</em> Recupera l'ID esistente, riconoscendo che si tratta di un "Utente di Ritorno".</li>
+            </ul>
+            <p>Il Frontend invia una chiamata <code>fetch()</code> al server Flask passando questo ID, i dati del browser (User-Agent) e la sorgente (Referer).</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>integrate IP geolocation lookup and SQLite tracking in Flask backend</b></div>
+            <p><strong>Step B: Elaborazione Dati (Lato Server)</strong><br>
+            L'endpoint <code>/notify-portfolio</code> riceve il payload, estrae l'indirizzo IP della richiesta in ingresso e interroga un servizio di Geo-IP Lookup per tradurre l'IP in coordinate di massima (Città, Nazione). Si connette poi al database <code>secure_docs.db</code> per incrementare il contatore totale delle visualizzazioni del CV.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>format and dispatch structured telemetry report via Telegram API</b></div>
+            <p><strong>Step C: Formattazione e Alert (Notifica)</strong><br>
+            Il backend compila un report strutturato (Markdown) con i dati raccolti (status utente, visualizzazioni totali, posizione stimata, dispositivo e sorgente) e lo inoltra tramite POST all'API di Telegram, recapitandolo nella chat privata del Titolare.</p>
+
+            <div class="callout legal">
+                <h4>Considerazioni sulla Sicurezza e GDPR</h4>
+                <p>L'identificativo nel <code>localStorage</code> è una stringa completamente anonima (es. <code>user_8f4b2a</code>) e non contiene dati PII. L'indirizzo IP non viene storicizzato in chiaro a lungo termine nel database, ma processato in RAM "al volo" solo per estrarre la città e inviare il ping su Telegram. Il sistema opera in modo silente tramite chiamate asincrone protette da policy CORS per impedire abusi dell'endpoint da domini terzi.</p>
+            </div>
+        </section>
+
+        <!-- ================= FASE 10 ================= -->
+        <section class="doc-section" id="fase10">
+            <div class="section-tag">12 · Fase 10</div>
+            <h2>Build di Produzione, Sicurezza Avanzata e AI Pipeline</h2>
+            <p><strong>Obiettivo:</strong> Mettere in sicurezza l'infrastruttura frontend proteggendo la logica di orchestrazione (Anti-Reverse Engineering) e arricchire la User Experience con asset generativi multimediali.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>implement Master vs Production environment separation</b></div>
+            <p>Per proteggere l'architettura ibrida e i workaround di sicurezza da sguardi indiscreti, il codice è stato diviso in due branch logici:</p>
+            <ul>
+              <li><strong>Source (index_master.html):</strong> Codice sorgente in chiaro, formattato e provvisto di commenti direttivi. Utilizzato in locale per la manutenzione e l'aggiornamento dei Database JSON.</li>
+              <li><strong>Build (index.html):</strong> Versione minificata (Minification) per l'ambiente di produzione. Questo processo elimina spazi, indentazioni e logica visiva, convertendo il codice in un blocco illeggibile che scoraggia e vanifica l'ispezione manuale in caso di bypass dei blocchi tastiera (F12).</li>
+            </ul>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>integrate Data-to-Audio (AI Pipeline) overview widget</b></div>
+            <p>Sviluppo di un widget audio custom per la riproduzione di un "Overview" generato tramite sintesi vocale neurale. Questa integrazione dimostra la capacità pratica di utilizzare l'Intelligenza Artificiale per trasformare dati testuali statici in un output accessibile e ingaggiante. Le interazioni con il player sono tracciate in tempo reale tramite eventi custom su <strong>Google Analytics 4</strong> (<code>play_audio_overview</code>).</p>
+
+            <div class="commit-chip"><span class="type-style">style</span><b>update UI/UX with Glassmorphism Avatar and new JSON data</b></div>
+            <ul>
+              <li>Integrazione di un <strong>Avatar interattivo</strong> incastonato nel layout tramite tecniche di <em>Glassmorphism</em>.</li>
+              <li>Estensione del Database JSON iniettando la certificazione <strong>Cybersecurity Fundamentals (Aruba)</strong>, mappata semanticamente sul motore particellare Canvas per generare un effetto <em>Matrix</em> mirato.</li>
+            </ul>
+        </section>
+
+        <!-- ================= APPENDICE A — CHANGELOG ================= -->
+        <section class="doc-section" id="changelog">
+            <div class="section-tag">13 · Appendice A</div>
+            <h2>Registro completo dei commit</h2>
+            <p>Cronologia integrale, in ordine di implementazione, come riferimento rapido per la manutenzione futura.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:36px;">#</th>
+                        <th style="width:90px;">Tipo</th>
+                        <th>Messaggio di commit</th>
+                        <th>Fase</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="mono">1</td><td><span class="pill pill-init">init</span></td><td>project scaffolding with HTML5 and base meta tags</td><td>Fase 1</td></tr>
+                    <tr><td class="mono">2</td><td><span class="pill pill-style">style</span></td><td>import Google Fonts (Space Grotesk, IBM Plex Sans/Mono, Playfair Display)</td><td>Fase 1</td></tr>
+                    <tr><td class="mono">3</td><td><span class="pill pill-style">style</span></td><td>setup CSS global variables and iOS Glassmorphism theme</td><td>Fase 1</td></tr>
+                    <tr><td class="mono">4</td><td><span class="pill pill-feat">feat</span></td><td>integrate Three.js and Vanta.js (Waves &amp; Fog) dependencies</td><td>Fase 2</td></tr>
+                    <tr><td class="mono">5</td><td><span class="pill pill-feat">feat</span></td><td>build sidebar profile card with pulsing status dot and tooltips</td><td>Fase 2</td></tr>
+                    <tr><td class="mono">6</td><td><span class="pill pill-feat">feat</span></td><td>implement Terminal Typewriter boot sequence in hero section</td><td>Fase 3</td></tr>
+                    <tr><td class="mono">7</td><td><span class="pill pill-feat">feat</span></td><td>implement scrollspy logic to dynamically highlight menu items</td><td>Fase 3</td></tr>
+                    <tr><td class="mono">8</td><td><span class="pill pill-feat">feat</span></td><td>create JSON arrays for ESPERIENZE, PROGETTI, and CERTIFICAZIONI</td><td>Fase 4</td></tr>
+                    <tr><td class="mono">9</td><td><span class="pill pill-feat">feat</span></td><td>add dynamic HTML5 Canvas FX Engine</td><td>Fase 4</td></tr>
+                    <tr><td class="mono">10</td><td><span class="pill pill-refactor">refactor</span></td><td>reformat JSON databases into vertical multi-line structures</td><td>Fase 4</td></tr>
+                    <tr><td class="mono">11</td><td><span class="pill pill-feat">feat</span></td><td>build Fullscreen Lightbox viewer for zooming assets</td><td>Fase 5</td></tr>
+                    <tr><td class="mono">12</td><td><span class="pill pill-feat">feat</span></td><td>add global support for video assets (preview_Video_Array)</td><td>Fase 5</td></tr>
+                    <tr><td class="mono">13</td><td><span class="pill pill-feat">feat</span></td><td>implement smart hover-preview and audio cleanup</td><td>Fase 5</td></tr>
+                    <tr><td class="mono">14</td><td><span class="pill pill-feat">feat</span></td><td>integrate Google Analytics 4 (GA4) global tracking snippet</td><td>Fase 6</td></tr>
+                    <tr><td class="mono">15</td><td><span class="pill pill-feat">feat</span></td><td>implement custom trackEvent() logic for behavioral analytics</td><td>Fase 6</td></tr>
+                    <tr><td class="mono">16</td><td><span class="pill pill-feat">feat</span></td><td>implement dual-tracking URL parameters (?ref=cv_btn &amp; ?ref=cv_qr)</td><td>Fase 7</td></tr>
+                    <tr><td class="mono">17</td><td><span class="pill pill-feat">feat</span></td><td>update CV with GDPR privacy footer and ATS-friendly inline CTA</td><td>Fase 7</td></tr>
+                    <tr><td class="mono">18</td><td><span class="pill pill-feat">feat</span></td><td>implement Google Consent Mode v2 for GA4 with default denied state</td><td>Fase 8</td></tr>
+                    <tr><td class="mono">19</td><td><span class="pill pill-feat">feat</span></td><td>build glassmorphism Cookie Banner with localStorage state management</td><td>Fase 8</td></tr>
+                    <tr><td class="mono">20</td><td><span class="pill pill-docs">docs</span></td><td>create standalone informativa-privacy.html compliant with Art. 13 GDPR</td><td>Fase 8</td></tr>
+                    <tr><td class="mono">21</td><td><span class="pill pill-fix">fix</span></td><td>prevent phone number line-break in CV contact section</td><td>Fase 7</td></tr>
+                    <tr><td class="mono">22</td><td><span class="pill pill-docs">docs</span></td><td>refine and polish wording for Phase 8 Consent Mode documentation</td><td>Fase 8</td></tr>
+                    <tr><td class="mono">23</td><td><span class="pill pill-feat">feat</span></td><td>merge mobile UI fixes and Google Consent Mode v2 integration</td><td>Fase 2/8</td></tr>
+                    <tr><td class="mono">24</td><td><span class="pill pill-feat">feat</span></td><td>add UUID generation and localStorage persistence for returning users</td><td>Fase 9</td></tr>
+                    <tr><td class="mono">25</td><td><span class="pill pill-feat">feat</span></td><td>integrate IP geolocation lookup and SQLite tracking in Flask backend</td><td>Fase 9</td></tr>
+                    <tr><td class="mono">26</td><td><span class="pill pill-feat">feat</span></td><td>format and dispatch structured telemetry report via Telegram API</td><td>Fase 9</td></tr>
+                </tbody>
+            </table>
+            <p style="color: var(--text-faint); font-size: 13px;"><em>Nota: la tabella non riporta hash o timestamp poiché non presenti nella cronologia fornita in origine. In caso di repository Git effettivo, si consiglia di integrare questa tabella con l'output di <code>git log --pretty=format:"%h|%ad|%s" --date=short</code> per avere tracciabilità temporale completa.</em></p>
+        </section>
+
+        <!-- ================= APPENDICE B — GLOSSARIO ================= -->
+        <section class="doc-section" id="glossario">
+            <div class="section-tag">14 · Appendice B</div>
+            <h2>Glossario tecnico</h2>
+            <p>Utile per spiegare il progetto a un interlocutore non tecnico senza perdere precisione.</p>
+            <dl class="glossary">
+                <dt>Vanilla JavaScript</dt>
+                <dd>JavaScript scritto senza framework o librerie di astrazione (React, Vue, ecc.), utilizzando direttamente le API native del browser.</dd>
+
+                <dt>Glassmorphism</dt>
+                <dd>Stile visivo basato su superfici semitrasparenti e sfocate, che simula il vetro smerigliato; diffuso nelle interfacce Apple recenti.</dd>
+
+                <dt>Scrollspy</dt>
+                <dd>Tecnica che monitora la posizione di scorrimento della pagina per evidenziare dinamicamente la sezione attualmente visibile nel menu di navigazione.</dd>
+
+                <dt>Data-driven rendering</dt>
+                <dd>Approccio in cui l'interfaccia viene generata a partire da una struttura dati (es. JSON), invece di essere scritta manualmente in HTML statico.</dd>
+
+                <dt>requestAnimationFrame / cancelAnimationFrame</dt>
+                <dd>API del browser per sincronizzare le animazioni con il ciclo di refresh dello schermo, e per interromperle esplicitamente evitando sprechi di risorse.</dd>
+
+                <dt>PII (Personally Identifiable Information)</dt>
+                <dd>Qualunque dato che permetta di identificare direttamente o indirettamente una persona fisica (nome, email, indirizzo IP in chiaro, ecc.).</dd>
+
+                <dt>dataLayer</dt>
+                <dd>Struttura dati intermedia usata da Google Analytics/Tag Manager per ricevere eventi custom dal sito prima di inoltrarli ai server di raccolta.</dd>
+
+                <dt>Parametro UTM / ref</dt>
+                <dd>Parametro aggiunto a un URL per identificare la sorgente di provenienza del traffico (es. un bottone specifico o un QR code), leggibile dagli strumenti di analytics.</dd>
+
+                <dt>ATS (Applicant Tracking System)</dt>
+                <dd>Software utilizzato dalle aziende per raccogliere, filtrare e scansionare automaticamente i CV ricevuti, spesso sensibile a layout complessi o multi-colonna.</dd>
+            </dl>
+        </section>
+
+        <!-- ================= APPENDICE C — MANUTENZIONE ================= -->
+        <section class="doc-section" id="manutenzione">
+            <div class="section-tag">15 · Appendice C</div>
+            <h2>Guida rapida alla manutenzione futura</h2>
+
+            <h3>Aggiungere una nuova esperienza, progetto o certificazione</h3>
+            <ol class="reg">
+                <li>Individuare l'array JSON corrispondente (<code>ESPERIENZE</code>, <code>PROGETTI</code> o <code>CERTIFICAZIONI</code>).</li>
+                <li>Copiare il primo oggetto dell'array, quello con <code>isTemplate: true</code>, e incollarlo come nuova voce: contiene già tutte le proprietà attese (<code>date</code>/<code>title</code>/<code>org</code> o <code>sub</code>, <code>bullets</code>, i tre array di asset, <code>full_PDF</code>, <code>full_LinkWeb</code>).</li>
+                <li>Rimuovere <code>isTemplate: true</code> dalla nuova voce (altrimenti il rendering la ignora) e compilare i campi rispettando la formattazione verticale già in uso.</li>
+                <li>Assegnare alla proprietà <code>effect</code> uno dei sei valori validi (<code>network</code>, <code>matrix</code>, <code>laser</code>, <code>pages</code>, <code>typography</code>, <code>pulse</code>), scegliendolo per coerenza semantica con il contenuto — vedi tabella di mappatura in Fase 4.</li>
+                <li>Non toccare il markup HTML: il rendering è automatico.</li>
+            </ol>
+
+            <h3>Aggiungere un nuovo evento di tracciamento</h3>
+            <ol class="reg">
+                <li>Definire chiaramente cosa si vuole misurare e perché (evitare eventi "per curiosità" non collegati a una domanda di business reale).</li>
+                <li>Richiamare <code>trackEvent(eventName, category, label)</code> sull'interazione desiderata. (Nota: non è necessario gestire il consenso, la funzione eredita automaticamente le regole della Google Consent Mode v2 configurate in <code>index.html</code>).</li>
+                <li>Aggiungere la nuova voce alla tabella degli eventi in Fase 6 di questo documento, mantenendo coerenza con il principio "nessun dato personale, solo interazione anonima".</li>
+            </ol>
+
+            <h3>Verificare l'assenza di memory leak su nuovi contenuti multimediali</h3>
+            <ol class="reg">
+                <li>Ogni nuovo asset video deve seguire il pattern hover-preview silenziato + audio solo su Lightbox già implementato in Fase 5.</li>
+                <li>Alla chiusura di qualunque modale multimediale, verificare che il nodo venga effettivamente distrutto (<code>innerHTML = ""</code>) e non semplicemente nascosto via CSS.</li>
+            </ol>
+        </section>
+
+        <!-- ================= CHIUSURA ================= -->
+        <section class="doc-section" id="chiusura" style="border-bottom: none;">
+            <div class="section-tag">16 · Chiusura</div>
+            <h2>Stato del progetto e validità del documento</h2>
+            <p>Sistema operativo, collaudato e in produzione, distribuito via GitHub Pages. Architettura pensata per essere scalabile a future integrazioni (nuove sezioni, nuovi effetti Canvas FX, nuovi eventi di tracciamento) senza richiedere una riscrittura strutturale.</p>
+
+            <div class="stamp-final">
+                <span class="ok">✓</span> Separazione dati/presentazione: verificata<br>
+                <span class="ok">✓</span> Gestione memoria (Canvas FX, audio, video): verificata<br>
+                <span class="ok">✓</span> Tracciamento comportamentale privo di PII: verificata<br>
+                <span class="ok">✓</span> Compliance ePrivacy &amp; Google Consent Mode v2: verificata<br>
+                <span class="ok">✓</span> Telemetria real-time e riconoscimento sessioni anonime: verificata<br>
+                <span class="ok">✓</span> Compatibilità ATS del CV: verificata<br>
+                <span class="ok">✓</span> Clausola GDPR presente su CV: verificata
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<footer class="doc-footer">
+    Documento generato per il versionamento architetturale del progetto Portfolio &amp; CV — Xhuliano Hysenji · System Design Report N. 2026-XH-01 · Fine documento
+</footer>
+
+<script>
+    // Scrollspy leggero per l'indice laterale, coerente con la Fase 3 del documento stesso.
+    const sections = document.querySelectorAll('section.doc-section');
+    const links = document.querySelectorAll('.toc a');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const id = entry.target.getAttribute('id');
+            const link = document.querySelector('.toc a[href="#' + id + '"]');
+            if (!link) return;
+            if (entry.isIntersecting) {
+                links.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+            }
+        });
+    }, { rootMargin: '-20% 0px -70% 0px', threshold: 0 });
+
+    sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
