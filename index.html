@@ -1679,16 +1679,39 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ==============================================
-// TELEGRAM SILENT PING
+// TELEGRAM SILENT PING (RADAR V2.0)
 // ==============================================
 (function() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const ref = urlParams.get('ref') || 'Diretto';
-  
-  const webhookUrl = `https://Swift92.pythonanywhere.com/notify-portfolio?ref=${ref}`;
-  
-  fetch(webhookUrl, { method: 'GET', mode: 'cors' })
-    .catch(err => console.log('Radar operativo')); 
+    // 1. Lettura della sorgente URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const ref = urlParams.get('ref') || 'Diretto';
+    
+    // 2. Generazione o lettura Identificativo Sessione
+    let isNewVisitor = false;
+    let visitorId = localStorage.getItem('xh_portfolio_visitor_id');
+    
+    if (!visitorId) {
+        isNewVisitor = true;
+        // Crea una stringa univoca anonima pseudo-casuale
+        visitorId = 'usr_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+        localStorage.setItem('xh_portfolio_visitor_id', visitorId);
+    }
+
+    // 3. Spedizione del pacchetto dati
+    const webhookUrl = 'https://Swift92.pythonanywhere.com/notify-portfolio';
+    
+    const payload = {
+        ref: ref,
+        visitor_id: visitorId,
+        is_new: isNewVisitor
+    };
+
+    fetch(webhookUrl, {
+        method: 'POST',
+        mode: 'cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    }).catch(err => console.log('Radar v2 operativo'));
 })();
 
 </script>
