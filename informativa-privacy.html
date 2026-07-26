@@ -91,45 +91,50 @@
 
   <div class="eyebrow">Informativa ai sensi degli artt. 13-14 GDPR (Reg. UE 2016/679)</div>
   <h1>Informativa sulla Privacy</h1>
-  <div class="updated">Ultimo aggiornamento: luglio 2026</div>
+  <div class="updated">Ultimo aggiornamento: Luglio 2026</div>
 
   <h2>1. Titolare del trattamento</h2>
   <p>Il titolare del trattamento dei dati raccolti tramite questo sito è <strong>Xhuliano Hysenji</strong>, contattabile all'indirizzo <a href="mailto:giuliocesare9236@gmail.com">giuliocesare9236@gmail.com</a> per qualsiasi richiesta relativa al trattamento dei dati o all'esercizio dei diritti descritti al punto 6.</p>
 
   <h2>2. Perché esiste questa pagina</h2>
-  <p>Questo portfolio è un progetto personale, non commerciale, che utilizza Google Analytics 4 per capire quali sezioni generano più interesse presso i selezionatori. Questa informativa spiega, in modo puntuale, cosa viene raccolto, perché, e come puoi mantenere il controllo sulla tua scelta.</p>
+  <p>Questo portfolio è un progetto personale e tecnologico. Utilizza Google Analytics 4 per capire quali sezioni generano più interesse presso i selezionatori, e un sistema di telemetria proprietario per monitorare gli accessi. Questa informativa spiega, in modo puntuale, cosa viene raccolto, perché, e come puoi mantenere il controllo sulla tua scelta.</p>
 
   <h2>3. Dati raccolti e finalità</h2>
-  <p>Il sito non richiede login, non raccoglie moduli di contatto e non chiede dati anagrafici. I soli dati trattati sono quelli generati dalla navigazione, in forma aggregata:</p>
+  <p>Il sito non richiede login, non raccoglie moduli di contatto e non chiede dati anagrafici espliciti. I soli dati trattati sono quelli generati dalla navigazione, suddivisi in due categorie:</p>
   <table>
     <thead><tr><th>Categoria di dato</th><th>Esempio</th><th>Identifica una persona?</th></tr></thead>
     <tbody>
-      <tr><td>Statistiche di sessione (GA4 di base)</td><td>tipo di dispositivo, area geografica generica, durata visita, sorgente di traffico</td><td>No</td></tr>
-      <tr><td>Eventi di interazione custom</td><td>apertura di una card, zoom su un documento, click su un link esterno, riproduzione di un video</td><td>No — viene registrato solo quale elemento è stato aperto, non chi lo ha aperto</td></tr>
+      <tr><td><strong>Telemetria di base e Sicurezza</strong><br><span style="font-size: 0.8em; color: var(--text-muted);">Tracciamento proprietario (Sistema Radar)</span></td><td>Indirizzo IP (per stima geografica approssimativa), User-Agent del browser, Referer.</td><td><strong>Sì (l'IP)</strong>, ma viene elaborato in tempo reale dal server esclusivamente per localizzare la città di provenienza e non viene storicizzato in chiaro nel database.</td></tr>
+      <tr><td><strong>Statistiche di sessione</strong><br><span style="font-size: 0.8em; color: var(--text-muted);">(Google Analytics 4)</span></td><td>Tipo di dispositivo, area geografica generica, durata visita, sorgente di traffico.</td><td>No — Dati aggregati.</td></tr>
+      <tr><td><strong>Interazioni con l'interfaccia</strong><br><span style="font-size: 0.8em; color: var(--text-muted);">(Eventi GA4 Custom)</span></td><td>Apertura di una card, zoom su un documento, click su link esterni, riproduzione video o l'accesso al sito tramite link rapido diretto dal CV.</td><td>No — Viene registrato solo quale elemento è stato aperto/avviato, non l'identità dell'utente che lo ha fatto.</td></tr>
     </tbody>
   </table>
 
-  <h2>4. Cookie utilizzati</h2>
-  <p>Google Analytics 4, se autorizzato dal banner presente sul sito, imposta i seguenti cookie:</p>
+  <h2>4. Cookie e Local Storage utilizzati</h2>
+  <p>Il sito utilizza meccanismi di archiviazione locale del browser per due scopi distinti:</p>
   <table>
-    <thead><tr><th>Cookie</th><th>Finalità</th><th>Durata</th></tr></thead>
+    <thead><tr><th>Cookie / Key</th><th>Tipologia e Finalità</th><th>Durata</th></tr></thead>
     <tbody>
-      <tr><td class="mono"><code>_ga</code></td><td>Distingue le sessioni di navigazione in forma statistica</td><td>13 mesi</td></tr>
-      <tr><td class="mono"><code>_ga_[container-id]</code></td><td>Mantiene lo stato della sessione per il calcolo delle metriche aggregate</td><td>13 mesi</td></tr>
+      <tr><td class="mono"><code>xh_portfolio_visitor_id</code></td><td><strong>Archiviazione Tecnica (Local Storage)</strong>. Stringa alfanumerica anonima utilizzata esclusivamente dal sistema di telemetria proprietario per distinguere un visitatore nuovo da un utente di ritorno, al fine di non falsare il contatore degli accessi. Non effettua tracciamento cross-site.</td><td>Persistente (fino a svuotamento cache del browser)</td></tr>
+      <tr><td class="mono"><code>_ga</code></td><td><strong>Cookie Statistico (GA4)</strong>. Distingue le sessioni di navigazione in forma aggregata. <em>Impostato solo in caso di consenso esplicito.</em></td><td>13 mesi</td></tr>
+      <tr><td class="mono"><code>_ga_[container-id]</code></td><td><strong>Cookie Statistico (GA4)</strong>. Mantiene lo stato della sessione per il calcolo delle metriche. <em>Impostato solo in caso di consenso esplicito.</em></td><td>13 mesi</td></tr>
     </tbody>
   </table>
+  
   <div class="box accent">
-    <p style="margin:0;"><strong>Nessun cookie viene impostato prima del tuo consenso.</strong> Il sito è configurato con Google Consent Mode v2: finché non premi "Accetta" sul banner, GA4 opera senza salvare identificatori sul tuo dispositivo.</p>
+    <p style="margin:0;"><strong>Google Analytics è subordinato al tuo consenso.</strong> Il sito è configurato con Google Consent Mode v2: finché non premi "Accetta" sul banner, GA4 opera senza salvare cookie sul tuo dispositivo. L'identificativo tecnico <code>xh_portfolio_visitor_id</code>, invece, è strettamente necessario al funzionamento della telemetria di base del server e non richiede consenso preventivo.</p>
   </div>
 
   <h2>5. Base giuridica del trattamento</h2>
   <ul>
-    <li><strong>Consenso</strong> (art. 6.1.a GDPR) per l'attivazione dei cookie statistici — revocabile in ogni momento, vedi punto 7.</li>
-    <li><strong>Misure precontrattuali su richiesta dell'interessato / legittimo interesse</strong>, per i dati eventualmente forniti spontaneamente in fase di candidatura (es. invio del CV), disciplinati separatamente dalla clausola presente sul CV stesso.</li>
+    <li><strong>Legittimo Interesse del Titolare</strong> (art. 6.1.f GDPR) per il funzionamento del sistema di telemetria di base (Radar), strettamente necessario a monitorare la sicurezza e la portata del portfolio, senza attività di profilazione marketing.</li>
+    <li><strong>Consenso</strong> (art. 6.1.a GDPR) per l'attivazione dei cookie statistici di terze parti (Google Analytics 4) — revocabile in ogni momento, vedi punto 8.</li>
+    <li><strong>Misure precontrattuali su richiesta dell'interessato</strong>, per la valutazione dei dati e dei documenti presentati nel portfolio in fase di selezione del personale.</li>
   </ul>
 
   <h2>6. Destinatari e trasferimento dei dati</h2>
-  <p>I dati statistici raccolti tramite Google Analytics 4 sono trattati da Google Ireland Limited, in qualità di responsabile del trattamento, e possono essere elaborati su server situati anche negli Stati Uniti, nell'ambito delle clausole contrattuali standard (SCC) adottate da Google per garantire un livello di protezione adeguato. Per approfondire: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">informativa privacy di Google</a>.</p>
+  <p>I dati di telemetria proprietari (IP e User-Agent) vengono elaborati in tempo reale tramite un'infrastruttura backend protetta (PythonAnywhere) e recapitati al Titolare sotto forma di notifica tramite le API di Telegram. Tali sistemi agiscono come responsabili tecnici del trasporto dati.</p>
+  <p>I dati statistici raccolti tramite Google Analytics 4 sono trattati da Google Ireland Limited e possono essere elaborati su server situati anche negli Stati Uniti, nell'ambito delle clausole contrattuali standard (SCC) adottate da Google per garantire un livello di protezione adeguato. Per approfondire: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">informativa privacy di Google</a>.</p>
 
   <h2>7. I tuoi diritti</h2>
   <p>In qualsiasi momento hai diritto a:</p>
@@ -137,13 +142,12 @@
     <li>Accedere ai dati che ti riguardano e conoscerne la finalità del trattamento;</li>
     <li>Chiederne la rettifica o la cancellazione;</li>
     <li>Opporti al trattamento o richiederne la limitazione;</li>
-    <li>Richiedere la portabilità dei dati, ove applicabile;</li>
     <li>Revocare il consenso ai cookie statistici in qualsiasi momento, senza pregiudicare la liceità del trattamento basato sul consenso prima della revoca;</li>
     <li>Proporre reclamo al <a href="https://www.garanteprivacy.it" target="_blank" rel="noopener">Garante per la protezione dei dati personali</a>.</li>
   </ul>
 
   <h2>8. Gestisci il tuo consenso</h2>
-  <p>Puoi rivedere la tua scelta in qualsiasi momento, anche se hai già risposto al banner in precedenza:</p>
+  <p>Puoi rivedere la tua scelta sui Cookie Statistici in qualsiasi momento, anche se hai già risposto al banner in precedenza:</p>
   <button id="manage-cookies-btn">Riapri le preferenze cookie</button>
 
   <footer>Xhuliano Hysenji — Portfolio Interattivo · Informativa Privacy</footer>

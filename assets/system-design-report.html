@@ -409,6 +409,7 @@
             <li><a href="#fase8">Fase 8 — ePrivacy &amp; Consent Mode</a></li>
             <li><a href="#fase9">Fase 9 — Telemetria Avanzata</a></li>
             <li><a href="#fase10">Fase 10 — Build, Sicurezza &amp; AI</a></li>
+            <li><a href="#fase11">Fase 11 — Deep Linking &amp; UX</a></li>
             <li><a href="#changelog">App. A — Registro Commit</a></li>
             <li><a href="#glossario">App. B — Glossario Tecnico</a></li>
             <li><a href="#manutenzione">App. C — Guida alla Manutenzione</a></li>
@@ -469,7 +470,7 @@
             <h4>1. Vanilla-first</h4>
             <p>Nessun framework pesante (React, Angular, Vue). L'assenza di un Virtual DOM e di una toolchain di build garantisce un Time-To-Interactive praticamente istantaneo — un fattore critico quando l'utente reale è un selezionatore che dedica in media pochi secondi alla prima impressione. In secondo luogo, mostrare padronanza del DOM nativo comunica una competenza "core" spesso più apprezzata, in ruoli IT Support/Back-Office, rispetto alla dimestichezza con una libreria pre-confezionata.</p>
             <h4>2. Separazione dati/presentazione</h4>
-            <p>Ogni contenuto (esperienze, progetti, certificazioni) vive in strutture JSON isolate dalla logica di rendering. Aggiungere un titolo di studio non richiede toccare l'HTML: si compila un oggetto e il motore di rendering fa il resto. Questo riduce drasticamente il rischio di introdurre bug durante gli aggiornamenti futuri.</p>
+            <p>Ogni contenuto (esperienze, progetti, certificazioni) vive in structures JSON isolate dalla logica di rendering. Aggiungere un titolo di studio non richiede toccare l'HTML: si compila un oggetto e il motore di rendering fa il resto. Questo riduce drasticamente il rischio di introdurre bug durante gli aggiornamenti futuri.</p>
             <h4>3. Osservabilità del comportamento, non dell'identità</h4>
             <p>Il sistema è stato progettato per rispondere alla domanda "quali parti del profilo generano interesse concreto?", non "chi è la persona che sta guardando?". Questa distinzione è il cardine dell'intera Fase 6 ed è la ragione per cui l'infrastruttura di tracciamento può essere difesa senza ambiguità in sede di colloquio o di audit.</p>
         </section>
@@ -620,6 +621,12 @@
                         <td>Engagement verso dimostrazioni pratiche rispetto alla sola lettura testuale</td>
                         <td><span class="pill pill-no">No PII</span></td>
                     </tr>
+                    <tr>
+                        <td class="mono">accesso_diretto_cv</td>
+                        <td>Atterraggio sul sito tramite URL con parametri (Deep Link) dal PDF</td>
+                        <td>La volontà del recruiter di bypassare la home per verificare istantaneamente uno specifico certificato</td>
+                        <td><span class="pill pill-no">No PII</span></td>
+                    </tr>
                 </tbody>
             </table>
 
@@ -740,9 +747,22 @@
             </ul>
         </section>
 
+        <!-- ================= FASE 11 ================= -->
+        <section class="doc-section" id="fase11">
+            <div class="section-tag">13 · Fase 11</div>
+            <h2>Deep Linking e Ottimizzazione UX "Zero-Friction"</h2>
+            <p><strong>Problema strategico:</strong> Il design originale del portfolio obbligava l'utente a passare per la "Hero Section" (effetto Wow) prima di poter consultare i documenti. Tuttavia, un'analisi delle abitudini dei recruiter ha evidenziato il rischio di dispersione (drop-off) nel caso in cui l'obiettivo fosse una verifica rapida e mirata di una specifica qualifica durante lo screening dei CV.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>implement deep-linking architecture via URL parameters (?section &amp; ?id)</b></div>
+            <p><strong>Soluzione tecnica:</strong> È stata implementata una logica di Deep Linking. Il curriculum in formato PDF è stato modificato rimuovendo i collegamenti generici al portfolio, sostituendoli con link mirati per ogni singola certificazione (es. <code>?section=certificazioni&id=1</code>). Uno script in ascolto sul <code>DOMContentLoaded</code> intercetta questi parametri e istruisce il browser ad avviare automaticamente la funzione <code>openPanel()</code> corretta, bypassando la navigazione manuale.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>add dedicated GA4 event (accesso_diretto_cv) for deep link tracking</b></div>
+            <p><strong>Telemetria e Tracciamento:</strong> Per non perdere i dati di navigazione di quegli utenti che saltano l'interfaccia principale, il trigger del Deep Link attiva simultaneamente un evento GA4 personalizzato (<code>accesso_diretto_cv</code>). Questo fornisce una metrica vitale: permette di misurare esattamente quanti recruiter scelgono la via della "verifica chirurgica" rispetto alla "navigazione esplorativa", offrendo insight preziosi sull'efficacia dell'impaginazione del CV PDF.</p>
+        </section>
+
         <!-- ================= APPENDICE A — CHANGELOG ================= -->
         <section class="doc-section" id="changelog">
-            <div class="section-tag">13 · Appendice A</div>
+            <div class="section-tag">14 · Appendice A</div>
             <h2>Registro completo dei commit</h2>
             <p>Cronologia integrale, in ordine di implementazione, come riferimento rapido per la manutenzione futura.</p>
             <table>
@@ -781,6 +801,11 @@
                     <tr><td class="mono">24</td><td><span class="pill pill-feat">feat</span></td><td>add UUID generation and localStorage persistence for returning users</td><td>Fase 9</td></tr>
                     <tr><td class="mono">25</td><td><span class="pill pill-feat">feat</span></td><td>integrate IP geolocation lookup and SQLite tracking in Flask backend</td><td>Fase 9</td></tr>
                     <tr><td class="mono">26</td><td><span class="pill pill-feat">feat</span></td><td>format and dispatch structured telemetry report via Telegram API</td><td>Fase 9</td></tr>
+                    <tr><td class="mono">27</td><td><span class="pill pill-feat">feat</span></td><td>implement Master vs Production environment separation</td><td>Fase 10</td></tr>
+                    <tr><td class="mono">28</td><td><span class="pill pill-feat">feat</span></td><td>integrate Data-to-Audio (AI Pipeline) overview widget</td><td>Fase 10</td></tr>
+                    <tr><td class="mono">29</td><td><span class="pill pill-style">style</span></td><td>update UI/UX with Glassmorphism Avatar and new JSON data</td><td>Fase 10</td></tr>
+                    <tr><td class="mono">30</td><td><span class="pill pill-feat">feat</span></td><td>implement deep-linking architecture via URL parameters (?section &amp; ?id)</td><td>Fase 11</td></tr>
+                    <tr><td class="mono">31</td><td><span class="pill pill-feat">feat</span></td><td>add dedicated GA4 event (accesso_diretto_cv) for deep link tracking</td><td>Fase 11</td></tr>
                 </tbody>
             </table>
             <p style="color: var(--text-faint); font-size: 13px;"><em>Nota: la tabella non riporta hash o timestamp poiché non presenti nella cronologia fornita in origine. In caso di repository Git effettivo, si consiglia di integrare questa tabella con l'output di <code>git log --pretty=format:"%h|%ad|%s" --date=short</code> per avere tracciabilità temporale completa.</em></p>
@@ -788,7 +813,7 @@
 
         <!-- ================= APPENDICE B — GLOSSARIO ================= -->
         <section class="doc-section" id="glossario">
-            <div class="section-tag">14 · Appendice B</div>
+            <div class="section-tag">15 · Appendice B</div>
             <h2>Glossario tecnico</h2>
             <p>Utile per spiegare il progetto a un interlocutore non tecnico senza perdere precisione.</p>
             <dl class="glossary">
@@ -818,12 +843,15 @@
 
                 <dt>ATS (Applicant Tracking System)</dt>
                 <dd>Software utilizzato dalle aziende per raccogliere, filtrare e scansionare automaticamente i CV ricevuti, spesso sensibile a layout complessi o multi-colonna.</dd>
+                
+                <dt>Deep Linking</dt>
+                <dd>Utilizzo di un indirizzo web (URL) che indirizza l'utente a un contenuto specifico e profondo di un sito web, superando la homepage o altre sezioni intermedie.</dd>
             </dl>
         </section>
 
         <!-- ================= APPENDICE C — MANUTENZIONE ================= -->
         <section class="doc-section" id="manutenzione">
-            <div class="section-tag">15 · Appendice C</div>
+            <div class="section-tag">16 · Appendice C</div>
             <h2>Guida rapida alla manutenzione futura</h2>
 
             <h3>Aggiungere una nuova esperienza, progetto o certificazione</h3>
@@ -851,7 +879,7 @@
 
         <!-- ================= CHIUSURA ================= -->
         <section class="doc-section" id="chiusura" style="border-bottom: none;">
-            <div class="section-tag">16 · Chiusura</div>
+            <div class="section-tag">17 · Chiusura</div>
             <h2>Stato del progetto e validità del documento</h2>
             <p>Sistema operativo, collaudato e in produzione, distribuito via GitHub Pages. Architettura pensata per essere scalabile a future integrazioni (nuove sezioni, nuovi effetti Canvas FX, nuovi eventi di tracciamento) senza richiedere una riscrittura strutturale.</p>
 
@@ -862,6 +890,7 @@
                 <span class="ok">✓</span> Compliance ePrivacy &amp; Google Consent Mode v2: verificata<br>
                 <span class="ok">✓</span> Telemetria real-time e riconoscimento sessioni anonime: verificata<br>
                 <span class="ok">✓</span> Compatibilità ATS del CV: verificata<br>
+                <span class="ok">✓</span> Logica di Deep Linking bypass UI integrata: verificata<br>
                 <span class="ok">✓</span> Clausola GDPR presente su CV: verificata
             </div>
         </section>
