@@ -715,14 +715,14 @@
             <h2>Boot Loader &amp; Cascading UI (Zero-Friction UX)</h2>
             <p><strong>Obiettivo:</strong> Incrementare l'impatto tecnico del primo caricamento senza penalizzare l'usabilità e la velocità di consultazione da parte dei recruiter.</p>
 
-            <div class="commit-chip"><span class="type-feat">feat</span><b>implement terminal-style boot loader and glowing typewriter effect</b></div>
-            <p>Introdotto un overlay iniziale in Vanilla JS e CSS puro che simula l'inizializzazione di un ambiente server. La sequenza digita stringhe di comando in tempo reale, abbinando un effetto "glow" dinamico sui caratteri in scrittura. Terminata la finta compilazione, il sistema mostra lo stato "Ready" prima di dissolversi.</p>
+            <div class="commit-chip"><span class="type-feat">feat</span><b>implement terminal-style boot loader with glowing typewriter effect</b></div>
+            <p>Introdotto un overlay iniziale in Vanilla JS e CSS puro che simula l'inizializzazione di un ambiente server. La sequenza digita stringhe di comando in tempo reale, arricchite da un <strong>effetto shimmer</strong> e da uno <strong>spinner dinamico</strong> ispirati alle interfacce di calcolo neurale (AI) per comunicare visivamente l'elaborazione dei dati in corso. Terminata la compilazione, il sistema mostra lo stato "Ready" prima di dissolversi.</p>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>add staggered cascading reveal using CSS --idx variables</b></div>
             <p>Sostituita l'apparizione simultanea (e statica) del DOM con una logica a cascata. A ogni nodo principale (sezioni, card, voci di menu) è stata assegnata una variabile CSS <code>--idx</code> incrementale. Rimosso l'overlay di boot, JavaScript applica una classe trigger che attiva le transizioni CSS basate su un <code>animation-delay</code> calcolato dinamicamente. Questo produce un effetto di "assemblaggio" fluido dell'interfaccia.</p>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>implement bypass routing for Deep Links</b></div>
-            <p><strong>Risoluzione del paradosso UX:</strong> L'effetto "wow" del boot loader dura 4 secondi, un tempo inaccettabile per un recruiter che ha cliccato un link diretto dal CV per verificare una singola certificazione. La logica JavaScript intercetta la presenza dei parametri <code>?section=</code> e <code>?id=</code> nell'URL: se presenti, il boot loader viene forzatamente nascosto (<code>display: none</code>) e la cascata bypassata, aprendo la risorsa istantaneamente, riducendo l'attrito di caricamento a zero.</p>
+            <p><strong>Risoluzione del paradosso UX:</strong> L'effetto "wow" del boot loader dura diversi secondi, un tempo inaccettabile per un recruiter che ha cliccato un link diretto dal CV per verificare una singola certificazione. La logica JavaScript intercetta la presenza dei parametri <code>?section=</code> e <code>?id=</code> nell'URL: se presenti, il boot loader viene forzatamente nascosto (<code>display: none</code>) e la cascata bypassata, aprendo la risorsa istantaneamente, riducendo l'attrito di caricamento a zero.</p>
 
             <div class="commit-chip"><span class="type-refactor">refactor</span><b>revert minification on JSON arrays and CanvasFX</b></div>
             <p><strong>Integrità architetturale:</strong> Ripristinata l'impaginazione verticale e la formattazione human-readable dei database JSON e del motore Canvas. La minificazione estrema per l'ambiente di produzione, sebbene utile per risparmiare byte, comprometteva irrimediabilmente la manutenibilità manuale "a blocchi" del sorgente Master (aggiornamento certificati, inserimento file base64), violando i principi delineati nella Fase 4 del progetto.</p>
@@ -779,6 +779,7 @@
                     <tr><td class="mono">34</td><td><span class="pill pill-feat">feat</span></td><td>implement boot loader bypass logic for Deep Link routing</td><td>Fase 12</td></tr>
                     <tr><td class="mono">35</td><td><span class="pill pill-refactor">refactor</span></td><td>revert minification on JSON databases and CanvasFX for maintainability</td><td>Fase 12</td></tr>
                     <tr><td class="mono">36</td><td><span class="pill pill-chore">chore</span></td><td>disable body scroll during boot sequence to prevent visual glitches</td><td>Fase 12</td></tr>
+                    <tr><td class="mono">37</td><td><span class="pill pill-feat">feat</span></td><td>integrazione effetto shimmer e spinner dinamico nel Boot Loader</td><td>Fase 12</td></tr>
                 </tbody>
             </table>
             <p style="color: var(--text-faint); font-size: 13px;"><em>Nota: la tabella non riporta hash o timestamp poiché non presenti nella cronologia fornita in origine. In caso di repository Git effettivo, si consiglia di integrare questa tabella con l'output di <code>git log --pretty=format:"%h|%ad|%s" --date=short</code> per avere tracciabilità temporale completa.</em></p>
@@ -822,6 +823,9 @@
 
                 <dt>Staggered Reveal / Cascading UI</dt>
                 <dd>Tecnica di animazione dell'interfaccia in cui gli elementi non compaiono simultaneamente, ma a catena, in base a un ritardo incrementale calcolato matematicamente.</dd>
+                
+                <dt>Shimmer Effect</dt>
+                <dd>Animazione CSS basata su un gradiente in movimento (linear-gradient + background-clip) che simula un'onda di luce continua su un elemento testuale o grafico, tipicamente usata nell'UI Design moderno per indicare uno stato di caricamento o elaborazione attiva.</dd>
             </dl>
         </section>
 
