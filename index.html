@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-7P0B5N12MF"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -477,7 +476,7 @@
   }
 
   /* -----------------------------------------------------------
-     NUOVI STILI: BOOT LOADER & CASCADING REVEAL
+     NUOVI STILI: BOOT LOADER (Effetto Shimmer Shimmer) & CASCADING REVEAL
      ----------------------------------------------------------- */
   
   #boot-loader {
@@ -496,21 +495,55 @@
     display: flex; flex-direction: column; gap: 12px;
   }
   
+  /* Contenitore riga */
   .loader-line {
-    opacity: 0; display: flex; align-items: center; min-height: 1.4rem;
+    display: flex; align-items: center; gap: 12px;
+    font-size: 14.5px; min-height: 24px;
+    opacity: 0; /* Viene reso visibile dal JS appena inizia */
   }
   
-  .loader-line.typing-active {
-    opacity: 1; color: #ffffff; text-shadow: 0 0 8px rgba(56, 189, 248, 0.8), 0 0 15px rgba(56, 189, 248, 0.5);
+  /* L'asterisco rotante (Stile Claude) */
+  .loader-spinner {
+    color: var(--ui-accent); /* Si abbina all'azzurro del tuo tema */
+    font-size: 18px;
+    display: inline-block;
+    animation: spin 1.5s linear infinite;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.3s ease;
+  }
+  .loader-spinner.active { opacity: 1; visibility: visible; }
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+
+  /* Testo della riga */
+  .loader-text { opacity: 0; }
+  
+  /* Il Shimmer per i comandi in esecuzione */
+  .loader-text.running {
+    opacity: 1;
+    background: linear-gradient(90deg, #5c5e69 0%, #ffffff 50%, #5c5e69 100%);
+    background-size: 200% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: shimmer 2s linear infinite;
+    font-weight: 500;
+  }
+  @keyframes shimmer { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
+
+  /* Stato spento post-esecuzione */
+  .loader-text.done {
+    opacity: 1;
+    background: none;
+    color: #5c5e69; 
+    -webkit-text-fill-color: initial;
+    font-weight: 400;
+    transition: color 0.5s ease;
   }
   
-  .loader-line.typed { 
-    opacity: 1; color: var(--ui-accent); text-shadow: 0 0 5px rgba(56, 189, 248, 0.3); 
-  }
-  
+  /* Il messaggio verde di "Ready" finale */
   .loader-ready-status {
     width: 100%; text-align: center; font-size: 1.1rem; font-weight: 600;
-    color: #ffffff; text-shadow: 0 0 15px rgba(56, 189, 248, 0.7);
+    color: var(--ui-accent); text-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
     display: none; opacity: 0;
   }
   
@@ -529,7 +562,6 @@
 </head>
 <body>
 
-<!-- BOOT LOADER OVERLAY -->
 <div id="boot-loader">
   <div class="loader-terminal" id="loader-terminal-content">
     <div class="loader-line" data-text="[01/05] Initializing environment..."></div>
@@ -581,7 +613,6 @@
 
       <p class="tag" id="hero-tag" data-reveal-cascade style="--idx: 5;">Dalla manutenzione industriale al cloud: diagnostica, automazione e problem-solving applicati all'IT Support.</p>
 
-      <!-- WIDGET AUDIO AI -->
       <div class="ai-audio-widget" id="hero-audio" data-reveal-cascade style="--idx: 6;">
         <div class="audio-info">
           <span class="audio-badge">AI PIPELINE DEMO</span>
@@ -656,7 +687,6 @@
   </div>
 </div>
 
-<!-- Aggiunta Banner Cookie di Claude -->
 <div id="consent-banner" role="dialog" aria-live="polite" aria-label="Preferenze cookie">
   <p>Questo sito utilizza Google Analytics in forma aggregata, senza raccogliere dati identificativi, per capire quali sezioni del portfolio generano più interesse. I cookie statistici vengono attivati solo con il tuo consenso. Maggiori dettagli nell'<a href="informativa-privacy.html">informativa privacy</a>.</p>
   <div class="consent-actions">
@@ -665,7 +695,6 @@
   </div>
 </div>
 
-<!-- SCRIPT -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.waves.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.fog.min.js"></script>
@@ -723,7 +752,7 @@
 })();
 
 // ==============================================
-// GESTIONE SEQUENZA BOOT E CASCATA
+// GESTIONE SEQUENZA BOOT E CASCATA (Aggiornato con Effetto Shimmer e Spinner)
 // ==============================================
 
 const bootLoader = document.getElementById('boot-loader');
@@ -740,7 +769,7 @@ if (isDeepLink) {
     bootLoader.style.display = 'none';
     startCascadingReveal();
 } else {
-    // SE L'ACCESSO È NORMALE: Esegue la sequenza Typewriter
+    // SE L'ACCESSO È NORMALE: Esegue la sequenza Typewriter e Shimmer
     document.body.style.overflow = 'hidden';
     window.addEventListener('load', () => {
         setTimeout(runBootSequence, 300);
@@ -750,35 +779,50 @@ if (isDeepLink) {
 function typeLine(lineEl) {
   return new Promise(resolve => {
     const text = lineEl.getAttribute('data-text');
+    
+    // Rende visibile il contenitore della riga e inietta HTML
+    lineEl.style.opacity = '1';
+    lineEl.innerHTML = `
+      <div class="loader-spinner active">✺</div>
+      <div class="loader-text running"></div>
+    `;
+    
+    const spinner = lineEl.querySelector('.loader-spinner');
+    const textEl = lineEl.querySelector('.loader-text');
     let charIdx = 0;
-    lineEl.classList.add('typing-active');
     
     const interval = setInterval(() => {
-      lineEl.textContent += text[charIdx];
+      textEl.textContent += text[charIdx];
       charIdx++;
       
       if (charIdx >= text.length) {
         clearInterval(interval);
-        lineEl.classList.remove('typing-active');
-        lineEl.classList.add('typed');
-        resolve();
+        
+        // Simula il "pensiero" in esecuzione (velocità variabile)
+        setTimeout(() => {
+          spinner.classList.remove('active');
+          textEl.classList.remove('running');
+          textEl.classList.add('done');
+          resolve();
+        }, 500 + Math.random() * 800); // Pausa di elaborazione stile Claude
       }
-    }, 15 + Math.random() * 20);
+    }, 15 + Math.random() * 20); // Velocità digitazione rapida
   });
 }
 
 async function runBootSequence() {
   await new Promise(r => setTimeout(r, 400));
   
+  // Cicla tutte le stringhe di comando
   for (let i = 0; i < lines.length; i++) {
     await typeLine(lines[i]);
-    await new Promise(r => setTimeout(r, 150));
   }
   
-  await new Promise(r => setTimeout(r, 600));
+  await new Promise(r => setTimeout(r, 400));
   terminalContent.style.display = 'none';
   readyMsg.style.display = 'block';
   
+  // Rivelazione del messaggio "Ready"
   readyMsg.animate([
     { opacity: 0, transform: 'translateY(10px)' },
     { opacity: 1, transform: 'translateY(0)' }
@@ -786,8 +830,8 @@ async function runBootSequence() {
 
   await new Promise(r => setTimeout(r, 1200));
   
+  // Fade out e cascata
   bootLoader.classList.add('fade-out');
-  
   setTimeout(startCascadingReveal, 700);
   
   setTimeout(() => {

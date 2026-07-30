@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Effetto Shimmer / Claude AI</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  body {
+    background-color: #0a0a0d; /* Sfondo scuro del tuo portfolio */
+    color: #e7e7ea;
+    font-family: "IBM Plex Mono", monospace;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+
+  .console {
+    background: #121317;
+    padding: 40px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.08);
+    width: 600px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .command-line {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14.5px;
+    min-height: 24px;
+  }
+
+  /* L'asterisco rotante */
+  .spinner {
+    color: #e8a33d; /* Un colore ambra/arancio, puoi cambiarlo in azzurro */
+    font-size: 18px;
+    display: inline-block;
+    animation: spin 1.5s linear infinite;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+  }
+  .spinner.active {
+    opacity: 1;
+    visibility: visible;
+  }
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+
+  /* IL SEGRETO: L'onda di luce (Shimmer) sul testo in esecuzione */
+  .text-content {
+    opacity: 0;
+  }
+  
+  .text-content.running {
+    opacity: 1;
+    /* Crea un gradiente che va da grigio scuro a bianco brillante e torna a grigio */
+    background: linear-gradient(90deg, #5c5e69 0%, #ffffff 50%, #5c5e69 100%);
+    background-size: 200% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    /* Muove il gradiente all'infinito creando l'onda luminosa */
+    animation: shimmer 2s linear infinite;
+    font-weight: 500;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% center; }
+    100% { background-position: -200% center; }
+  }
+
+  /* Lo stato finale quando il comando ha concluso */
+  .text-content.done {
+    opacity: 1;
+    background: none;
+    color: #5c5e69; /* Colore spento/muted, esattamente come nel video */
+    -webkit-text-fill-color: initial;
+    font-weight: 400;
+    transition: color 0.5s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="console" id="console"></div>
+
+  <script>
+    // Le frasi che simuleremo
+    const commands = [
+      "View current grid.ts to find the formula bar...",
+      "Add copiedRef state for the copy/paste clipboard indicator",
+      "Draw a dashed border on the copied cell",
+      "Editing file...",
+      "✓ Interactive Portfolio Ready"
+    ];
+    
+    const consoleEl = document.getElementById('console');
+
+    // Funzione per digitare il testo lettera per lettera
+    async function typeWriter(text, textEl) {
+      return new Promise(resolve => {
+        let i = 0;
+        const interval = setInterval(() => {
+          textEl.textContent += text.charAt(i);
+          i++;
+          if (i >= text.length) {
+            clearInterval(interval);
+            resolve();
+          }
+        }, 25); // Velocità del typewriter (molto rapido come Claude)
+      });
+    }
+
+    async function runDemo() {
+      // Breve pausa iniziale
+      await new Promise(r => setTimeout(r, 500));
+
+      for (let i = 0; i < commands.length; i++) {
+        const isLast = (i === commands.length - 1);
+        
+        // Crea la riga
+        const line = document.createElement('div');
+        line.className = 'command-line';
+
+        // Crea l'asterisco
+        const spinner = document.createElement('div');
+        spinner.className = 'spinner';
+        if (!isLast) spinner.classList.add('active');
+        spinner.innerHTML = '✺'; 
+
+        // Crea il contenitore del testo
+        const textEl = document.createElement('div');
+        textEl.className = 'text-content running'; // Appare subito con l'onda luminosa
+
+        if (isLast) {
+            // Per l'ultima frase (Ready), la facciamo diversa
+            textEl.className = 'text-content';
+            textEl.style.color = '#6fce8f'; // Verde successo
+            textEl.style.opacity = '1';
+        }
+
+        line.appendChild(spinner);
+        line.appendChild(textEl);
+        consoleEl.appendChild(line);
+
+        // Digita il testo
+        await typeWriter(commands[i], textEl);
+
+        if (!isLast) {
+            // Lascia che l'onda luminosa continui per un tempo casuale (simula l'esecuzione)
+            await new Promise(r => setTimeout(r, 800 + Math.random() * 1200));
+
+            // Ferma l'esecuzione: spegne l'asterisco e spegne il testo
+            spinner.classList.remove('active');
+            textEl.classList.remove('running');
+            textEl.classList.add('done');
+        }
+      }
+    }
+
+    runDemo();
+  </script>
+
+</body>
+</html>
