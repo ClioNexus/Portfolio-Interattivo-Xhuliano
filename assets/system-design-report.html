@@ -289,6 +289,7 @@
     .commit-chip .type-style { color: var(--cyan); }
     .commit-chip .type-init { color: var(--amber); }
     .commit-chip .type-refactor { color: #c792ea; }
+    .commit-chip .type-chore { color: #b0bec5; }
     .commit-chip .type-docs { color: #82aaff; }
     .commit-chip .type-fix { color: var(--red); }
 
@@ -341,6 +342,7 @@
     .pill-style { background: rgba(79,214,208,0.12); color: var(--cyan); }
     .pill-init { background: rgba(232,163,61,0.14); color: var(--amber); }
     .pill-refactor { background: rgba(199,146,234,0.12); color: #c792ea; }
+    .pill-chore { background: rgba(176,190,197,0.12); color: #b0bec5; }
     .pill-docs { background: rgba(130,170,255,0.12); color: #82aaff; }
     .pill-fix { background: rgba(232,97,95,0.12); color: var(--red); }
     .pill-no { background: rgba(232,97,95,0.12); color: var(--red); }
@@ -409,7 +411,8 @@
             <li><a href="#fase8">Fase 8 — ePrivacy &amp; Consent Mode</a></li>
             <li><a href="#fase9">Fase 9 — Telemetria Avanzata</a></li>
             <li><a href="#fase10">Fase 10 — Build, Sicurezza &amp; AI</a></li>
-            <li><a href="#fase11">Fase 11 — Deep Linking &amp; UX</a></li>
+            <li><a href="#fase11">Fase 11 — Deep Linking</a></li>
+            <li><a href="#fase12">Fase 12 — Boot Loader &amp; Cascading UI</a></li>
             <li><a href="#changelog">App. A — Registro Commit</a></li>
             <li><a href="#glossario">App. B — Glossario Tecnico</a></li>
             <li><a href="#manutenzione">App. C — Guida alla Manutenzione</a></li>
@@ -514,15 +517,7 @@
             <h2>Interattività e Logica del DOM</h2>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>implement Terminal Typewriter boot sequence in hero section</b></div>
-            <p>Script che simula, carattere per carattere, una sequenza di boot da server Linux nella hero section, con logica di scrittura/cancellazione a velocità variabile (<code>typingSpeed</code> randomizzata sulla scrittura, fissa più rapida in cancellazione) per un effetto meno meccanico. La sequenza reale mostrata è:</p>
-            <ul>
-                <li><code>root@server:~# ./boot_portfolio.sh</code></li>
-                <li><code>mounting AWS_cloud_infrastructure...</code></li>
-                <li><code>systemctl start local-ai-agents.service</code></li>
-                <li><code>root@server:~# whoami</code></li>
-                <li><code>Ciao, sono</code> — a questo punto il nome, il badge di benvenuto e il sottotitolo vengono rivelati con una <code>keyframe</code> dedicata (<code>cyber-materialize</code>).</li>
-            </ul>
-            <p>Funziona come "firma tecnica" immediata: nei primi due secondi di permanenza sulla pagina, prima ancora di scorrere, l'utente riceve un segnale coerente col profilo professionale dichiarato.</p>
+            <p>Script che simula, carattere per carattere, una sequenza di boot da server Linux nella hero section, con logica di scrittura/cancellazione a velocità variabile (<code>typingSpeed</code> randomizzata sulla scrittura, fissa più rapida in cancellazione) per un effetto meno meccanico.</p>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>implement scrollspy logic to dynamically highlight menu items</b></div>
             <p>Un Event Listener sullo scroll calcola quale sezione è attiva nel viewport e aggiorna la voce di menu corrispondente. Oltre al beneficio di navigazione, questa stessa logica di "osservazione dello scroll" è stata riutilizzata concettualmente in questo stesso documento per l'indice laterale.</p>
@@ -534,8 +529,8 @@
             <h2>Database Locale e Renderizzazione Dinamica</h2>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>create JSON arrays for ESPERIENZE, PROGETTI, and CERTIFICAZIONI</b></div>
-            <p>Separazione rigorosa tra dati e grafica: ogni voce (esperienza lavorativa, progetto, certificazione) è un oggetto JSON con proprietà normalizzate (titolo, periodo, descrizione, asset, tag). Il rendering è puramente funzionale: itera l'array e produce il markup. Aggiungere un nuovo certificato è un'operazione di compilazione dati, non di sviluppo front-end.</p>
-            <p>Ogni array include come primo elemento un oggetto <code>{ isTemplate: true, ... }</code>, mai renderizzato (il loop di rendering lo salta esplicitamente con <code>if(item.isTemplate) return;</code>) ma mantenuto come "stampo" pronto all'uso: per aggiungere una nuova voce è sufficiente duplicarlo e compilare i campi, senza dover ricordare a memoria la struttura dell'oggetto.</p>
+            <p>Separazione rigorosa tra dati e grafica: ogni voce (esperienza lavorativa, progetto, certificazione) è un oggetto JSON con proprietà normalizzate. Aggiungere un nuovo certificato è un'operazione di compilazione dati, non di sviluppo front-end.</p>
+            <p>Ogni array include come primo elemento un oggetto <code>{ isTemplate: true, ... }</code>, mai renderizzato (il loop di rendering lo salta esplicitamente con <code>if(item.isTemplate) return;</code>) ma mantenuto come "stampo" pronto all'uso.</p>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>add dynamic HTML5 Canvas FX Engine</b></div>
             <p>Motore grafico proprietario costruito su tag <code>&lt;canvas&gt;</code>, distinto dalle librerie esterne della Fase 2. Ogni voce del database possiede una proprietà <code>effect</code> che determina quale dei sei algoritmi particellari implementati (<code>network</code>, <code>matrix</code>, <code>laser</code>, <code>pages</code>, <code>typography</code>, <code>pulse</code>) viene eseguito all'apertura del pannello di dettaglio. La mappatura non è casuale ma semantica:</p>
@@ -543,14 +538,14 @@
                 <thead><tr><th>Effetto</th><th>Logica visiva</th><th>Applicato a</th></tr></thead>
                 <tbody>
                     <tr><td class="mono">network</td><td>Nodi connessi da linee, tipico di un grafo di relazioni</td><td>Esperienze lavorative, badge AWS</td></tr>
-                    <tr><td class="mono">matrix</td><td>Pioggia di caratteri in stile terminale, con parole chiave (<code>LINUX</code>, <code>PYTHON</code>, <code>AI</code>...) che emergono a intermittenza</td><td>Cybersecurity Fundamentals</td></tr>
-                    <tr><td class="mono">laser</td><td>Griglia scan-line con fascio orizzontale in movimento e nodi mobili</td><td>Robotica ABB, progetti di simulazione 3D</td></tr>
-                    <tr><td class="mono">pages</td><td>Rettangoli/pagine che ruotano su asse Y in caduta lenta</td><td>Progetti editoriali/documentali (es. flipbook)</td></tr>
-                    <tr><td class="mono">typography</td><td>Lettere corsive (Playfair Display) che pulsano in dissolvenza</td><td>Certificazione linguistica Oxford B2</td></tr>
-                    <tr><td class="mono">pulse</td><td>Cerchi concentrici che si espandono e svaniscono, come un radar</td><td>Certificazione Social Media Management</td></tr>
+                    <tr><td class="mono">matrix</td><td>Pioggia di caratteri in stile terminale, con parole chiave</td><td>Cybersecurity Fundamentals</td></tr>
+                    <tr><td class="mono">laser</td><td>Griglia scan-line con fascio orizzontale in movimento</td><td>Robotica ABB, progetti di simulazione 3D</td></tr>
+                    <tr><td class="mono">pages</td><td>Rettangoli/pagine che ruotano su asse Y in caduta lenta</td><td>Progetti editoriali/documentali</td></tr>
+                    <tr><td class="mono">typography</td><td>Lettere corsive che pulsano in dissolvenza</td><td>Certificazione linguistica Oxford B2</td></tr>
+                    <tr><td class="mono">pulse</td><td>Cerchi concentrici che si espandono e svaniscono</td><td>Certificazione Social Media Management</td></tr>
                 </tbody>
             </table>
-            <p>Il ciclo di animazione è gestito con <code>requestAnimationFrame</code> e distrutto esplicitamente con <code>cancelAnimationFrame</code> alla chiusura del pannello, per prevenire consumo di CPU/GPU in background. Un dettaglio ulteriore di ottimizzazione: l'effetto <code>matrix</code> è deliberatamente limitato via delta-time a circa 22 fps (contro i 60 fps degli altri effetti), sia per fedeltà estetica al ritmo "a scatti" dei terminali storici, sia per contenere il carico di rendering su dispositivi meno performanti. Alla ridimensionamento della finestra, un listener su <code>resize</code> reinizializza l'effetto attivo alle nuove dimensioni del pannello, evitando artefatti grafici su cambi di orientamento mobile.</p>
+            <p>Il ciclo di animazione è gestito con <code>requestAnimationFrame</code> e distrutto esplicitamente con <code>cancelAnimationFrame</code> alla chiusura del pannello, per prevenire consumo di CPU/GPU in background.</p>
 
             <div class="commit-chip"><span class="type-refactor">refactor</span><b>reformat JSON databases into vertical multi-line structures</b></div>
             <p>Reindentazione verticale degli array per ospitare stringhe lunghe (inclusi payload Base64 di alcune immagini) senza incorrere in errori di sintassi durante le modifiche manuali future. Pratica di Clean Code minore ma che riduce concretamente il rischio di regressioni accidentali.</p>
@@ -568,8 +563,8 @@
             <p>Il sistema di iniezione DOM riconosce dinamicamente il tipo di asset (immagine, PDF, Base64, video MP4) e produce il markup adeguato, senza rami di codice duplicati per ogni formato.</p>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>implement smart hover-preview and audio cleanup</b></div>
-            <p>I video in anteprima sono marcati <code>muted loop playsinline</code>: non è una scelta stilistica ma un requisito tecnico, poiché i browser moderni bloccano l'autoplay di contenuti con audio non richiesto dall'utente. L'attributo <code>muted</code> aggira questa restrizione in modo pienamente conforme alle policy dei browser; l'anteprima si avvia al passaggio del mouse (<code>onmouseover="this.play()"</code>) e si interrompe all'uscita (<code>onmouseout="this.pause()"</code>), in stile YouTube. L'audio reale si attiva solo all'apertura nel Lightbox a schermo intero, dove il tag viene ricreato con <code>controls autoplay</code> (senza <code>muted</code>).</p>
-            <p>Alla chiusura del modale, il nodo HTML viene distrutto dinamicamente (<code>viewerContainer.innerHTML = ""</code>) invece di essere semplicemente nascosto via CSS — questo impedisce l'esecuzione residua dell'audio/video in background: gestione esplicita del rischio di memory/audio leak, non un dettaglio implicito lasciato al garbage collector del browser.</p>
+            <p>I video in anteprima sono marcati <code>muted loop playsinline</code>: non è una scelta stilistica ma un requisito tecnico, poiché i browser moderni bloccano l'autoplay di contenuti con audio non richiesto dall'utente. L'anteprima si avvia al passaggio del mouse e si interrompe all'uscita.</p>
+            <p>Alla chiusura del modale, il nodo HTML viene distrutto dinamicamente (<code>viewerContainer.innerHTML = ""</code>) invece di essere semplicemente nascosto via CSS — questo impedisce l'esecuzione residua dell'audio/video in background: gestione esplicita del rischio di memory/audio leak.</p>
         </section>
 
         <!-- ================= FASE 6 — TRACCIAMENTO ================= -->
@@ -579,12 +574,12 @@
             <p>Questa è la sezione da citare per esteso in caso di domande — proprie, di un recruiter o di un responsabile privacy — su cosa fa esattamente il sito quando viene visitato. Ogni elemento è descritto con la relativa giustificazione tecnica e giuridica.</p>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>integrate Google Analytics 4 (GA4) global tracking snippet</b></div>
-            <p>Iniezione dello snippet globale GA4 (Measurement ID <code>G-7P0B5N12MF</code>), caricato in modo asincrono (<code>&lt;script async&gt;</code>) nel <code>&lt;head&gt;</code> per non bloccare il rendering iniziale della pagina. Google Analytics 4 opera in modalità aggregata: raccoglie parametri macro (tipo di dispositivo, area geografica generica, durata di sessione, sorgente di traffico) senza costruire un profilo identificativo individuale nel senso richiesto per una vera profilazione ai fini del GDPR.</p>
+            <p>Iniezione dello snippet globale GA4 (Measurement ID <code>G-7P0B5N12MF</code>). Google Analytics 4 opera in modalità aggregata: raccoglie parametri macro (tipo di dispositivo, area geografica generica, durata di sessione, sorgente di traffico) senza costruire un profilo identificativo individuale nel senso richiesto per una vera profilazione ai fini del GDPR.</p>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>implement custom trackEvent() logic for behavioral analytics</b></div>
             <p>Superamento del tracciamento di base (pageview) tramite una funzione dedicata:</p>
             <div class="commit-chip" style="border-left-color: var(--amber);"><code>function trackEvent(eventName, category, label) { gtag('event', eventName, { event_category: category, event_label: label }); }</code></div>
-            <p>La funzione viene richiamata inline sui quattro trigger d'interazione già descritti nella tabella sottostante, passando sempre la stessa coppia di parametri: <code>category</code> = la sezione di provenienza (<code>esperienza</code>/<code>progetti</code>/<code>certificazioni</code>) e <code>label</code> = il titolo testuale della voce coinvolta. Nessuna funzione del sito raccoglie o trasmette a GA4 dati diversi da questi due parametri testuali, entrambi già pubblici sul sito stesso. Questo trasforma il sito da vetrina passiva a strumento di Business Intelligence orientato a un solo scopo dichiarato: capire quali parti del profilo generano interesse concreto in fase di selezione.</p>
+            <p>La funzione viene richiamata inline sui trigger d'interazione, passando sempre la stessa coppia di parametri: <code>category</code> = la sezione di provenienza e <code>label</code> = il titolo testuale della voce coinvolta. Nessuna funzione del sito raccoglie o trasmette a GA4 dati diversi da questi due parametri testuali, entrambi già pubblici sul sito stesso.</p>
 
             <h3>Mappa completa degli eventi tracciati</h3>
             <table>
@@ -606,24 +601,24 @@
                     <tr>
                         <td class="mono">zoom_documento</td>
                         <td>Apertura del Lightbox su un asset (diploma, attestato)</td>
-                        <td>Intenzione di verifica incrociata della fonte, non solo lettura superficiale</td>
+                        <td>Intenzione di verifica incrociata della fonte</td>
                         <td><span class="pill pill-no">No PII</span></td>
                     </tr>
                     <tr>
                         <td class="mono">click_risorsa_esterna</td>
-                        <td>Uscita verso piattaforme ufficiali (es. badge Credly, repository GitHub)</td>
-                        <td>Abbandono del sito verso una fonte terza di verifica, segnale di interesse elevato</td>
+                        <td>Uscita verso piattaforme ufficiali (es. badge Credly)</td>
+                        <td>Abbandono del sito verso una fonte terza di verifica</td>
                         <td><span class="pill pill-no">No PII</span></td>
                     </tr>
                     <tr>
                         <td class="mono">play_video</td>
-                        <td>Riproduzione di un contenuto multimediale (demo, simulazione)</td>
-                        <td>Engagement verso dimostrazioni pratiche rispetto alla sola lettura testuale</td>
+                        <td>Riproduzione di un contenuto multimediale</td>
+                        <td>Engagement verso dimostrazioni pratiche</td>
                         <td><span class="pill pill-no">No PII</span></td>
                     </tr>
                     <tr>
                         <td class="mono">accesso_diretto_cv</td>
-                        <td>Atterraggio sul sito tramite URL con parametri (Deep Link) dal PDF</td>
+                        <td>Atterraggio sul sito tramite URL con parametri (Deep Link)</td>
                         <td>La volontà del recruiter di bypassare la home per verificare istantaneamente uno specifico certificato</td>
                         <td><span class="pill pill-no">No PII</span></td>
                     </tr>
@@ -631,20 +626,9 @@
             </table>
 
             <div class="callout legal">
-                <h4>Nota di difesa privacy — da citare in colloquio o audit</h4>
-                <p>I quattro trigger sopra elencati registrano <strong>esclusivamente interazioni anonime con l'interfaccia</strong>: quale elemento è stato aperto, non chi lo ha aperto. Non viene raccolto alcun dato anagrafico, indirizzo email, o identificativo diretto tramite questi eventi custom. Lo scopo dichiarato e verificabile è l'ottimizzazione del layout e la comprensione delle aree del profilo di maggiore interesse aziendale — una finalità di analisi statistica aggregata, non di profilazione individuale a fini di marketing o retargeting, che infatti non è mai stata implementata.</p>
+                <h4>Nota di difesa privacy</h4>
+                <p>I trigger sopra elencati registrano <strong>esclusivamente interazioni anonime con l'interfaccia</strong>: quale elemento è stato aperto, non chi lo ha aperto. Non viene raccolto alcun dato anagrafico, indirizzo email, o identificativo diretto tramite questi eventi custom.</p>
             </div>
-
-            <h3>Cosa il sistema NON fa (per chiarezza esplicita)</h3>
-            <ul>
-                <li>Non utilizza cookie di profilazione marketing o retargeting pubblicitario.</li>
-                <li>Non incrocia i dati di navigazione con l'identità dell'utente che li genera.</li>
-                <li>Non rivende né condivide dati con terze parti al di fuori dell'elaborazione statistica standard di Google Analytics.</li>
-                <li>Non richiede né raccoglie credenziali, email o dati di contatto tramite il tracciamento comportamentale.</li>
-            </ul>
-
-            <h3>Base giuridica e finalità</h3>
-            <p>Il trattamento dei dati aggregati rientra nell'ambito delle misure adottate su richiesta dell'interessato prima della conclusione di un contratto (fase precontrattuale di selezione), oltre che nel legittimo interesse dell'autore a comprendere l'efficacia del proprio strumento di autopromozione professionale — finalità entrambe compatibili con l'impianto del Regolamento UE 2016/679 quando, come in questo caso, il trattamento resta aggregato e non identificativo.</p>
         </section>
 
         <!-- ================= FASE 7 ================= -->
@@ -658,111 +642,95 @@
                 <li><code>?ref=cv_btn</code> — accesso dal bottone testuale/grafico presente nel CV digitale (PDF).</li>
                 <li><code>?ref=cv_qr</code> — accesso dal QR code stampato sulle copie cartacee del CV, utile per eventi, fiere e colloqui in presenza.</li>
             </ul>
-            <p>Questa segmentazione permette di valutare, nel tempo, quale formato di CV (digitale o cartaceo) genera più conversioni verso il portfolio, informazione utile per orientare le future candidature.</p>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>update CV with GDPR privacy footer and ATS-friendly inline CTA</b></div>
-            <p>Due interventi mirati sul CV:</p>
-            <ul>
-                <li><strong>Rimozione dell'età</strong>, per favorire uno screening imparziale (Unbiased Recruitment).</li>
-                <li><strong>CTA "Visiona originali nel Portfolio"</strong> racchiusa in tag <code>&lt;span&gt;</code>, per non interferire con la struttura di scansione dei software ATS (Applicant Tracking System).</li>
-                <li><strong>Clausola GDPR a piè di pagina</strong> (D.Lgs 196/03 e Regolamento UE 2016/679), mantenuta come precauzione formale contro le procedure di scarto automatizzate adottate da HR e software di selezione ancora legati a prassi datate del panorama lavorativo italiano.</li>
-            </ul>
+            <p>Interventi mirati sul CV, come rimozione dell'età per Unbiased Recruitment, e CTA inserita per non interferire con la struttura di scansione dei software ATS (Applicant Tracking System).</p>
 
             <div class="commit-chip"><span class="type-fix">fix</span><b>prevent phone number line-break in CV contact section</b></div>
-            <p>Blindatura tipografica del layout per l'esportazione PDF: l'applicazione della regola <code>white-space: nowrap</code> sul blocco dei contatti impedisce al motore di stampa del browser di spezzare il numero di telefono su due righe, preservando la formattazione formale del documento in ogni formato.</p>
+            <p>Blindatura tipografica del layout per l'esportazione PDF tramite <code>white-space: nowrap</code>.</p>
         </section>
 
         <!-- ================= FASE 8 ================= -->
         <section class="doc-section" id="fase8">
             <div class="section-tag">10 · Fase 8 — Sezione di Difesa Procedurale</div>
             <h2>Compliance ePrivacy e Google Consent Mode v2</h2>
-            <p>Intervento successivo alla prima stesura di questo documento, introdotto per colmare due lacune formali indipendenti dalla correttezza tecnica del tracciamento descritto in Fase 6: l'assenza di un gate di consenso <em>prima</em> dell'attivazione dei cookie statistici, e l'assenza di un'informativa privacy pubblicata sul sito (art. 13 GDPR).</p>
+            <p>Intervento per colmare due lacune formali: l'assenza di un gate di consenso <em>prima</em> dell'attivazione dei cookie statistici, e l'assenza di un'informativa privacy pubblicata sul sito (art. 13 GDPR).</p>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>implement Google Consent Mode v2 for GA4 with default denied state</b></div>
-            <p>Subito dopo <code>gtag('js', new Date())</code> e prima di <code>gtag('config', ...)</code>, viene impostato <code>gtag('consent', 'default', {'analytics_storage': 'denied'})</code>. In questo stato iniziale GA4 non imposta alcun cookie: opera in modalità "cookieless ping", inviando al massimo dati aggregati e non identificativi, senza salvare nulla sul dispositivo dell'utente. Solo un'azione esplicita dell'utente può far passare il flag a <code>granted</code>.</p>
+            <p>Subito prima di attivare GA4, viene impostato <code>gtag('consent', 'default', {'analytics_storage': 'denied'})</code>. In questo stato GA4 non imposta alcun cookie, ma opera in modalità "cookieless ping".</p>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>build glassmorphism Cookie Banner with localStorage state management</b></div>
-            <p>Banner non intrusivo, coerente con il design system esistente (stesso <code>backdrop-filter</code>, stessa palette), ancorato a fondo pagina. Al click su "Accetta" viene richiamato <code>gtag('consent', 'update', {'analytics_storage': 'granted'})</code> e la scelta viene persistita in <code>localStorage</code> sotto la chiave <code>cookie_consent_analytics</code>, così da non ripresentare il banner ad ogni visita. Al click su "Rifiuta" la scelta viene salvata come <code>denied</code> e GA4 resta permanentemente senza storage. Un link "Gestisci cookie" nel footer della sidebar permette di riaprire il banner e cambiare idea in qualunque momento — requisito esplicito del diritto di revoca del consenso.</p>
+            <p>Banner non intrusivo. Al click su "Accetta" viene richiamato l'update del consenso e salvato su <code>localStorage</code> per non ripresentare il banner.</p>
 
             <div class="commit-chip"><span class="type-docs">docs</span><b>create standalone informativa-privacy.html compliant with Art. 13 GDPR</b></div>
-            <p>Pagina indipendente, in continuità visiva col portfolio, raggiungibile dal footer della sidebar e dal testo stesso del banner. Contiene gli elementi richiesti dall'art. 13 GDPR: identità del titolare del trattamento, categorie di dati raccolti (statistiche aggregate + i quattro eventi custom di Fase 6, esplicitamente qualificati come privi di identificativi), i cookie tecnici effettivamente impostati da GA4 (<code>_ga</code>, <code>_ga_[container-id]</code>) con relativa durata, base giuridica (consenso per i cookie statistici, legittimo interesse/misure precontrattuali per i dati di candidatura), il richiamo al trasferimento extra-UE verso Google Ireland/USA tramite clausole contrattuali standard, l'elenco dei diritti dell'interessato con link diretto al reclamo presso il Garante Privacy, e un pulsante che azzera il consenso salvato per permettere una nuova scelta.</p>
-
-            <div class="callout legal">
-                <h4>Nota di difesa privacy — Fase 8</h4>
-                <p>Prima di questo intervento, il documento poteva <em>spiegare</em> cosa il tracciamento faceva, ma non <em>dimostrava</em> che l'utente avesse potuto scegliere prima che il tracciamento partisse. Da questa Fase in poi, le due cose coincidono: nessun cookie GA4 viene scritto sul dispositivo dell'utente finché il flag <code>analytics_storage</code> non è <code>granted</code> per sua scelta esplicita, verificabile aprendo gli strumenti sviluppatore del browser prima e dopo il click su "Accetta".</p>
-            </div>
-
-            <p style="color: var(--text-faint); font-size: 13px;"><em>Nota di continuità: qualunque nuovo evento aggiunto in futuro tramite <code>trackEvent()</code> eredita automaticamente il gate di consenso qui descritto — non richiede alcuna modifica alla logica di Consent Mode.</em></p>
+            <p>Pagina indipendente contenente gli elementi richiesti dall'art. 13 GDPR.</p>
         </section>
 
         <!-- ================= FASE 9 ================= -->
         <section class="doc-section" id="fase9">
             <div class="section-tag">11 · Fase 9</div>
-            <h2>Implementazione Telemetria Avanzata e Riconoscimento Sessioni (Telegram Radar v2.0)</h2>
-            <p>Evoluzione del sistema di notifica webhook di base (Ping) in un motore di telemetria intelligente. L'obiettivo è fornire un report istantaneo su Telegram contenente dati arricchiti sul visitatore, distinguendo un nuovo accesso da un utente di ritorno, e tracciando la posizione geografica stimata e il tipo di dispositivo.</p>
+            <h2>Implementazione Telemetria Avanzata (Radar v2.0)</h2>
+            <p>Evoluzione del sistema di notifica webhook di base (Ping) in un motore di telemetria intelligente che distingue accessi di ritorno e raccoglie dati arricchiti (geo-localizzazione stimata, device).</p>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>add UUID generation and localStorage persistence for returning users</b></div>
-            <p><strong>Step A: Generazione Identificativo (Lato Client)</strong><br>
-            Al caricamento del portfolio, JavaScript verifica se nel <code>localStorage</code> del browser esiste già un "Visitor ID" univoco anonimo.</p>
-            <ul>
-                <li><em>Se NON esiste:</em> Genera una stringa alfanumerica casuale, la salva nel browser e contrassegna la sessione come "Nuovo Visitatore".</li>
-                <li><em>Se ESISTE:</em> Recupera l'ID esistente, riconoscendo che si tratta di un "Utente di Ritorno".</li>
-            </ul>
-            <p>Il Frontend invia una chiamata <code>fetch()</code> al server Flask passando questo ID, i dati del browser (User-Agent) e la sorgente (Referer).</p>
+            <p>Generazione di un "Visitor ID" univoco e anonimo nel <code>localStorage</code> per differenziare i visitatori nuovi da quelli di ritorno.</p>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>integrate IP geolocation lookup and SQLite tracking in Flask backend</b></div>
-            <p><strong>Step B: Elaborazione Dati (Lato Server)</strong><br>
-            L'endpoint <code>/notify-portfolio</code> riceve il payload, estrae l'indirizzo IP della richiesta in ingresso e interroga un servizio di Geo-IP Lookup per tradurre l'IP in coordinate di massima (Città, Nazione). Si connette poi al database <code>secure_docs.db</code> per incrementare il contatore totale delle visualizzazioni del CV.</p>
+            <p>L'endpoint Flask riceve il payload, interroga un servizio Geo-IP Lookup per tradurre l'IP, e aggiorna il db SQLite per tenere traccia delle views.</p>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>format and dispatch structured telemetry report via Telegram API</b></div>
-            <p><strong>Step C: Formattazione e Alert (Notifica)</strong><br>
-            Il backend compila un report strutturato (Markdown) con i dati raccolti (status utente, visualizzazioni totali, posizione stimata, dispositivo e sorgente) e lo inoltra tramite POST all'API di Telegram, recapitandolo nella chat privata del Titolare.</p>
-
-            <div class="callout legal">
-                <h4>Considerazioni sulla Sicurezza e GDPR</h4>
-                <p>L'identificativo nel <code>localStorage</code> è una stringa completamente anonima (es. <code>user_8f4b2a</code>) e non contiene dati PII. L'indirizzo IP non viene storicizzato in chiaro a lungo termine nel database, ma processato in RAM "al volo" solo per estrarre la città e inviare il ping su Telegram. Il sistema opera in modo silente tramite chiamate asincrone protette da policy CORS per impedire abusi dell'endpoint da domini terzi.</p>
-            </div>
+            <p>Report strutturato recapitabile privatamente tramite bot Telegram.</p>
         </section>
 
         <!-- ================= FASE 10 ================= -->
         <section class="doc-section" id="fase10">
             <div class="section-tag">12 · Fase 10</div>
             <h2>Build di Produzione, Sicurezza Avanzata e AI Pipeline</h2>
-            <p><strong>Obiettivo:</strong> Mettere in sicurezza l'infrastruttura frontend proteggendo la logica di orchestrazione (Anti-Reverse Engineering) e arricchire la User Experience con asset generativi multimediali.</p>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>implement Master vs Production environment separation</b></div>
-            <p>Per proteggere l'architettura ibrida e i workaround di sicurezza da sguardi indiscreti, il codice è stato diviso in due branch logici:</p>
-            <ul>
-              <li><strong>Source (index_master.html):</strong> Codice sorgente in chiaro, formattato e provvisto di commenti direttivi. Utilizzato in locale per la manutenzione e l'aggiornamento dei Database JSON.</li>
-              <li><strong>Build (index.html):</strong> Versione minificata (Minification) per l'ambiente di produzione. Questo processo elimina spazi, indentazioni e logica visiva, convertendo il codice in un blocco illeggibile che scoraggia e vanifica l'ispezione manuale in caso di bypass dei blocchi tastiera (F12).</li>
-            </ul>
+            <p>Codice diviso in branch sorgente (Master, indentato) e branch di Build (minificato e compresso) per offuscare la logica e scoraggiare reverse engineering.</p>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>integrate Data-to-Audio (AI Pipeline) overview widget</b></div>
-            <p>Sviluppo di un widget audio custom per la riproduzione di un "Overview" generato tramite sintesi vocale neurale. Questa integrazione dimostra la capacità pratica di utilizzare l'Intelligenza Artificiale per trasformare dati testuali statici in un output accessibile e ingaggiante. Le interazioni con il player sono tracciate in tempo reale tramite eventi custom su <strong>Google Analytics 4</strong> (<code>play_audio_overview</code>).</p>
+            <p>Sviluppo di un widget audio custom per la riproduzione di un "Overview" generato tramite sintesi vocale neurale (AI), con tracking GA4 associato.</p>
 
             <div class="commit-chip"><span class="type-style">style</span><b>update UI/UX with Glassmorphism Avatar and new JSON data</b></div>
-            <ul>
-              <li>Integrazione di un <strong>Avatar interattivo</strong> incastonato nel layout tramite tecniche di <em>Glassmorphism</em>.</li>
-              <li>Estensione del Database JSON iniettando la certificazione <strong>Cybersecurity Fundamentals (Aruba)</strong>, mappata semanticamente sul motore particellare Canvas per generare un effetto <em>Matrix</em> mirato.</li>
-            </ul>
+            <p>Integrazione di Avatar interattivo e aggiunta della certificazione Cybersecurity Fundamentals.</p>
         </section>
 
         <!-- ================= FASE 11 ================= -->
         <section class="doc-section" id="fase11">
             <div class="section-tag">13 · Fase 11</div>
-            <h2>Deep Linking e Ottimizzazione UX "Zero-Friction"</h2>
-            <p><strong>Problema strategico:</strong> Il design originale del portfolio obbligava l'utente a passare per la "Hero Section" (effetto Wow) prima di poter consultare i documenti. Tuttavia, un'analisi delle abitudini dei recruiter ha evidenziato il rischio di dispersione (drop-off) nel caso in cui l'obiettivo fosse una verifica rapida e mirata di una specifica qualifica durante lo screening dei CV.</p>
+            <h2>Deep Linking e Ottimizzazione UX</h2>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>implement deep-linking architecture via URL parameters (?section &amp; ?id)</b></div>
-            <p><strong>Soluzione tecnica:</strong> È stata implementata una logica di Deep Linking. Il curriculum in formato PDF è stato modificato rimuovendo i collegamenti generici al portfolio, sostituendoli con link mirati per ogni singola certificazione (es. <code>?section=certificazioni&id=1</code>). Uno script in ascolto sul <code>DOMContentLoaded</code> intercetta questi parametri e istruisce il browser ad avviare automaticamente la funzione <code>openPanel()</code> corretta, bypassando la navigazione manuale.</p>
+            <p>Rimossi i collegamenti generici dal CV PDF per sostituirli con link mirati. Lo script intercetta i parametri URL e avvia <code>openPanel()</code> per saltare direttamente alla certificazione richiesta.</p>
 
             <div class="commit-chip"><span class="type-feat">feat</span><b>add dedicated GA4 event (accesso_diretto_cv) for deep link tracking</b></div>
-            <p><strong>Telemetria e Tracciamento:</strong> Per non perdere i dati di navigazione di quegli utenti che saltano l'interfaccia principale, il trigger del Deep Link attiva simultaneamente un evento GA4 personalizzato (<code>accesso_diretto_cv</code>). Questo fornisce una metrica vitale: permette di misurare esattamente quanti recruiter scelgono la via della "verifica chirurgica" rispetto alla "navigazione esplorativa", offrendo insight preziosi sull'efficacia dell'impaginazione del CV PDF.</p>
+            <p>Implementata logica analitica per identificare quante visualizzazioni saltano l'homepage per dirigersi ai certificati diretti, misurando l'efficacia del Deep Linking del CV PDF.</p>
+        </section>
+
+        <!-- ================= FASE 12 ================= -->
+        <section class="doc-section" id="fase12">
+            <div class="section-tag">14 · Fase 12</div>
+            <h2>Boot Loader &amp; Cascading UI (Zero-Friction UX)</h2>
+            <p><strong>Obiettivo:</strong> Incrementare l'impatto tecnico del primo caricamento senza penalizzare l'usabilità e la velocità di consultazione da parte dei recruiter.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>implement terminal-style boot loader and glowing typewriter effect</b></div>
+            <p>Introdotto un overlay iniziale in Vanilla JS e CSS puro che simula l'inizializzazione di un ambiente server. La sequenza digita stringhe di comando in tempo reale, abbinando un effetto "glow" dinamico sui caratteri in scrittura. Terminata la finta compilazione, il sistema mostra lo stato "Ready" prima di dissolversi.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>add staggered cascading reveal using CSS --idx variables</b></div>
+            <p>Sostituita l'apparizione simultanea (e statica) del DOM con una logica a cascata. A ogni nodo principale (sezioni, card, voci di menu) è stata assegnata una variabile CSS <code>--idx</code> incrementale. Rimosso l'overlay di boot, JavaScript applica una classe trigger che attiva le transizioni CSS basate su un <code>animation-delay</code> calcolato dinamicamente. Questo produce un effetto di "assemblaggio" fluido dell'interfaccia.</p>
+
+            <div class="commit-chip"><span class="type-feat">feat</span><b>implement bypass routing for Deep Links</b></div>
+            <p><strong>Risoluzione del paradosso UX:</strong> L'effetto "wow" del boot loader dura 4 secondi, un tempo inaccettabile per un recruiter che ha cliccato un link diretto dal CV per verificare una singola certificazione. La logica JavaScript intercetta la presenza dei parametri <code>?section=</code> e <code>?id=</code> nell'URL: se presenti, il boot loader viene forzatamente nascosto (<code>display: none</code>) e la cascata bypassata, aprendo la risorsa istantaneamente, riducendo l'attrito di caricamento a zero.</p>
+
+            <div class="commit-chip"><span class="type-refactor">refactor</span><b>revert minification on JSON arrays and CanvasFX</b></div>
+            <p><strong>Integrità architetturale:</strong> Ripristinata l'impaginazione verticale e la formattazione human-readable dei database JSON e del motore Canvas. La minificazione estrema per l'ambiente di produzione, sebbene utile per risparmiare byte, comprometteva irrimediabilmente la manutenibilità manuale "a blocchi" del sorgente Master (aggiornamento certificati, inserimento file base64), violando i principi delineati nella Fase 4 del progetto.</p>
         </section>
 
         <!-- ================= APPENDICE A — CHANGELOG ================= -->
         <section class="doc-section" id="changelog">
-            <div class="section-tag">14 · Appendice A</div>
+            <div class="section-tag">15 · Appendice A</div>
             <h2>Registro completo dei commit</h2>
             <p>Cronologia integrale, in ordine di implementazione, come riferimento rapido per la manutenzione futura.</p>
             <table>
@@ -806,6 +774,11 @@
                     <tr><td class="mono">29</td><td><span class="pill pill-style">style</span></td><td>update UI/UX with Glassmorphism Avatar and new JSON data</td><td>Fase 10</td></tr>
                     <tr><td class="mono">30</td><td><span class="pill pill-feat">feat</span></td><td>implement deep-linking architecture via URL parameters (?section &amp; ?id)</td><td>Fase 11</td></tr>
                     <tr><td class="mono">31</td><td><span class="pill pill-feat">feat</span></td><td>add dedicated GA4 event (accesso_diretto_cv) for deep link tracking</td><td>Fase 11</td></tr>
+                    <tr><td class="mono">32</td><td><span class="pill pill-feat">feat</span></td><td>implement terminal-style boot loader with glowing typewriter effect</td><td>Fase 12</td></tr>
+                    <tr><td class="mono">33</td><td><span class="pill pill-feat">feat</span></td><td>add staggered cascading reveal via CSS --idx variables</td><td>Fase 12</td></tr>
+                    <tr><td class="mono">34</td><td><span class="pill pill-feat">feat</span></td><td>implement boot loader bypass logic for Deep Link routing</td><td>Fase 12</td></tr>
+                    <tr><td class="mono">35</td><td><span class="pill pill-refactor">refactor</span></td><td>revert minification on JSON databases and CanvasFX for maintainability</td><td>Fase 12</td></tr>
+                    <tr><td class="mono">36</td><td><span class="pill pill-chore">chore</span></td><td>disable body scroll during boot sequence to prevent visual glitches</td><td>Fase 12</td></tr>
                 </tbody>
             </table>
             <p style="color: var(--text-faint); font-size: 13px;"><em>Nota: la tabella non riporta hash o timestamp poiché non presenti nella cronologia fornita in origine. In caso di repository Git effettivo, si consiglia di integrare questa tabella con l'output di <code>git log --pretty=format:"%h|%ad|%s" --date=short</code> per avere tracciabilità temporale completa.</em></p>
@@ -813,7 +786,7 @@
 
         <!-- ================= APPENDICE B — GLOSSARIO ================= -->
         <section class="doc-section" id="glossario">
-            <div class="section-tag">15 · Appendice B</div>
+            <div class="section-tag">16 · Appendice B</div>
             <h2>Glossario tecnico</h2>
             <p>Utile per spiegare il progetto a un interlocutore non tecnico senza perdere precisione.</p>
             <dl class="glossary">
@@ -846,12 +819,15 @@
                 
                 <dt>Deep Linking</dt>
                 <dd>Utilizzo di un indirizzo web (URL) che indirizza l'utente a un contenuto specifico e profondo di un sito web, superando la homepage o altre sezioni intermedie.</dd>
+
+                <dt>Staggered Reveal / Cascading UI</dt>
+                <dd>Tecnica di animazione dell'interfaccia in cui gli elementi non compaiono simultaneamente, ma a catena, in base a un ritardo incrementale calcolato matematicamente.</dd>
             </dl>
         </section>
 
         <!-- ================= APPENDICE C — MANUTENZIONE ================= -->
         <section class="doc-section" id="manutenzione">
-            <div class="section-tag">16 · Appendice C</div>
+            <div class="section-tag">17 · Appendice C</div>
             <h2>Guida rapida alla manutenzione futura</h2>
 
             <h3>Aggiungere una nuova esperienza, progetto o certificazione</h3>
@@ -879,7 +855,7 @@
 
         <!-- ================= CHIUSURA ================= -->
         <section class="doc-section" id="chiusura" style="border-bottom: none;">
-            <div class="section-tag">17 · Chiusura</div>
+            <div class="section-tag">18 · Chiusura</div>
             <h2>Stato del progetto e validità del documento</h2>
             <p>Sistema operativo, collaudato e in produzione, distribuito via GitHub Pages. Architettura pensata per essere scalabile a future integrazioni (nuove sezioni, nuovi effetti Canvas FX, nuovi eventi di tracciamento) senza richiedere una riscrittura strutturale.</p>
 
@@ -890,8 +866,8 @@
                 <span class="ok">✓</span> Compliance ePrivacy &amp; Google Consent Mode v2: verificata<br>
                 <span class="ok">✓</span> Telemetria real-time e riconoscimento sessioni anonime: verificata<br>
                 <span class="ok">✓</span> Compatibilità ATS del CV: verificata<br>
-                <span class="ok">✓</span> Logica di Deep Linking bypass UI integrata: verificata<br>
-                <span class="ok">✓</span> Clausola GDPR presente su CV: verificata
+                <span class="ok">✓</span> Clausola GDPR presente su CV: verificata<br>
+                <span class="ok">✓</span> Boot Loader dinamico e Bypass UX per i recruiter: verificata
             </div>
         </section>
 
